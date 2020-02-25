@@ -1,6 +1,6 @@
 from ctypes import *
 
-lib = CDLL("python/mandelbrot.so", RTLD_GLOBAL)
+lib = CDLL("mandelbrot.so", RTLD_GLOBAL)
 
 mandelbrot = lib.mandelbrot
 mandelbrot.argtypes = [c_int, c_int, c_double, c_double, c_double, c_double]
