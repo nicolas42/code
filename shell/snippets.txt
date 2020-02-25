@@ -1,0 +1,5 @@
+change directory to the same one that the script's being run from
+cd $(dirname $0) 
+
+
+
