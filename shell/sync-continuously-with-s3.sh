@@ -1,6 +1,10 @@
 
-dir=/Users/nick2/Yafoo/
-s3dir=s3://yafoo/
+
+#dir=/Users/nick2/Yafoo/
+#s3dir=s3://yafoo/
+
+dir=$0
+s3dir=$1
 
 mkdir ~/.nick/
 ls -lR $dir > ~/.nick/old

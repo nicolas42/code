@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 	// Tokenizer
 	// read file
 	char buffer[1000000];
-	FILE* fp = fopen("main.c", "r");
+	FILE* fp = fopen("make", "r");
     fread(buffer, 1000000, 1, fp);
 	fclose(fp);
 	// make tokens
