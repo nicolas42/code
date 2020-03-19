@@ -1,0 +1,14 @@
+// Starship September 2019 Calculations
+// from https://www.youtube.com/watch?v=5UUtNR6BhjE
+
+
+ship_dry_mass = 85
+propellant_mass = 1200;
+ascent_payload = 150;
+initial_mass = ship_dry_mass + propellant_mass + ascent_payload; // 1435
+final_mass = ship_dry_mass + ascent_payload; // 235
+delta_v = 3.7 * log ( initial_mass / final_mass );
+// = 6.69, uh oh need another 3.5km/s of delta-v
+
+// for booster need to add starship's initial_mass
+
