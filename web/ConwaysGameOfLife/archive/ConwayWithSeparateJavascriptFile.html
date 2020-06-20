@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+  <script type="text/javascript" src="ConwaysGameOfLife.js"></script>
+</head>
+<body>
+
+  <!-- An Image and the Console if needed -->
+<img id="img01" width="400" height="400">
+<p id="console"></p>
+
+
+</body>
+  
+<script>
+// demoConwaysGameOfLife(document.querySelector("#img01"));
+// 
+
+var imageElement = document.querySelector("#img01");
+imageElement.height = 200;
+imageElement.width = 200;
+
+  // gosper glider gun (x,y coordinates)
+var coords = [2, 6, 2, 7, 3, 6, 3, 7, 12, 6, 12, 7, 12, 8, 13, 5, 13, 9, 14, 4, 14, 10, 15, 4, 15, 10, 16, 7, 17, 5, 17, 9, 18, 6, 18, 7, 18, 8, 19, 7, 22, 4, 22, 5, 22, 6, 23, 4, 23, 5, 23, 6, 24, 3, 24, 7, 26, 2, 26, 3, 26, 7, 26, 8, 36, 4, 36, 5, 37, 4, 37, 5];
+conwaysGameOfLife(imageElement, 100, 100, coords);
+
+</script>
+</html>

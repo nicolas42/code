@@ -1,0 +1,48 @@
+<textarea autofocus></textarea>
+<p>This page turns violet when you hold the V key.</p>
+<script>
+  window.addEventListener("keydown", event => {
+    console.dir(event.key);
+  });
+
+  window.addEventListener("keydown", event => {
+    if (event.key == "v") {
+      document.body.style.background = "violet";
+    }
+  });
+  window.addEventListener("keyup", event => {
+    if (event.key == "v") {
+      document.body.style.background = "";
+    }
+  });
+
+
+// let textarea, p, result;
+
+// textarea = document.querySelector('textarea');
+// p = document.querySelector('p');
+
+// result = eval(textarea.value);
+// p.innerHTML = result.toString();
+
+// focus when press '/' key
+// result shows on enter press, button press or alternatively continuously
+
+
+
+window.addEventListener("keyup", event => {
+
+    // if (event.key === "Enter"){
+
+    let textarea, p, result;
+
+    textarea = document.querySelector('textarea');
+    p = document.querySelector('p');
+
+    result = eval(textarea.value);
+    p.innerHTML = result.toString();
+
+// }
+  });
+
+</script>

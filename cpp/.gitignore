@@ -1,0 +1,11 @@
+a.out
+*.ppm
+*.a
+*.so
+*.dSYM
+.DS_Store
+*.dat
+
+*.o
+*.gch
+.vscode

@@ -1,0 +1,28 @@
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Helvetica, sans-serif; font-weight: 300; line-height: 2; }
+    h1 { text-align: center; background-color: #eee; font-size: 40px; }
+    body { max-width: 1000px; margin: 0 auto; }
+    canvas { width: 1000px; height: 1000px; }
+</style>
+
+<body>
+    <h1>Conway</h1>
+    <canvas></canvas> 
+    <p style="padding-bottom: 1000px; "></p>
+</body>
+
+<script src="conway.js"></script>
+<script>
+
+conway();
+
+// conway({
+//     canvas: document.querySelector("canvas"), 
+//     height: 200,
+//     width: 200,
+//     aliveColor: [0, 0, 255, 255], 
+//     deadColor: [255, 255, 255, 255], 
+//     delay: 200
+// });
+
+</script>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+</head>
+<body>
+<canvas id="canvas1" width="1000" height="1000">
+<p id="console"></p>
+
+
+</body>
+  <script>
+
+// Drawing seems to work in Chrome but not in Safari :(
+
+var white = [255, 255, 255, 255];
+var black = [0, 0, 0, 255];
+var canvas = document.querySelector("#canvas1");
+
+var width = 1000;
+var height = 1000;
+// get the image from the context - image: {width, height, data}
+var ctx = canvas.getContext("2d");
+var imgData = ctx.getImageData(0, 0, width, height);
+var data = imgData.data;
+
+// Make White Image
+var i;
+for (i = 0; i < data.length; i += 4) {
+  data[i + 0] = white[0];
+  data[i + 1] = white[1];
+  data[i + 2] = white[2];
+  data[i + 3] = white[3];
+}
+
+
+// gosper glider gun (x,y,x,y...)
+var coords = [2, 6, 2, 7, 3, 6, 3, 7, 12, 6, 12, 7, 12, 8, 13, 5, 13, 9, 14, 4, 14, 10, 15, 4, 15, 10, 16, 7, 17, 5, 17, 9, 18, 6, 18, 7, 18, 8, 19, 7, 22, 4, 22, 5, 22, 6, 23, 4, 23, 5, 23, 6, 24, 3, 24, 7, 26, 2, 26, 3, 26, 7, 26, 8, 36, 4, 36, 5, 37, 4, 37, 5];
+
+// Add random initial points to fill 10%
+for(i=0;i<Math.round(0.1*width*height);i=i+1){
+  coords.push(Math.round(Math.random()*width));
+  coords.push(Math.round(Math.random()*height));
+}
+    
+var x;
+var y;
+var pos;
+// draw coords (that gosper thing)
+for (i = 0; i < coords.length; i += 2) {
+  x = coords[i];
+  y = coords[i + 1];
+  pos = (y * width * 4) + (x * 4);
+
+  data[pos + 0] = black[0];
+  data[pos + 1] = black[1];
+  data[pos + 2] = black[2];
+  data[pos + 3] = black[3];
+}
+
+ctx.putImageData(imgData, 0, 0); // Put data in canvas' 2D context
+
+function evolve() {
+
+  // var x;
+  // var y;
+  // var pos;
+  var num; // number of neighbours
+  var live; // whether to live or die. 1 = live, 0 = die
+
+  // zero neighbors
+  for (y = 1; y < height - 1; y = y + 1) {
+    for (x = 1; x < width - 1; x = x + 1) {
+      pos = y * width * 4 + x * 4;
+
+      data[pos + 3] = 0; // keep number of neighbours in alpha channel
+    }
+  }
+
+
+  // update neighbors
+  for (y = 1; y < height - 1; y = y + 1) {
+    for (x = 1; x < width - 1; x = x + 1) {
+      pos = y * width * 4 + x * 4;
+
+      if (data[pos + 0] === black[0]) { // currCell.isAlive
+        // alpha channel contains number of neighbours 
+        // (red pixel position + 3)
+        data[pos - (4 * width) - 4 + 3] += 1;
+        data[pos - (4 * width) + 3] += 1;
+        data[pos - (4 * width) + 4 + 3] += 1;
+        data[pos - 4 + 3] += 1;
+        // data[pos];
+        data[pos + 4 + 3] += 1;
+        data[pos + (4 * width) - 4 + 3] += 1;
+        data[pos + (4 * width) + 3] += 1;
+        data[pos + (4 * width) + 4 + 3] += 1;
+      }
+    }
+  }
+
+  // function print(str){
+  //     document.querySelector('#console').innerHTML += str;
+  // }
+  // 
+  // function println(str){
+  //     document.querySelector('#console').innerHTML += (str + "<br>");
+  // }
+
+  //  Print Neighbours
+  //  document.querySelector("#console").innerHTML = "";
+  //  for (y = 1; y < height-1; y = y + 1) {
+  //    for (x = 1; x < width-1; x = x + 1 ){
+  //      pos = y*width*4 + x*4;
+  //
+  //      print(""+data[pos+3]+" ");
+  //    }
+  //      print("<br>");
+  //  }
+
+  // update the living
+  for (y = 1; y < height - 1; y = y + 1) {
+    for (x = 1; x < width - 1; x = x + 1) {
+      pos = y * width * 4 + x * 4;
+      num = data[pos + 3]; // number of neighbours
+      live = 0; // determines whether cell lives or dies
+
+      if (data[pos + 0] === black[0]) { // currCell.isAlive
+        if (num < 2) {
+          live = 0; // false
+        } else if ((num === 2) || (num === 3)) {
+          live = 1; // true
+        } else if (num > 3) {
+          live = 0; // false
+        }
+      } else {
+        if (num === 3) {
+          live = 1; // true
+        }
+      }
+      if (live === 1) {
+        data[pos + 0] = black[0];
+        data[pos + 1] = black[1];
+        data[pos + 2] = black[2];
+        data[pos + 3] = black[3];
+      } else {
+        data[pos + 0] = white[0];
+        data[pos + 1] = white[1];
+        data[pos + 2] = white[2];
+        data[pos + 3] = white[3];
+      }
+    }
+  }
+
+  ctx.putImageData(imgData, 0, 0);
+}
+    
+// evolve();
+var id = setInterval(evolve, 20);
+// clearInterval(id);
+
+function getClickPosition(e) {
+  var rect = e.currentTarget.getBoundingClientRect();
+  var xPos = e.clientX - rect.left;
+  var yPos = e.clientY - rect.top;
+  var x;
+  var y;
+  var pos;
+  
+  // e.currentTarget.innerHTML = pos.x+', '+pos.y;
+  if (e.which === 1){
+    
+    document.querySelector("#console").innerHTML = xPos+','+yPos;
+    // coords.push(xPos);
+    // coords.push(yPos);
+
+    x = xPos;
+    y = yPos;
+    pos = (y * width * 4) + (x * 4);
+
+    data[pos + 0] = black[0];
+    data[pos + 1] = black[1];
+    data[pos + 2] = black[2];
+    data[pos + 3] = black[3];
+    
+    ctx.putImageData(imgData, 0, 0);
+    
+  }
+}
+
+
+canvas.addEventListener("mousemove",getClickPosition,false);
+canvas.addEventListener("mousedown",function(e){
+	clearInterval(id);
+},false);
+canvas.addEventListener("mouseup",function(e){
+	id = setInterval(evolve, 20);
+},false);
+
+  </script>
+</html>
