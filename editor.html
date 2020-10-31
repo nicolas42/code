@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="jquery-3.5.1.min.js"></script>
+
+  <script>
+
+    function create_element(event) {
+      let el = document.createElement('p');
+      el.innerHTML = 'woohoo';
+      document.body.appendChild(el)
+      // alert(event.target.nodeName);
+      console.log('create element')
+    }
+
+    i = 2;
+    function doit(arg) {
+
+      e = $('#input_field');
+      console.log(e.first().text());
+      if (arg == -1) {
+        // move up:
+        e.prev().insertAfter(e);
+      } else if (arg == +1) {
+        // move down:
+        e.next().insertBefore(e);
+      }
+
+      // i += arg
+      // console.log(i)
+      // e = document.querySelector('#input_field');
+      // document.body.insertBefore(e, document.body.children[i]);
+
+
+      // paragraphs[textarea_index - 1].innerHTML = textarea.value;
+      // textarea.innerHTML = paragraphs[textarea_index].innerHTML;
+      // document.body.insertBefore(textarea, paragraphs[textarea_index]);
+    }
+
+    window.addEventListener("keydown", event => {
+      console.log(event.key)
+      if (event.key == "ArrowDown") {
+        doit(+1);
+      }
+    });
+    window.addEventListener("keydown", event => {
+      if (event.key == "ArrowUp") {
+        doit(-1);
+      }
+    });
+
+  </script>
+</head>
+
+<body>
+
+  <p>
+    <button id="create_element">create element</button>
+  </p>
+  <textarea id="input_field">hello world</textarea>
+
+  <p>Click on a paragraph. An alert box will alert the element that triggered the event.</p>
+
+  <p><strong>Note:</strong> The target property returns the element that triggered the event, and not necessarily the
+    eventlistener's element.</p>
+
+
+</body>
+
+<script>
+      document.querySelector("#create_element").addEventListener("click", create_element);
+
+</script>
+</html>
