@@ -2,44 +2,51 @@
 import cv2 
 import sys
 import math
+import numpy as np
+import importlib
+import doughboy_config as config
+import json
 
-def draw_doughboy(image, frequency):
 
-    # frequency = 2
-    periods = 2
-    samples = 30
+
+def draw_wave_at_frequency(image, frequency):
+
     sine_wave = []
-    for i in range(samples + 1):
-        x = periods * 2 * math.pi * i / samples
+    for i in range(config.samples + 1):
+        x = config.periods * 2 * math.pi * i / config.samples
         sine_wave.append( (x, math.sin(frequency * x)) )
-
     print(sine_wave)
 
     for xy in sine_wave:
-
-        offset = ( 50, 200 )
-        radius = 3
-        color = (0,0,0)
-        thickness = -1
-        scaler = (50, 50)
-
-        center_coordinates = ( int( offset[0] + xy[0]*scaler[0] ), int( offset[1] - xy[1]*scaler[1] ) )
+        center_coordinates = ( int( config.offset[0] + xy[0] * config.scaler[0] ), int( config.offset[1] - xy[1] * config.scaler[1] ) )
         print(center_coordinates)
-        cv2.circle(image, center_coordinates, radius, color, thickness, lineType=cv2.LINE_AA)
+        cv2.circle(image, center_coordinates, config.radius, config.color, config.thickness, lineType=cv2.LINE_AA)
 
     return image
 
 
+i = 0
+paused = False
+while True:
 
-# path = sys.argv[1]
-path = '/Users/nick/Downloads/IMG_9360.jpg'
-image = cv2.imread(path)
+    importlib.reload(config)
 
-for i in range(1000):
-    frequency = 1 + i/100
-    image_copy = draw_doughboy(image.copy(), frequency)
-    cv2.imshow('window_name', image_copy) 
-    cv2.waitKey(33)
+    image = np.zeros((config.height, config.width, 3), np.uint8)
+    image[:, :] = config.background_color
+
+    key = cv2.waitKey(config.key_wait) 
+    if key in config.escape_keys:
+        break
+    elif key == config.pause_key: # space
+        paused = not paused
+
+    if not paused:
+        i += 1
+        frequency = 1 + i * config.frequency_increment
+        image = draw_wave_at_frequency(image, frequency)
+        cv2.imshow('window_name', image) 
+
+
 
 cv2.destroyAllWindows()
 
