@@ -33,11 +33,11 @@ def trivector(a):
 
 
 from math import *
-TPI = 2*pi
+tau = 2*pi
 
-v = vector([cos(TPI/8), sin(TPI/8), 0]);
-a = vector([cos(TPI/8), sin(TPI/8), 0]);
-b = vector([cos(TPI/8)*sin(TPI/8), sin(TPI/8)*sin(TPI/8), cos(TPI/8)]);
+v = vector([cos(tau/8), sin(tau/8), 0]);
+a = vector([cos(tau/8), sin(tau/8), 0]);
+b = vector([cos(tau/8)*sin(tau/8), sin(tau/8)*sin(tau/8), cos(tau/8)]);
 #multiply([b,a,v,a,b])
 ba=mul(b,a); bav=mul(ba,v); bava=mul(bav,a); bavab=mul(bava,b); 
 
