@@ -1,20 +1,23 @@
 height, width = 600, 800
 
-key_wait = 33
+key_wait = 10
 
 # frequency = 2
-periods = 2
-samples = 50
+periods = 1
+samples = 100
 
-offset = ( 50, 150 )
+offset = ( 50, 150)
+scaler = (100, 100)
 
 radius = 3
+thickness = -1
+
+rainbow_color = True # overrides color
 color = (0,0,0)
 background_color = (255, 255, 255)
-thickness = -1
-scaler = (50, 100)
+
 
 escape_keys = [ 27, 113 ] # escape, q
 pause_key = 32 # space
-
+reset_key = 114 # r
 frequency_increment = 0.01
