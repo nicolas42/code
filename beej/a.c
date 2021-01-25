@@ -1,128 +1,93 @@
-#include <errno.h>
-#include <string.h>
+/*
+** client.c -- a stream socket client demo
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <err.h>
-#include <sys/types.h>
-#include <sys/socket.h>
+#include <errno.h>
+#include <string.h>
 #include <netdb.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+
 #include <arpa/inet.h>
-#include <stdarg.h>
 
-/* "BSIZE" is the size of the buffer we use to read from the socket. */
+#define PORT "3490" // the port client will be connecting to 
 
-#define BSIZE 0x1000
+#define MAXDATASIZE 100 // max number of bytes we can get at once 
 
-/* Quickie function to test for failures. It is actually better to use
-   a macro here, since a function like this results in unnecessary
-   function calls to things like "strerror". However, not every
-   version of C has variadic macros. */
-
-static void fail (int test, const char * format, ...)
+// get sockaddr, IPv4 or IPv6:
+void *get_in_addr(struct sockaddr *sa)
 {
-    if (test) {
-	va_list args;
-	va_start (args, format);
-	vfprintf (stderr, format, args);
-	va_end (args);
-	// exit ok
-	exit (EXIT_FAILURE);
+    if (sa->sa_family == AF_INET) {
+        return &(((struct sockaddr_in*)sa)->sin_addr);
     }
+
+    return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
-/* Get the web page and print it to standard output. */
-
-static void get_page (int s, const char * host, const char * page)
+int main(int argc, char *argv[])
 {
-    /* "msg" is the request message that we will send to the
-       server. */
+    int sockfd, numbytes;  
+    char buf[MAXDATASIZE];
+    struct addrinfo hints, *servinfo, *p;
+    int rv;
+    char s[INET6_ADDRSTRLEN];
 
-    char * msg;
-
-    /* "format" is the format of the HTTP request we send to the web
-       server. */
-
-    const char * format =
-        "GET /%s HTTP/1.0\r\nHost: %s\r\nUser-Agent: fetch.c\r\n\r\n";
-
-    /* This holds return values from functions. */
-
-    int status;
-
-    /* I am using non-standard function "asprintf" for convenience. If
-       you don't have "asprintf", use "snprintf" with a fixed-size
-       buffer and check its return value against the length of the
-       buffer after the call. */
-
-    status = asprintf (& msg, format, page, host);
-
-    /* Check that "asprintf" succeeded. */
-
-    fail (status == -1 || ! msg, "asprintf failed.\n");
-
-    /* Send the request. */
-
-    status = send (s, msg, strlen (msg), 0);
-
-    /* Check it succeeded. The FreeBSD manual page doesn't mention
-       whether "send" sets errno, but
-       "http://pubs.opengroup.org/onlinepubs/009695399/functions/send.html"
-       claims it does. */
-
-    fail (status == -1, "send failed: %s\n", strerror (errno));
-
-    while (1) {
-	/* The number of bytes received. */
-        int bytes;
-	/* Our receiving buffer. */
-        char buf[BSIZE+10];
-	/* Get "BSIZE" bytes from "s". */
-        bytes = recvfrom (s, buf, BSIZE, 0, 0, 0);
-	/* Stop once there is nothing left to print. */
-        if (bytes == 0) {
-            break;
-        }
-        fail (bytes == -1, "%s\n", strerror (errno));
-	/* Nul-terminate the string before printing. */
-        buf[bytes] = '\0';
-	/* Print it to standard output. */
-        printf ("%s", buf);
+    if (argc != 2) {
+        fprintf(stderr,"usage: client hostname\n");
+        exit(1);
     }
-    free (msg);
-}
 
-int main ()
-{
-    struct addrinfo hints, *res, *res0;
-    int error;
-    /* "s" is the file descriptor of the socket. */
-    int s;
-    /* Get one of the web pages here. */
-    const char * host = "www.lemoda.net";
-
-    memset (&hints, 0, sizeof (hints));
-    /* Don't specify what type of internet connection. */
-    hints.ai_family = PF_UNSPEC;
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
-    error = getaddrinfo (host, "http", & hints, & res0);
-    fail (error, gai_strerror (error));
-    s = -1;
-    for (res = res0; res; res = res->ai_next) {
-        s = socket (res->ai_family, res->ai_socktype, res->ai_protocol);
-        fail (s < 0, "socket: %s\n", strerror (errno));
-        if (connect (s, res->ai_addr, res->ai_addrlen) < 0) {
-            fprintf (stderr, "connect: %s\n", strerror (errno));
-            close (s);
-	    // exit ok
-            exit (EXIT_FAILURE);
+
+    if ((rv = getaddrinfo(argv[1], PORT, &hints, &servinfo)) != 0) {
+        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
+        return 1;
+    }
+
+    // loop through all the results and connect to the first we can
+    for(p = servinfo; p != NULL; p = p->ai_next) {
+        if ((sockfd = socket(p->ai_family, p->ai_socktype,
+                p->ai_protocol)) == -1) {
+            perror("client: socket");
+            continue;
         }
+
+        if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
+            close(sockfd);
+            perror("client: connect");
+            continue;
+        }
+
         break;
     }
-    if (s != -1) {
-        get_page (s, host, "c/");
+
+    if (p == NULL) {
+        fprintf(stderr, "client: failed to connect\n");
+        return 2;
     }
-    freeaddrinfo (res0);
+
+    inet_ntop(p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr),
+            s, sizeof s);
+    printf("client: connecting to %s\n", s);
+
+    freeaddrinfo(servinfo); // all done with this structure
+
+    if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
+        perror("recv");
+        exit(1);
+    }
+
+    buf[numbytes] = '\0';
+
+    printf("client: received '%s'\n",buf);
+
+    close(sockfd);
+
     return 0;
 }
-
