@@ -4,7 +4,7 @@ import sys
 import math
 import numpy as np
 import importlib
-import doughboy_config as config
+import config
 import json
 import colorsys
 
@@ -59,7 +59,7 @@ while True:
         i += 1
         frequency = 1 + i * config.frequency_increment
         image = draw_wave_at_frequency(image, frequency)
-        cv2.imshow('Controls: spacebar to pause, q or escape to exit', image) 
+        cv2.imshow('Controls: r to reset, spacebar to pause, q or escape to exit', image) 
 
 
 
