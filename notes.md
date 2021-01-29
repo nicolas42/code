@@ -24,6 +24,10 @@ wyos
  
 Alpine Linux on Virtualbox Notes
 --------------------------------------------------------------
+
+IMPORTANT: I have not been able to get audio working on alpine linux in virtualbox 
+on a macos host.
+
  
 in system boot order, set hard drive to be the first item
 root
