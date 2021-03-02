@@ -16,6 +16,8 @@
 
 #include "multivector.h"
 
+#include "mandelbrot.h"
+
 
 int main(int argc, char **argv)
 {
@@ -41,6 +43,7 @@ int main(int argc, char **argv)
 
     multivector::main();
 
+    mandelbrot::mandelbrot_simple(1000,1000,0,0,4,4);
 
     return 0;
 }

@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
  
-namespace misc {
+// namespace misc {
 
 int demo_vectors()
 {
@@ -37,4 +37,4 @@ int demo_vectors()
     return 0;
 }
 
-}
+// }
