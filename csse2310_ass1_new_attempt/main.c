@@ -7,10 +7,6 @@
 
 int DEBUG = 0;
 
-struct player {
-    char symbol;
-};
-
 struct tile { 
     char data[25]; 
 };
@@ -27,6 +23,12 @@ struct move {
     int column;
     int rotation;
 };
+
+struct player {
+    char symbol;
+    struct move last_move;
+};
+
 
 void parse_tiles( char *string, int string_length, struct tile** ret_tiles, int* ret_tiles_length )
 {
@@ -195,10 +197,10 @@ int is_move_valid( struct board board, struct tile tile_arg, int x, int y, int r
 
             if ( tile.data[tile_index] == '!' ) {
                 if ( board_y < 0 || board_y > board.height-1 || board_x < 0 || board_x > board.width-1 ) {
-                    printf("invalid move.  value out of bounds\n");
+                    if (DEBUG) printf("invalid move.  value out of bounds\n");
                     return 0;
                 } else if ( board.data[board_y * board.width + board_x] != '.' ) { 
-                    printf("invalid move.  collision\n");
+                    if (DEBUG) printf("invalid move.  collision\n");
                     return 0;
                 }
             }
@@ -285,7 +287,7 @@ void read_line(FILE* file, char **ret_line)
 
 
 // return 1 if valid move is found
-int get_automatic_player_move_type_1(struct board board, struct tile tile, struct move last_move, struct move *move)
+int get_automatic_player_move_type_1(struct board board, struct tile tile, struct move last_move, struct move *ret_move)
 {
     int rstart = last_move.row;
     int cstart = last_move.column;
@@ -295,12 +297,12 @@ int get_automatic_player_move_type_1(struct board board, struct tile tile, struc
     int c = cstart;
     for ( int theta = 0; theta < 360; theta += 90 ) {
         while (1) {
-            printf("r,c,theta %d %d %d\n", r,c,theta);
+            if (DEBUG) printf("r,c,theta %d %d %d\n", r,c,theta);
             
             if (is_move_valid(board, tile, r, c, theta)){
-                move->row = r;
-                move->column = c;
-                move->rotation = theta;
+                ret_move->row = r;
+                ret_move->column = c;
+                ret_move->rotation = theta;
                 return 1;
             } 
             c += 1;
@@ -321,8 +323,66 @@ int get_automatic_player_move_type_1(struct board board, struct tile tile, struc
 
 
 
+// // return 1 if valid move is found
+// int get_automatic_player_move_type_2(struct board board, struct tile tile, struct move last_move_from_this_player, int player_number, struct move *ret_move)
+// {
+
+//     int rstart = last_move_from_this_player.row;
+//     int cstart = last_move_from_this_player.column;
+//     int theta = 0;
+
+//     int r = rstart;
+//     int c = cstart;
+//     for ( int theta = 0; theta < 360; theta += 90 ) {
+//         while (1) {
+//             if (DEBUG) printf("r,c,theta %d %d %d\n", r,c,theta);
+            
+//             if (is_move_valid(board, tile, r, c, theta)){
+//                 ret_move->row = r;
+//                 ret_move->column = c;
+//                 ret_move->rotation = theta;
+//                 return 1;
+//             } 
+//             c += 1;
+//             if (c > board.width-1 + 2) {
+//                 c = -2;
+//                 r += 1;
+//             }
+//             if (r > board.height-1 + 2) {
+//                 r = -2;
+//             }
+//             if ( r == rstart && c == cstart ) { break; }
+//         }
+//     } 
+
+//     return 0;
+// }
+
+
+int toggle(int a)
+{
+    if (a == 0){
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int rotate(int a, int min, int max)
+{
+    a += 1;
+    if ( a > max) {
+        a = min;
+    }
+    return a;
+}
+
 int main(int argc, char **argv)
 {
+
+    // get command line arguments
+
+
 
     // load tiles
     struct tile *tiles = NULL;
@@ -332,96 +392,98 @@ int main(int argc, char **argv)
         char *file_string = NULL; 
         int string_length = -1;
         read_file( "tilefile", &file_string, &string_length );
-        // printf("%s", file_string);
-        // printf("%d\n", string_length);
+        if (DEBUG) printf("%s", file_string);
+        if (DEBUG) printf("%d\n", string_length);
         parse_tiles( file_string, string_length, &tiles, &tiles_length );
         free(file_string);
     }
-    for ( int i=0; i<tiles_length; i+=1 ) {
-        print_tile(tiles[i]);
-    }
+    // for ( int i=0; i<tiles_length; i+=1 ) {
+    //     print_tile(tiles[i]);
+    // }
 
     // print_all_tiles_in_all_rotations(tiles, tiles_length);
+
 
     // initialize board
     struct board board;
     int width = 8;
     int height = 8;
     initialize_board( width, height, &board );
-    print_board( board );
-    printf("\n\n");
+    // print_board( board );
+    // printf("\n\n");
 
 
     // setup players
+    // player 1 is at index 0.  player 2 is at index 1
     struct player players[2];
     int player_index = 0;
     players[0].symbol = '#';
+    players[0].last_move.column = -2;
+    players[0].last_move.row = -2;
     players[1].symbol = '*';
+    players[1].last_move.column = -2;
+    players[1].last_move.row = -2;
 
 
-
-    struct move last_move;
-    last_move.row = -2;
-    last_move.column = -2;
 
 
     // main loop
     while (1) {
         if (DEBUG) printf("tiles_index, tiles_length %d %d\n", tiles_index, tiles_length);
 
-        // print current tile
+        print_board( board );
+        printf("\n");
         print_tile(tiles[tiles_index]);
 
-        // get move from automatic player type 1
-        print_tile(tiles[tiles_index]);
-        fgetc(stdin);
-        struct move m;
-        if (get_automatic_player_move_type_1(board, tiles[tiles_index], last_move, &m)){
-            printf("move found - row column rotation: %d %d %d\n", m.row, m.column, m.rotation);
-            // make_move(board, tiles[tiles_index], m.row, m.column, m.rotation, players[player_index]);
+
+
+        while (1){
+            // get move from automatic player type 1
+            printf("> ");
+            fgetc(stdin);
+            struct move m;
+            struct move last_move = players[toggle(player_index)].last_move;
+            if (get_automatic_player_move_type_1(board, tiles[tiles_index], last_move, &m)){
+                if (DEBUG) printf("move found - row column rotation: %d %d %d\n", m.row, m.column, m.rotation);
+                make_move(board, tiles[tiles_index], m.row, m.column, m.rotation, players[player_index]);
+                players[player_index].last_move = m;
+                break;
+            } else {
+                printf("INVALID MOVE\n");
+            }
         }
-        last_move = m;
-
 
 
         // // get move from human
-        // print_tile(tiles[tiles_index]);
-        // printf("> ");
-        // char *line = NULL;
-        // int row = -1;
-        // int column = -1;
-        // int rotation = -1;
-        // read_line(stdin, &line);
-        // sscanf(line, "%d %d %d\n", &row, &column, &rotation);
-        // free(line);
-        // printf("%d %d rotated %d\n", row, column, rotation);
+        // while (1) {
+        //     struct move m;
+        //     printf("> ");
+        //     char *line = NULL;
+        //     m.row = -1;
+        //     m.column = -1;
+        //     m.rotation = -1;
+        //     read_line(stdin, &line);
+        //     sscanf(line, "%d %d %d\n", &(m.row), &(m.column), &(m.rotation));
+        //     free(line);
+        //     printf("%d %d rotated %d\n", m.row, m.column, m.rotation);
+            
+        //     if (is_move_valid(board, tiles[tiles_index], m.row, m.column, m.rotation)){
+        //         make_move(board, tiles[tiles_index], m.row, m.column, m.rotation, players[player_index]);
+        //         players[player_index].last_move = m;
+        //         break;
+        //     } else {
+        //         printf("INVALID MOVE\n");
+        //     }
+        // }
 
-
-
-        if (!is_move_valid(board, tiles[tiles_index], m.row, m.column, m.rotation))
-        {
-            printf("INVALID MOVE\n");
-
-        } else 
-        {
-            printf("VALID MOVE :)\n");
-            make_move(board, tiles[tiles_index], m.row, m.column, m.rotation, players[player_index]);
-
-            tiles_index += 1;
-            if ( tiles_index == tiles_length ) {
-                tiles_index = 0;
-            }
-
-            if (player_index == 0) { 
-                player_index = 1;
-            } else {
-                player_index = 0;
-            }
-
-            print_board( board );
-        }
+        
+        tiles_index = rotate(tiles_index, 0, tiles_length-1);
+        player_index = toggle(player_index);
     }
 
+
+    free(tiles);
+    free(board.data);
     return 0;
 }
 
