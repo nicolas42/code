@@ -5,91 +5,30 @@
 #include "read_file.h"
 #include "assert.h"
 
-// void parse_tiles( char *string, int string_length, char*** ret_tiles, int* ret_tiles_length)
-// {
-// 	int allocated = 1000;
-//     char **tiles = (char**)malloc(allocated);
-// 	int tiles_length = 0;
+int DEBUG = 0;
 
-
-//     tiles[0] = string;
-//     tiles_length = 1;
-
-//     for ( int i=0; ; i+=1 ) {
-//         // expand output data if required
-//         if ( allocated == tiles_length ) {
-//             allocated *= 2;
-//             tiles = (char**)realloc(tiles, allocated);
-//         }
-
-//         // end of file
-//         if ( string[i] == '\n' && string[i+1] == '\0' ) {
-//             string[i] = '\0';
-//             break;
-//         }
-//         if ( string[i] != '\0' && string[i-1] == '\n' && string[i-2] == '\n' ) {
-//             tiles[tiles_length] = string + i;
-//             tiles_length += 1;
-//             string[i-2] = '\0';
-//         }
-//     }
-
-//     *ret_tiles = tiles;
-//     *ret_tiles_length = tiles_length;
-// }
-
-// void parse_tiles2( char *string, int string_length, char*** ret_output, int* ret_output_length)
-// {
-//     char **output = (char**)malloc(1000);
-// 	int output_allocated = 1000;
-// 	int output_length = 0;
-
-//     int string_pos = 0;
-//     output[output_length] = string;
-//     output_length += 1;
-
-//     // the tiles file has the following format
-//     // tile [30 bytes]
-//     // newline [1 byte]
-//     // ...
-//     // tile [30 bytes]
-//     // EOF null byte [1 byte]
-//     // if there's a newline after the tile then assume there's another tile after it.  
-//     // if there's an EOF null byte after a tile then assume there's nothing after it.
-
-//     while (1) {
-
-//         // expand output array if required
-//         if ( output_allocated == output_length ) {
-//             output_allocated *= 2;
-//             output = (char**)realloc(output, output_allocated);
-//         }
-//         string_pos += 30;
-//         if ( string[string_pos] == '\n' ) {
-//             string[string_pos] = '\0';
-//             string_pos += 1;
-//             output[output_length] = string+string_pos;;
-//             output_length += 1;
-//         } 
-//         if ( string[string_pos] == '\0' ) {
-//             break;
-//         }
-//     }
-
-//     *ret_output = output; 
-//     *ret_output_length = output_length;
-// }
-
-
-
-
-
+struct player {
+    char symbol;
+};
 
 struct tile { 
     char data[25]; 
 };
 
-void parse_tiles3( char *string, int string_length, struct tile** ret_tiles, int* ret_tiles_length )
+
+struct board {
+    char *data;
+    int width;
+    int height;
+};
+
+struct move { 
+    int row;
+    int column;
+    int rotation;
+};
+
+void parse_tiles( char *string, int string_length, struct tile** ret_tiles, int* ret_tiles_length )
 {
     struct tile* tiles = (struct tile*)malloc(1000);
 	int tiles_allocated = 1000;
@@ -207,12 +146,6 @@ void print_all_tiles_in_all_rotations( struct tile* tiles, int tiles_length )
 
 // }
 
-struct board {
-    char *data;
-    int width;
-    int height;
-};
-
 // set all values of the board to '.'
 void initialize_board(int width, int height, struct board *ret_board) {
 
@@ -238,46 +171,73 @@ void print_board( struct board board ) {
     }
 }
 
-void make_move( struct board board, struct tile tile, int x, int y, int rotation_degrees, int *is_valid ) {
+// make move or return error -1 if the move is invalid
+int is_move_valid( struct board board, struct tile tile_arg, int x, int y, int rotation_degrees) {
     
-    struct tile rotated_tile;
-    rotate_tile( tile, rotation_degrees, &rotated_tile );
-    print_tile(rotated_tile);
+    if (!(rotation_degrees == 0 || rotation_degrees == 90 || rotation_degrees == 180 || rotation_degrees == 270 )) {
+        // return error if the rotation value is invalid
+        return 0;
+    }
+
+    struct tile tile;
+    rotate_tile( tile_arg, rotation_degrees, &tile );
+    // print_tile(tile);
 
     // x and y describe the middle character of the tile
     // so if we go from x-2,y-2 to x+2,y+2 on the board we cover the necessary space.
     
-    *is_valid = 1;
     int tile_index = 0;
     for(int board_y = y-2; board_y <= y+2; ++board_y) {
-        for(int board_x = x-2; board_x < x+2; ++board_x) {
-            if ( rotated_tile.data[tile_index++] == ',' ) { 
-                continue;
-            } 
-            if ( board_y < 0 || board_y > board.height-1 || board_x < 0 || board_x > board.width-1 ) {
-                *is_valid = 0;
-                return;
+        for(int board_x = x-2; board_x <= x+2; ++board_x) {
+            char board_data = board.data[board_y * board.width + board_x];
+
+            if (DEBUG) printf("board_y, board_x, tile_index, board_data, tile.data[tile_index]: %d %d %d %c %c\n", board_y, board_x, tile_index, board_data, tile.data[tile_index]);
+
+            if ( tile.data[tile_index] == '!' ) {
+                if ( board_y < 0 || board_y > board.height-1 || board_x < 0 || board_x > board.width-1 ) {
+                    printf("invalid move.  value out of bounds\n");
+                    return 0;
+                } else if ( board.data[board_y * board.width + board_x] != '.' ) { 
+                    printf("invalid move.  collision\n");
+                    return 0;
+                }
             }
+            tile_index++; 
+
         }
     }
 
-    tile_index = 0;
-    for(int board_y = y-2; board_y < y+3; ++board_y) {
-        for(int board_x = x-2; board_x < x+3; ++board_x) {
-            if ( rotated_tile.data[tile_index] == ',' ) { 
-                tile_index++;
+    return 1;
+}
+
+
+
+
+
+// make move or return error -1 if the move is invalid
+int make_move( struct board board, struct tile tile_arg, int x, int y, int rotation_degrees, struct player player) {
+
+    struct tile tile;
+    rotate_tile( tile_arg, rotation_degrees, &tile );
+    // print_tile(tile);
+
+    int tile_index = 0;
+    for(int board_y = y-2; board_y <= y+2; ++board_y) {
+        for(int board_x = x-2; board_x <= x+2; ++board_x) {
+            if ( tile.data[tile_index] == ',' ) { 
             } else {
-                board.data[board_y * board.width + board_x] = rotated_tile.data[tile_index++];
+                board.data[board_y * board.width + board_x] = player.symbol;
             }
+            tile_index++;
         }
     }
-
+    return 0;
 }
 
 // read a newline '\n' or null byte '\0' terminated line
-void read_line(FILE* file, char **ret_line) {
+void read_line(FILE* file, char **ret_line) 
+{
 
-    printf("> ");
     char *line = (char*)malloc(1000);
     int allocated = 1000;
     int length = 0;
@@ -302,58 +262,165 @@ void read_line(FILE* file, char **ret_line) {
 }
 
 
+// void parse_input_line(char *line)
+// {
+//     char* offsets[3];
+//     int offsets_length = 0;
+//     offsets[offsets_length++] = line;
+//     for (int i=1; line[i] != '\0'; i+=1 ) {
+//         if (line[i] == ' ') {
+//             offsets[offsets_length++] = line+i;
+//         }
+//     }
+//     int inputs[3];
+//     int inputs_length = 0;
+//     for (int i=0; i<3; i+=1) {
+//         char *ptr;
+//         inputs[i] = (int)strtol(offsets[i], &ptr, 10);    
+//     }
+//     for (int i=0; i<3; i+=1) {
+//         printf("%d ", inputs[i]);
+//     }
+// }
+
+
+// return 1 if valid move is found
+int get_automatic_player_move_type_1(struct board board, struct tile tile, struct move last_move, struct move *move)
+{
+    int rstart = last_move.row;
+    int cstart = last_move.column;
+    int theta = 0;
+
+    int r = rstart;
+    int c = cstart;
+    for ( int theta = 0; theta < 360; theta += 90 ) {
+        while (1) {
+            printf("r,c,theta %d %d %d\n", r,c,theta);
+            
+            if (is_move_valid(board, tile, r, c, theta)){
+                move->row = r;
+                move->column = c;
+                move->rotation = theta;
+                return 1;
+            } 
+            c += 1;
+            if (c > board.width-1 + 2) {
+                c = -2;
+                r += 1;
+            }
+            if (r > board.height-1 + 2) {
+                r = -2;
+            }
+            if ( r == rstart && c == cstart ) { break; }
+        }
+    } 
+
+    return 0;
+}
+
 
 
 
 int main(int argc, char **argv)
 {
 
+    // load tiles
     struct tile *tiles = NULL;
     int tiles_length = 0;
+    int tiles_index = 0;
     {
         char *file_string = NULL; 
         int string_length = -1;
         read_file( "tilefile", &file_string, &string_length );
         // printf("%s", file_string);
         // printf("%d\n", string_length);
-        parse_tiles3( file_string, string_length, &tiles, &tiles_length );
+        parse_tiles( file_string, string_length, &tiles, &tiles_length );
         free(file_string);
     }
-
-    // // print tiles
-    // for ( int tiles_index=0; tiles_index<tiles_length; ++tiles_index) {
-    //     char tile_string[31];
-    //     sprint_tile(tiles[tiles_index], tile_string);
-    //     printf("%d\n%s", tiles_index, tile_string);
-    // }
+    for ( int i=0; i<tiles_length; i+=1 ) {
+        print_tile(tiles[i]);
+    }
 
     // print_all_tiles_in_all_rotations(tiles, tiles_length);
 
+    // initialize board
     struct board board;
-    int width = 10;
-    int height = 12;
+    int width = 8;
+    int height = 8;
     initialize_board( width, height, &board );
     print_board( board );
     printf("\n\n");
 
 
-    int is_valid = 0;
-    make_move(board, tiles[0], 2,2,90, &is_valid);
-    if (is_valid != 1) {
-        printf("INVALID MOVE\n");
-    }
-    print_board( board );
+    // setup players
+    struct player players[2];
+    int player_index = 0;
+    players[0].symbol = '#';
+    players[1].symbol = '*';
 
 
+
+    struct move last_move;
+    last_move.row = -2;
+    last_move.column = -2;
+
+
+    // main loop
     while (1) {
-        char *line = NULL;
-        read_line(stdin, &line);
-        printf("%s\n", line);
-    }
+        if (DEBUG) printf("tiles_index, tiles_length %d %d\n", tiles_index, tiles_length);
 
-    int row, column, rotate;
-    sscanf(line, "%d %d %d\n", &row, &column, &rotate);
-    printf("%d %d rotated %d\n", row, column, rotate);
+        // print current tile
+        print_tile(tiles[tiles_index]);
+
+        // get move from automatic player type 1
+        print_tile(tiles[tiles_index]);
+        fgetc(stdin);
+        struct move m;
+        if (get_automatic_player_move_type_1(board, tiles[tiles_index], last_move, &m)){
+            printf("move found - row column rotation: %d %d %d\n", m.row, m.column, m.rotation);
+            // make_move(board, tiles[tiles_index], m.row, m.column, m.rotation, players[player_index]);
+        }
+        last_move = m;
+
+
+
+        // // get move from human
+        // print_tile(tiles[tiles_index]);
+        // printf("> ");
+        // char *line = NULL;
+        // int row = -1;
+        // int column = -1;
+        // int rotation = -1;
+        // read_line(stdin, &line);
+        // sscanf(line, "%d %d %d\n", &row, &column, &rotation);
+        // free(line);
+        // printf("%d %d rotated %d\n", row, column, rotation);
+
+
+
+        if (!is_move_valid(board, tiles[tiles_index], m.row, m.column, m.rotation))
+        {
+            printf("INVALID MOVE\n");
+
+        } else 
+        {
+            printf("VALID MOVE :)\n");
+            make_move(board, tiles[tiles_index], m.row, m.column, m.rotation, players[player_index]);
+
+            tiles_index += 1;
+            if ( tiles_index == tiles_length ) {
+                tiles_index = 0;
+            }
+
+            if (player_index == 0) { 
+                player_index = 1;
+            } else {
+                player_index = 0;
+            }
+
+            print_board( board );
+        }
+    }
 
     return 0;
 }
