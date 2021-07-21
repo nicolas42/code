@@ -4,7 +4,7 @@
 
 
 
-
+// read file into ret_data as a null-byte ended string
 void read_file (char *filename, char **ret_data, int *ret_length)
 {
 	// string
@@ -27,7 +27,7 @@ void read_file (char *filename, char **ret_data, int *ret_length)
 		character = fgetc(f);
 		if (feof(f)) { 
 			data[length] = '\0'; // null byte
-			length += 1;
+			// length += 1;
 			break; 
 		}
 		data[length] = (char)character;
@@ -54,6 +54,6 @@ int demo_read_file(int argc, char **argv)
     printf("%s", data);
     printf("%d\n", data_length);
 	free(data);
-	
+
     return 0;
 }
