@@ -1,8 +1,14 @@
 // https://www.youtube.com/watch?v=hHeq-SB8uVg
 
 // to find a root keep on doing this
-// x -= f(x) / f'(x)
-// start with a random value of x
+// set x to some value, say 0.
+// x = x - ( f(x) / f'(x) )
+// This will give you one of the closest roots
+
+// i think the general idea is something like this
+// f(x_current) = (x_current - x_next) * f'(x_current)
+// so 
+// x_next = x_current - f(x_current)/f'(x_current) 
 
 
 #include <iostream>
