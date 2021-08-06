@@ -4,20 +4,14 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-int main(int argc, char** argv){
-
-
-
-    int w = 800;
-    int h = 800;
-    int c = 4;
+void draw_mandelbrot_image(int w, int h, int c, char **ret_image)
+{
     double xcenter = 0;
     double ycenter = 0;
     double width = 4;
     double height = 4;
 
-    char *image = malloc(w*h*c*sizeof(char));
-
+    char *image = *ret_image;
     const unsigned char black[4] = {0, 0, 0, 255};
     const unsigned char white[4] = {255, 255, 255, 255};
     
@@ -25,9 +19,8 @@ int main(int argc, char** argv){
         for (int x = 0; x < w; x += 1) {
 
             double zx, zxtmp, zy, cx, cy;
-            int is_in_set, stride, i, imax;
-
-            imax = 40;
+            int is_in_set, stride, i;
+            const int max_iterations = 40;
 
             // image is flipped vertically
             cx = x * (width / w) - (xcenter + width/2);
@@ -36,7 +29,7 @@ int main(int argc, char** argv){
             zy = 0;
             is_in_set = 1;
 
-            for(i = 1; i <= imax; i += 1){
+            for(i = 1; i <= max_iterations; i += 1){
                 zxtmp = zx * zx - zy * zy + cx;
                 zy = 2 * zx * zy + cy;
                 zx = zxtmp;
@@ -52,14 +45,27 @@ int main(int argc, char** argv){
                 image[y*w*c + x*c + 2] = (char)black[2];
                 image[y*w*c + x*c + 3] = 255;
             } else {
-				image[y*w*c + x*c + 0] = white[0] * i / imax;
-                image[y*w*c + x*c + 1] = white[1] * i / imax;
-                image[y*w*c + x*c + 2] = white[2] * i / imax;
+				image[y*w*c + x*c + 0] = white[0] * i / max_iterations;
+                image[y*w*c + x*c + 1] = white[1] * i / max_iterations;
+                image[y*w*c + x*c + 2] = white[2] * i / max_iterations;
                 image[y*w*c + x*c + 3] = 255;
 			}
         }
     }
+    *ret_image = image;  
+}
 
+
+int main(int argc, char** argv){
+
+
+
+    int w = 800;
+    int h = 800;
+    int c = 4;
+    char *image = malloc(w*h*c*sizeof(char));
+
+    draw_mandelbrot_image(w,h,c,&image);
 
 //      int stbi_write_png(char const *filename, int w, int h, int comp, const void *data, int stride_in_bytes);
 //    The functions create an image file defined by the parameters. The image

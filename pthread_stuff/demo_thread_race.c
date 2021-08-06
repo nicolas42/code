@@ -30,7 +30,7 @@ void* add1(void* arg)
 
 }
 
-void demo_race(void)
+void demo_thread_race(void)
 {
 	#define num_threads 1000
 
@@ -60,6 +60,6 @@ void demo_race(void)
 
 int main(int argc, char** argv)
 {
-	demo_race();
+	demo_thread_race();
 	return 0;
 }
