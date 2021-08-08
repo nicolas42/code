@@ -46,9 +46,9 @@ int main(int argc, char** argv){
     char* filename = "primes.dat";
 
 
-  if (signal(SIGINT, sig_handler) == SIG_ERR)
-      printf("\ncan't catch SIGINT\n");
-
+    if (signal(SIGINT, sig_handler) == SIG_ERR) {
+        printf("\ncan't catch SIGINT\n");
+    }
 
     // If primes files exist then get primes from it
     // otherwise just start with a 2 as the first prime
