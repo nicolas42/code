@@ -1,7 +1,11 @@
+*.txt
+
+data/*
+
 *.pyc
+*.gch
 
 .DS_Store
-data/*
 *.mp4
 *.avi
 *.mkv
@@ -24,3 +28,5 @@ data/*
 
 *.out
 *.dat
+
+
