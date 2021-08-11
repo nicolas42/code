@@ -1,87 +1,16 @@
-#include "multivector.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <stdarg.h>
 
 
-// === Arena Allocator =============
+// A 3D multivector has 8 elements
+// a scalar, a three dimensional vector, a three dimensional bivector, and a trivector
+// [ s x y z xy yz zx xyz ]
+// [ e0 e1 e2 e3 e12 e23 e31 e123 ]
 
-void multivector_arena_make(size_t n)
-{
-    multivector_arena_size = 0;
-    multivector_arena_allocated = n * multivector_size;
-    multivector_arena = (multivector_t)malloc(multivector_arena_allocated * multivector_size);
-}
-
-multivector_t multivector_arena_allocate(void)
-{
-    multivector_t offset = multivector_arena + multivector_arena_size * multivector_size;
-
-    // realloc on overflow
-    if (multivector_arena_size + multivector_size > multivector_arena_allocated){
-        multivector_arena_allocated *= 2;
-        multivector_arena = (multivector_t)realloc(multivector_arena, multivector_arena_allocated * multivector_size);
-    }
-
-    multivector_arena_size += multivector_size;
-    return offset;
-}
-
-void multivector_arena_recycle(void)
-{
-    multivector_arena_size = 0;
-}
-
-void multivector_arena_free(void)
-{
-    free(multivector_arena);
-}
-
-// ===================================
-
-multivector_t multivector_init(void)
-{
-    multivector_t a = multivector_arena_allocate();
-    for (size_t i = 0; i < multivector_length; i++) { a[i] = 0; }
-    return a;
-}
-
-
-multivector_t multivector_scalar(double arg)
-{
-    multivector_t a = multivector_arena_allocate();
-    for (size_t i = 0; i < multivector_length; i++) { a[i] = 0; }
-    a[0] = arg;
-    return a;
-}
-
-multivector_t multivector_vector(double a, double b, double c)
-{
-    multivector_t arr = multivector_arena_allocate();
-    for (size_t i = 0; i < multivector_length; i++) { arr[i] = 0; }
-    arr[1] = a;
-    arr[2] = b;
-    arr[3] = c;
-    return arr;
-}
-
-multivector_t multivector_bivector(double a, double b, double c)
-{
-    multivector_t arr = multivector_arena_allocate();
-    for (size_t i = 0; i < multivector_length; i++) { arr[i] = 0; }
-    arr[4] = a;
-    arr[5] = b;
-    arr[6] = c;
-    return arr;
-}
-
-multivector_t multivector_trivector(double arg)
-{
-    multivector_t a = multivector_arena_allocate();
-    for (size_t i = 0; i < multivector_length; i++) { a[i] = 0; }
-    a[7] = arg;
-    return a;
-}
-
-
-multivector_t multivector_geometric_product(multivector_t a, multivector_t b)
+// 3D geometric product
+void multiply_multivectors(double* a, double* b, double* c)
 {
 
     // multivector product in R3
@@ -96,11 +25,6 @@ multivector_t multivector_geometric_product(multivector_t a, multivector_t b)
 
     // "All the pieces matter" - Lester Freamon
 
-    multivector_t c = multivector_arena_allocate();
-    for (size_t i = 0; i < multivector_length; i++)
-    {
-        c[i] = 0;
-    }
     c[0]   =   +a[0]*b[0]  +a[1]*b[1]  +a[2]*b[2]  +a[3]*b[3]  -a[4]*b[4] -a[5]*b[5] -a[6]*b[6] -a[7]*b[7];
     c[1]   =   +a[0]*b[1]  +a[1]*b[0]  -a[2]*b[4]  +a[3]*b[6]  +a[4]*b[2] -a[5]*b[7] -a[6]*b[3] -a[7]*b[5];
     c[2]   =   +a[0]*b[2]  +a[1]*b[4]  +a[2]*b[0]  -a[3]*b[5]  -a[4]*b[1] +a[5]*b[3] -a[6]*b[7] -a[7]*b[6];
@@ -109,221 +33,103 @@ multivector_t multivector_geometric_product(multivector_t a, multivector_t b)
     c[5]   =   +a[0]*b[5]  +a[1]*b[7]  +a[2]*b[3]  -a[3]*b[2]  +a[4]*b[6] +a[5]*b[0] -a[6]*b[4] +a[7]*b[1];
     c[6]   =   +a[0]*b[6]  -a[1]*b[3]  +a[2]*b[7]  +a[3]*b[1]  -a[4]*b[5] +a[5]*b[4] +a[6]*b[0] +a[7]*b[2];
     c[7]   =   +a[0]*b[7]  +a[1]*b[5]  +a[2]*b[6]  +a[3]*b[4]  +a[4]*b[3] +a[5]*b[1] +a[6]*b[2] +a[7]*b[0];    
-    return c;
+
 }
 
-multivector_t multivector_mul(int num, ...)
+void print_multivector(double *c)
 {
-
-   va_list valist;
-   multivector_t result = multivector_scalar(1);
-   int i;
-
-   /* initialize valist for num number of arguments */
-   va_start(valist, num);
-
-   /* access all the arguments assigned to valist */
-   for (i = 0; i < num; i++) {
-      result = multivector_geometric_product(result, va_arg(valist, multivector_t));
-   }
-	
-   /* clean memory reserved for valist */
-   va_end(valist);
-
-   return result;
+    printf("[");
+    if ( c[0] != 0 ) printf(" %+.2f", c[0] );
+    if ( c[1] != 0 ) printf(" %+.2fx", c[1] );
+    if ( c[2] != 0 ) printf(" %+.2fy", c[2] );
+    if ( c[3] != 0 ) printf(" %+.2fz", c[3] );
+    if ( c[4] != 0 ) printf(" %+.2fxy", c[4] );
+    if ( c[5] != 0 ) printf(" %+.2fyz", c[5] );
+    if ( c[6] != 0 ) printf(" %+.2fzx", c[6] );
+    if ( c[7] != 0 ) printf(" %+.2fxyz", c[7] );
+    printf(" ]");
+    // printf("[ %.1f + (%.1fx + %.1fy + %.1fz) + (%.1fxy + %.1fyz + %.1fzx) + %.1fxyz ]", c[0],c[1],c[2],c[3],c[4],c[5],c[6],c[7] );
 }
 
-multivector_t multivector_rotate(multivector_t v, multivector_t a, multivector_t b)
-{
-    // Rotate v by twice the angle between a and b;
-    return multivector_mul(5, b,a,v,a,b);
-}
-
-multivector_t multivector_rot(multivector_t a, multivector_t b)
-{
-    // rotate a by twice the angle between itself and b
-    return multivector_mul(5,b,a,a,a,b);
-}
-
-multivector_t multivector_vector_spherical(double r, double theta, double phi)
+void make_vector_in_spherical_coordinates(double r, double theta, double phi, double *mv)
 {
     // Spherical coordinates
     // x = cos(theta)*sin(phi); y = cos(theta-90)*sin(phi); z = cos(phi); 
-    return multivector_vector(
-        r*cos(theta)*sin(phi), 
-        r*sin(theta)*sin(phi), 
-        r*cos(phi)
-    );
+    mv[0] = 0;
+    mv[1] = r*cos(theta)*sin(phi);
+    mv[2] = r*sin(theta)*sin(phi);
+    mv[3] = r*cos(phi);
+    mv[4] = 0;
+    mv[5] = 0;
+    mv[6] = 0;
+    mv[7] = 0;
 }
 
-void multivector_print(multivector_t a)
+#define MUL(a,b,c) \
+{\
+    multiply_multivectors(a,b,c);\
+    print_multivector(a); printf(" * ");\
+    print_multivector(b); printf(" = ");\
+    print_multivector(c); printf("\n"); \
+}\
+
+
+int multivector_main() // int argc, char **argv)
 {
+    #define TWOPI 6.28318530718
 
-    printf("multivector( ");
-    for (size_t i = 0; i < multivector_length; i++)
-    {
-        printf("%.3f ", a[i]);
-    }
-    printf(")\n");
-}
+    double x[8] = { 0, 1,0,0 };
+    double y[8] = { 0, 0,1,0 };
+    double xy[8];
+    double temp[8];
 
-void multivector_print_scalar(multivector_t a)
-{
-    printf( "multivector_scalar( %.3f )\n", a[0] );
-}
-
-void multivector_print_vector(multivector_t a)
-{
-    printf( "multivector_vector( %.3f %.3f %.3f )\n", a[1],a[2],a[3]);
-}
-
-void multivector_print_bivector(multivector_t a)
-{
-    printf( "multivector_bivector( %.3f %.3f %.3f )\n", a[4],a[5],a[6]);
-}
-
-void multivector_print_trivector(multivector_t a)
-{
-    printf( "multivector_trivector( %.3f )\n", a[7]);
-}
-
-#undef multivector_length
-
-
-int multivector_main(void)
-{
-    #define TAU 6.28318530718
-
-    // #include "multiline_string_literal.h"
-    // printf("%s", multiline_string_literal);
-
-    multivector_arena_make(1000);
-
-    multivector_t v = multivector_vector(1,0,0);
-    multivector_t a = multivector_vector(1,0,0);
-    multivector_t b = multivector_vector(1/sqrt(2),1/sqrt(2),0);
-    // multivector_t c;
-    multivector_t r;
-    multivector_t spinor;
-    multivector_t spinor1;
-    multivector_t spinor2;
-
-    puts("\
-    multivector_length\n\
-    multiplying two vectors which have the same direction is equivalent to dotting them together\n\
-    It gives the length squared\n");
-
-    puts("r = multivector_mul(2, multivector_vector(1,1,0), multivector_vector(1,1,0));");
-    r = multivector_mul(2, multivector_vector(1,1,0), multivector_vector(1,1,0));
-    multivector_print_scalar(r);
-    puts(""); getchar();
-
-
-    puts("\
-    In spherical coordinates (r,theta,phi) where TAU = 2*Pi\n");
-
-    puts("r = multivector_mul(2, multivector_vector_spherical(1, TAU/8, TAU/4), multivector_vector_spherical(1, TAU/8, TAU/4));");    
-    r = multivector_mul(2, multivector_vector_spherical(1, TAU/8, TAU/4), multivector_vector_spherical(1, TAU/8, TAU/4));
-    multivector_print_scalar(r);
-    puts(""); getchar(); 
+    // To multiply multivectors
+    // xy = x*y
+    multiply_multivectors(x,y,xy);
+    print_multivector(xy);
     
-    puts("\
-    Area\n\
-    Multiplying two vectors which are orthogonal to each other will give the area of the rectangle\n");
 
-    puts("r = multivector_mul(2, multivector_vector(1,0,0), multivector_vector(0,1,0));");    
-    r = multivector_mul(2, multivector_vector(1,0,0), multivector_vector(0,1,0));
-    multivector_print_bivector(r);
-    puts(""); getchar();
-    
-    puts("\
-    Here we have two vectors in spherical coordinates.\n\
-    Multiplying them gives the dot product and the wedge product (similar to the cross product.\n");
+    MUL(x,y,xy);
+    MUL(x,xy,temp);
+    MUL(y,xy,temp);
+    MUL(xy,xy,temp);
 
-    puts("r = multivector_mul(2, multivector_vector_spherical(1, TAU/8, TAU/8), multivector_vector_spherical(1, TAU/4, TAU/4));");
-    r = multivector_mul(2, multivector_vector_spherical(1, TAU/8, TAU/8), multivector_vector_spherical(1, TAU/4, TAU/4));
-    multivector_print(r);
-    puts(""); getchar();
 
-    puts("\
-    volume\n\
-    Volume works great but you get a multivector_trivector\n");
+    double a[8] = { 0, 2,3,8,  4,8,15, 1};
+    double b[8] = { 0, 2,3,8,  4,8,15, 1};
+    MUL(a,b,temp);
 
-    puts("r = multivector_mul(3, multivector_vector(1,0,0), multivector_vector(0,1,0), multivector_vector(0,0,1));");    
-    r = multivector_mul(3, multivector_vector(1,0,0), multivector_vector(0,1,0), multivector_vector(0,0,1));
-    multivector_print_trivector(r);
-    puts(""); getchar();
-
-    puts("\n");
-    
-    puts("r = multivector_mul(3, multivector_vector_spherical(1, TAU/8, TAU/4), multivector_vector_spherical(1, 3*TAU/8, TAU/4), multivector_vector(0,0,1));");
-    r = multivector_mul(3, multivector_vector_spherical(1, TAU/8, TAU/4), multivector_vector_spherical(1, 3*TAU/8, TAU/4), multivector_vector(0,0,1));
-    multivector_print_trivector(r);
-    puts(""); getchar();
-
-    puts("A multivector_trivector is also known as a pseudoscalar since it's a single number\n");
-    puts("but it squares to give a negative scalar\n");
-    puts("\n");
-    puts("\n");
-    puts("2D rotation (complex numbers)\n");
-    puts("A vector can be rotated by multiplying it by a bivector\n");
-    puts("A bivector works like a complex number\n");
-    
-    puts("r = multivector_mul(2, multivector_vector(1,0,0), multivector_bivector(1,0,0)); \n");
-    r = multivector_mul(2, multivector_vector(1,0,0), multivector_bivector(1,0,0)); 
-    multivector_print_vector(r);
-    puts(""); getchar();
-
-    puts("\n");
-    
-    puts("spinor = multivector_mul(2, multivector_vector(1,0,0), multivector_vector_spherical(1, TAU/12, TAU/4));");
-    puts("r = multivector_mul(2, multivector_vector(1,0,0), spinor);");
-    spinor = multivector_mul(2, multivector_vector(1,0,0), multivector_vector_spherical(1, TAU/12, TAU/4));
-    r = multivector_mul(2, multivector_vector(1,0,0), spinor);
-    multivector_print_vector(r);
-
-    puts("\n");
-    puts("\n");
-    puts("3D rotation work in this way apparently\n");
-    puts("To rotate a vector 'v' in the arc from vector 'a' to vector 'b'\n");
-    puts("multiply(b,a,v,a,b);\n");
-    puts("This will rotate v by twice the angle between a and b\n");
-    puts("v = multivector_vector(1,0,0);\n");
-    puts("a = multivector_vector_spherical(1, TAU/8, TAU/4);\n");
-    puts("b = multivector_vector_spherical(1, TAU/8, TAU/8);\n");
-    puts("r = multivector_mul(5, b,a,v,a,b);\n");
-
-    v = multivector_vector(1,0,0);
-    a = multivector_vector_spherical(1, TAU/8, TAU/4);
-    b = multivector_vector_spherical(1, TAU/8, TAU/8);
-    r = multivector_mul(5, b,a,v,a,b);
-
-    multivector_print_vector(r);
-    puts("\n");
-    puts("Does it work just multiplying on one side? Not generally I think.\n");
-    puts("spinor1 = multivector_mul(2, multivector_vector(1,0,0), multivector_vector_spherical(1,TAU/8,TAU/4))\n");
-    puts("spinor2 = multivector_mul(2, multivector_vector(1,0,0), multivector_vector_spherical(1,TAU/8,TAU/4))\n");
-    puts("multivector_mul(3, multivector_vector(1,0,0), spinor1, spinor2);\n");
-
-    spinor1 = multivector_mul(2, multivector_vector(1,0,0), multivector_vector_spherical(1,TAU/8,TAU/4));
-    spinor2 = multivector_mul(2, multivector_vector(1,0,0), multivector_vector_spherical(1,TAU/8,TAU/4));
-    multivector_mul(3, multivector_vector(1,0,0), spinor1, spinor2);
-
-    puts("\n");
-    puts("chirality???\n");
-    puts("r = multivector_mul(2, multivector_trivector(3), multivector_trivector(4));\n");
-    r = multivector_mul(2, multivector_trivector(3), multivector_trivector(4));
-    multivector_print(r);
-    
-    multivector_arena_free();
+    // double c[8],d[8];
+    // make_vector_in_spherical_coordinates(1,TWOPI/8,TWOPI/8, c);
+    // MUL(x,c,d)
 
     return 0;
 
-    #undef TAU
-
 }
 
-// int main(int argc, char** argv)
+
+
+
+
+
+
+
+
+// double* multivector_rotate(double* v, double* a, double* b)
 // {
-//     multivector_main();
+//     // Rotate v by twice the angle between a and b;
+//     // return multivector_mul(5, b,a,v,a,b);
 // }
+
+// double* multivector_vector_spherical(double r, double theta, double phi)
+// {
+//     // Spherical coordinates
+//     // x = cos(theta)*sin(phi); y = cos(theta-90)*sin(phi); z = cos(phi); 
+//     return multivector_vector(
+//         r*cos(theta)*sin(phi), 
+//         r*sin(theta)*sin(phi), 
+//         r*cos(phi)
+//     );
+// }
+
+

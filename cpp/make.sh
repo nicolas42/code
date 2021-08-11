@@ -1,7 +1,11 @@
-# cat $0
-# source commands.sh
-for f in `ls src/*.c `; do echo $f ;    clang   -std=c99    -Weverything -c -Isrc $f ; done
-for f in `ls src/*.cpp `; do echo $f ;  clang++ -std=c++17  -Weverything -c -Isrc $f ; done
+# echo $0
+c_files=$(ls src/*.c)
+cpp_files=$(ls src/*.cpp)
+echo $c_files
+echo $cpp_files
+
+gcc -Isrc -Wall -Wpedantic -std=c99   -c $c_files 
+gcc -Isrc -Wall -Wpedantic -std=c++14 -c $cpp_files 
 ar rcs lib.a *.o
-rm *.o
-echo 'created lib.a'
+rm *.o 
+
