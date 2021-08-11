@@ -9,7 +9,8 @@
 // [ s x y z xy yz zx xyz ]
 // [ e0 e1 e2 e3 e12 e23 e31 e123 ]
 
-void geometric_product(double* a, double* b, double* c)
+// 3D geometric product
+void multiply_multivectors(double* a, double* b, double* c)
 {
 
     // multivector product in R3
@@ -35,24 +36,7 @@ void geometric_product(double* a, double* b, double* c)
 
 }
 
-// double* multivector_rotate(double* v, double* a, double* b)
-// {
-//     // Rotate v by twice the angle between a and b;
-//     // return multivector_mul(5, b,a,v,a,b);
-// }
-
-// double* multivector_vector_spherical(double r, double theta, double phi)
-// {
-//     // Spherical coordinates
-//     // x = cos(theta)*sin(phi); y = cos(theta-90)*sin(phi); z = cos(phi); 
-//     return multivector_vector(
-//         r*cos(theta)*sin(phi), 
-//         r*sin(theta)*sin(phi), 
-//         r*cos(phi)
-//     );
-// }
-
-void print_multivector(double *c, char *end)
+void print_multivector(double *c)
 {
     printf("[");
     if ( c[0] != 0 ) printf(" %+.2f", c[0] );
@@ -64,7 +48,6 @@ void print_multivector(double *c, char *end)
     if ( c[6] != 0 ) printf(" %+.2fzx", c[6] );
     if ( c[7] != 0 ) printf(" %+.2fxyz", c[7] );
     printf(" ]");
-    printf("%s", end);
     // printf("[ %.1f + (%.1fx + %.1fy + %.1fz) + (%.1fxy + %.1fyz + %.1fzx) + %.1fxyz ]", c[0],c[1],c[2],c[3],c[4],c[5],c[6],c[7] );
 }
 
@@ -84,14 +67,14 @@ void make_vector_in_spherical_coordinates(double r, double theta, double phi, do
 
 #define MUL(a,b,c) \
 {\
-    geometric_product(a,b,c);\
-    print_multivector(a,""); printf(" * ");\
-    print_multivector(b,""); printf(" = ");\
-    print_multivector(c,"\n");\
+    multiply_multivectors(a,b,c);\
+    print_multivector(a); printf(" * ");\
+    print_multivector(b); printf(" = ");\
+    print_multivector(c); printf("\n"); \
 }\
 
 
-int main(int argc, char **argv)
+int multivector_main() // int argc, char **argv)
 {
     #define TWOPI 6.28318530718
 
@@ -99,6 +82,12 @@ int main(int argc, char **argv)
     double y[8] = { 0, 0,1,0 };
     double xy[8];
     double temp[8];
+
+    // To multiply multivectors
+    // xy = x*y
+    multiply_multivectors(x,y,xy);
+    print_multivector(xy);
+    
 
     MUL(x,y,xy);
     MUL(x,xy,temp);
@@ -117,4 +106,30 @@ int main(int argc, char **argv)
     return 0;
 
 }
+
+
+
+
+
+
+
+
+
+// double* multivector_rotate(double* v, double* a, double* b)
+// {
+//     // Rotate v by twice the angle between a and b;
+//     // return multivector_mul(5, b,a,v,a,b);
+// }
+
+// double* multivector_vector_spherical(double r, double theta, double phi)
+// {
+//     // Spherical coordinates
+//     // x = cos(theta)*sin(phi); y = cos(theta-90)*sin(phi); z = cos(phi); 
+//     return multivector_vector(
+//         r*cos(theta)*sin(phi), 
+//         r*sin(theta)*sin(phi), 
+//         r*cos(phi)
+//     );
+// }
+
 

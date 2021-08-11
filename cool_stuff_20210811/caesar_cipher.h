@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-char* caesar(char* text, int shift) {
+char* caesar_cipher(char* text, int shift) {
     char* code = (char*)calloc(strlen(text)+1, sizeof(char));
     int i;
 
@@ -41,9 +41,12 @@ char* caesar(char* text, int shift) {
     return code;
 }
 
-int main()
+int caesar_cipher_main()
 {
     char text[] = "The quick brown fox jumps over the lazy dog.";
-    printf("%s\n",caesar(text, 13));
+    int shift = 13;
+
+    printf("%s => ", text );
+    printf("%s\n",caesar_cipher(text, shift));
     return 0;
 }
