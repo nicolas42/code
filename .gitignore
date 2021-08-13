@@ -21,11 +21,13 @@ data/*
 *.pgm
 
 *.o
+*.a
 *.so
 *.dSYM
+*.so.dSYM
+*.dll
 
 *.exe
-
 *.out
 *.dat
 

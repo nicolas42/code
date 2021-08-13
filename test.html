@@ -1,0 +1,236 @@
+<!-- <meta http-equiv="refresh" content="1"> -->
+
+<!DOCTYPE html>
+<!-- KaTeX requires the use of the HTML5 doctype. Without it, KaTeX may not render properly -->
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"
+    integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn" crossorigin="anonymous">
+
+  <!-- The loading of KaTeX is deferred to speed up page rendering -->
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"
+    integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"
+    crossorigin="anonymous"></script>
+
+  <!-- To automatically render math in text elements, include the auto-render extension:
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"
+    integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script> -->
+</head>
+
+<style>
+/* *{ border: 0; margin: 0; } */
+input {width: 100%}
+</style>
+
+
+<body>
+<input id='cell' value='c = \pm\sqrt{a^2 + b^2}'>
+<input id='cell' value='c = \pm\sqrt{a^2 + b^2}'>
+<input id='cell' value='c = \pm\sqrt{a^2 + b^2}'>
+<input id='cell' value='c = \pm\sqrt{a^2 + b^2}'>
+<input id='cell' value='c = \pm\sqrt{a^2 + b^2}'>
+<input id='cell' value='c = \pm\sqrt{a^2 + b^2}'>
+<input id='cell' value='c = \pm\sqrt{a^2 + b^2}'>
+<input id='cell' value='c = \pm\sqrt{a^2 + b^2}'>
+<input id='cell' value='c = \pm\sqrt{a^2 + b^2}'>
+<input id='cell' value='c = \pm\sqrt{a^2 + b^2}'>
+<input id='cell' value='c = \pm\sqrt{a^2 + b^2}'>
+<input id='cell' value='c = \pm\sqrt{a^2 + b^2}'>
+<input id='cell' value='c = \pm\sqrt{a^2 + b^2}'>
+<input id='cell' value='c = \pm\sqrt{a^2 + b^2}'>
+<input id='cell' value='c = \pm\sqrt{a^2 + b^2}'>
+<input id='cell' value='c = \pm\sqrt{a^2 + b^2}'>
+<input id='cell' value='c = \pm\sqrt{a^2 + b^2}'>
+<input id='cell' value='c = \pm\sqrt{a^2 + b^2}'>
+
+</body>
+<script>
+
+// https://stackoverflow.com/questions/53043089/javascript-get-all-parent-elements-of-an-element
+function getParents(elem) {
+  var parents = [];
+  while(elem.parentNode && elem.parentNode.nodeName.toLowerCase() != 'body') {
+    elem = elem.parentNode;
+    parents.push(elem);
+  }
+  return parents;
+}
+
+function get_the_right_parent(elem) {
+  var parent_elem;
+  var parents = getParents(elem);
+  for (var i=0; i<parents.length; ++i){
+    if ( parents[i].id === 'cell' ) {
+      parent_elem = parents[i];
+      break;
+    }
+  }
+  return parent_elem;
+}
+
+
+function toggle_element(event) {
+
+  var elem = event.target;
+  console.log(elem.tagName);
+  if ( elem.tagName == 'INPUT') {
+
+    // replace input with paragraph
+    p = document.createElement("p");
+    p.value = elem.value;
+    p.id='cell'
+    katex.render(elem.value, p, { throwOnError: false }) // elem.value.slice(4)
+    elem.replaceWith(p)
+    return; 
+
+  } 
+
+
+  var p = get_the_right_parent(elem);
+  if ( p.tagName == 'P'){ 
+
+    // replace paragraph with input
+    input = document.createElement("input");
+    input.id='cell'
+    input.value = p.value;
+    p.replaceWith(input)
+
+  }
+
+}
+
+// window.addEventListener("keydown", event => {
+//     console.log(event.key)
+//     console.log(event.target)
+//     if (event.key == "Tab"){
+//       toggle_element(event)
+//     }
+//   });
+
+
+// document.addEventListener('click', toggle_element );
+
+</script>
+
+
+
+
+
+
+</html>
+
+
+
+<!-- 
+<script>
+
+var el = event.target;
+if ( el.tagName == 'INPUT') {
+
+  // replace input with paragraph
+  p = document.createElement("p");
+  p.value = el.value;
+  p.id='p'
+  katex.render(el.value, p, { throwOnError: false }) // el.value.slice(4)
+  el.replaceWith(p)
+
+} else if ( el.tagName == 'p'){ 
+
+  // replace para with input
+  input = document.createElement("input");
+  input.id='cell'
+  input.value = p.value;
+  el.replaceWith(input)
+
+}
+
+</script> -->
+
+
+
+
+<!-- 
+<script>
+
+function render_all_katex(){
+  let katex_elements = document.querySelectorAll('#katex');
+  katex_elements.forEach(
+    (element)=>{
+      katex.render(element.innerText, element, { throwOnError: false })
+  });
+};
+setTimeout(render_all_katex, 1000);
+
+
+
+// var input = document.querySelector('#input');
+// var output = document.querySelector('#output');
+
+// input.addEventListener("keyup", event => {
+//   if ( input.value.search('/eq ') === 0) {
+//     katex.render(input.value.slice(4), output, { throwOnError: false })
+//   }
+// });
+
+
+window.addEventListener("keydown", event => {
+  if (event.key == "tab") {
+    
+  }
+});
+
+
+window.addEventListener("keyboard", event => {
+  console.log('sldkfj');
+  // const span = document.createElement("span");
+  // p.replaceWith(span);
+  console.log(document.activeElement.tagName)
+  document.activeElement.value = 'hello';
+  document.activeElement.innerText = 'hello';
+});
+
+</script> -->
+
+
+
+
+
+
+
+
+
+<!-- 
+<script>
+// show events in a pre tag
+
+
+function stringifyEvent(e) {
+  const obj = {};
+  for (let k in e) {
+    obj[k] = e[k];
+  }
+  return JSON.stringify(obj, (k, v) => {
+    if (v instanceof Node) return 'Node';
+    if (v instanceof Window) return 'Window';
+    return v;
+  }, 4);
+}
+
+
+let view_event = function(e){
+    console.dir(e);
+    document.querySelector('pre').innerHTML = stringifyEvent(e);
+    console.log(stringifyEvent(e));
+
+}
+
+window.addEventListener("click", view_event);
+window.addEventListener("keydown", view_event);
+
+
+</script>
+ -->
+
+
