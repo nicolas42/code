@@ -1,0 +1,119 @@
+<!-- <meta http-equiv="refresh" content="1"> -->
+
+<!DOCTYPE html>
+<!-- KaTeX requires the use of the HTML5 doctype. Without it, KaTeX may not render properly -->
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"
+    integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn" crossorigin="anonymous">
+
+  <!-- The loading of KaTeX is deferred to speed up page rendering -->
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"
+    integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"
+    crossorigin="anonymous"></script>
+
+  <!-- To automatically render math in text elements, include the auto-render extension:
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"
+    integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script> -->
+</head>
+
+<style>
+/* *{ border: 0; margin: 0; } */
+* { box-sizing: border-box}
+textarea { width: 100%; height: 100px; }
+</style>
+
+
+<body>
+<!-- <input value='c = \pm\sqrt{a^2 + b^2}'> -->
+
+<textarea id="input">
+# This is the type of thing that we all know and love.
+
+/math c = \pm\sqrt{a^2 + b^2}
+
+
+Now this is something else isn't it.
+  
+</textarea>
+<p id="output"></p>
+
+
+</body>
+<script>
+
+
+function render_input2output(event)
+{
+    console.log(event.key)
+    console.log(event.target)
+    katex.render(document.querySelector('#input').value, document.querySelector('#output'), { throwOnError: false }) // elem.value.slice(4)
+}
+window.addEventListener("keyup", render_input2output);
+
+
+
+
+function getParents(elem) {
+  // https://stackoverflow.com/questions/53043089/javascript-get-all-parent-elements-of-an-element
+  var parents = [];
+  while(elem.parentNode && elem.parentNode.nodeName.toLowerCase() != 'body') {
+    elem = elem.parentNode;
+    parents.push(elem);
+  }
+  return parents;
+}
+
+function get_the_right_parent(elem) {
+  var parent_elem;
+  var parents = getParents(elem);
+  for (var i=0; i<parents.length; ++i){
+    if ( parents[i].id === 'cell' ) {
+      parent_elem = parents[i];
+      break;
+    }
+  }
+  return parent_elem;
+}
+
+
+function toggle_element(event) {
+
+  var elem = event.target;
+  console.log(elem.tagName);
+  if ( elem.tagName == 'INPUT') {
+
+    // replace input with paragraph
+    p = document.createElement("p");
+    p.value = elem.value;
+    p.id='cell'
+    katex.render(elem.value, p, { throwOnError: false }) // elem.value.slice(4)
+    elem.replaceWith(p)
+    return; 
+
+  } 
+
+
+  var p = get_the_right_parent(elem);
+  if ( p.tagName == 'P'){ 
+
+    // replace paragraph with input
+    input = document.createElement("input");
+    input.id='cell'
+    input.value = p.value;
+    p.replaceWith(input)
+
+  }
+
+}
+
+// document.addEventListener('click', toggle_element );
+
+
+</script>
+</html>
+
+
+
