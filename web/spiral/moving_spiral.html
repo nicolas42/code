@@ -58,14 +58,11 @@ canvas.height = window.innerHeight;
 
 
 
-var context = canvas.getContext("2d");
-context.fillStyle = "black";
-context.font = "20px Arial";
-context.fillText("click me", (canvas.width / 2) - 17, (canvas.height / 2) + 8);
 
 
-var interval_id = 0;
-function draw_pretties()
+
+var tid = 0;
+function draw_rotating_pattern()
 {
 
     var pattern = { 
@@ -78,8 +75,8 @@ function draw_pretties()
     }
     console.log(pattern);
 
-    clearInterval(interval_id);
-    interval_id = setInterval(function(){
+    clearInterval(tid);
+    tid = setInterval(function(){
         pattern.angle += 0.00001
         // pattern.color = make_random_color();
         show_turtle(canvas, pattern);
@@ -89,19 +86,32 @@ function draw_pretties()
     pre.innerText += JSON.stringify(pattern) + '\n';
 }
 
+
+
 var started_music = false;
 function draw_pretties_and_start_music()
 {
-    draw_pretties()
+    draw_rotating_pattern()
 
     var audio = document.querySelector('audio')
     if ( audio.paused && !started_music ) { audio.play(); started_music = true; }
 }
 
+// draw_rotating_pattern()
+
+var ctx = canvas.getContext("2d");
+ctx.fillStyle = "black";
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+ctx.fillStyle = "grey";
+ctx.font = "40px Verdana";
+ctx.fillText("click me", (canvas.width / 2) - 100, canvas.height / 2);
+
+
+// var pattern_change_interval =setInterval(draw_rotating_pattern, 5000);
 
 canvas.addEventListener('click', draw_pretties_and_start_music);
 
-// draw_pretties()
+// draw_rotating_pattern()
 
 // canvas.onwheel = function(event)
 // {

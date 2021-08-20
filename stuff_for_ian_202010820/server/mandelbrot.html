@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<style> * { padding: 0; margin: 0 } </style>
+
+<body>
+    <canvas></canvas>
+    <pre>
+?x=-0.6999687500000003&y=-0.2901249999999999&zoom=1024&fullscreen=1
+?x=-0.6980494359334312&y=-0.29024059804280583&zoom=65536&canvas_width=400&canvas_height=400&fullscreen=0&max_iterations=1000
+?x=-0.027120712995529206&y=0.6441158065199851&zoom=67108864
+?x=-0.027099643200635935&y=0.6440290103852749&zoom=268435456
+?x=-0.02709963878151032&y=0.6440290090395138&zoom=4294967296
+?x=0.31923687500000003&y=-0.4990148437499999&zoom=1024000
+?x=0.31923733207893373&y=-0.499014675590515&zoom=8388608000
+?x=0.38715883591593053&y=-0.25874134865963394&zoom=1073741824
+?x=0.1347109374999998&y=-0.6361328125&zoom=2048
+?x=0.2681601562500003&y=-0.004765624999999972&zoom=4096
+?x=0.38715883594200756&y=-0.2587413487062&zoom=536870912
+?x=0.32898730468750015&y=-0.4237490234374998&zoom=16384
+?x=-1.7664619022752155&y=0.041740019425749834&zoom=1073741824&w=800&h=800&max_iterations=855
+    </pre>
+</body>
+
+
+<script src="js/draw_mandelbrot.js"></script>
+<script>
+
+
+
+function draw_mandelbrot_and_update_url(canvas, p) {
+    draw_mandelbrot(canvas, p);
+    // https://computerrock.com/blog/html5-changing-the-browser-url-without-refreshing-page/
+    window.history.replaceState(
+        "object or string", "Title", "?x=" + p.x + "&y=" + p.y + "&zoom=" + p.zoom 
+        + "&canvas_width=" + p.canvas_width + "&canvas_height=" + p.canvas_height + "&fullscreen=" + p.fullscreen + "&max_iterations=" + p.max_iterations 
+    );
+}
+
+function redraw_mandelbrot_and_update_url(event) 
+{
+    // on left click zoom in
+    // on right click zoom out
+
+    if (event.which === 1) {
+
+        // get position of clicked mouse cursor
+        var rect = event.currentTarget.getBoundingClientRect();
+        var x_pixel = event.clientX - rect.left;
+        var y_pixel = event.clientY - rect.top;
+
+        var math_height = 4 / parameters.zoom;
+        var math_width = 4 / parameters.zoom;
+
+        parameters.x = (parameters.x - math_width / 2) + x_pixel / (canvas.width / math_width);
+        parameters.y = (parameters.y - math_height / 2) + y_pixel / (canvas.height / math_height);
+        parameters.zoom *= 2;
+
+    } else if (event.which === 3) {
+        parameters.zoom /= 2;
+    }
+
+    draw_mandelbrot_and_update_url(canvas, parameters)
+
+}
+
+
+function main()
+{
+
+    // There are two globals cause I don't know how to make event handlers work without them
+    // The canvas element, which comes from the HTML document
+    // and the parameters object which is basically the parameters needed to draw the thing.
+
+    window.canvas = document.querySelector('canvas')
+    
+    window.parameters = {x: -0.6999687500000003, y: -0.2901249999999999, zoom: 1024, canvas_width: 500, canvas_height: 500, fullscreen: 0 };
+
+    canvas.width = parameters.canvas_width;
+    canvas.height = parameters.canvas_height;
+
+
+    // get parameters from url
+    window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (_, key, value) {
+        parameters[key] = parseFloat(value);
+    });
+
+    if (parameters.canvas_width !== undefined && parameters.canvas_height !== undefined ) {
+        canvas.width = parameters.canvas_width;
+        canvas.height = parameters.canvas_height;
+    }
+    if (parameters.fullscreen === 1) { 
+        canvas.width = window.innerWidth; 
+        canvas.height = window.innerHeight; 
+    }
+
+
+    var mandelbrot = {};
+    mandelbrot.x = parameters.x;
+    mandelbrot.y = parameters.y;
+    mandelbrot.zoom = parameters.zoom;
+    mandelbrot.max_iterations = parameters.max_iterations;
+    draw_mandelbrot_and_update_url(canvas, parameters);
+
+    canvas.addEventListener("mousedown", redraw_mandelbrot_and_update_url, false);
+    canvas.addEventListener("contextmenu", function(event) { event.preventDefault() });
+
+}
+
+main();
+
+</script>
+
