@@ -112,25 +112,26 @@ There must be a better way of doing this.
 
 
 
-  // const gps_stride = 100;
+  const gps_stride = 100;
 
-  // init_map({ latitude: gps[0], longitude: gps[1], zoom: 20 });
-
-
-
-  // let polyline = [];
-  // for (var i = 0; i < gps.length; i += gps_stride) { polyline.push([gps[i + 1], gps[i + 0]]) }
-  // draw_polyline(polyline)
+  init_map({ latitude: gps[0], longitude: gps[1], zoom: 20 });
 
 
-  // let gps_index = 0;
-  // draw_point({ latitude: gps[gps_index + 0], longitude: gps[gps_index + 1] });
 
-  // function move_point() {
-  //   draw_point({ latitude: gps[gps_index + 0], longitude: gps[gps_index + 1] });
-  //   gps_index = gps_index + gps_stride;
-  // }
+  let polyline = [];
+  for (var i = 0; i < gps.length; i += gps_stride) { polyline.push([gps[i + 1], gps[i + 0]]) }
+  draw_polyline(polyline)
 
-  // setInterval(move_point, 100);
+
+  let gps_index = 0;
+  draw_point({ latitude: gps[gps_index + 0], longitude: gps[gps_index + 1] });
+
+  function move_point() {
+    draw_point({ latitude: gps[gps_index + 0], longitude: gps[gps_index + 1] });
+    gps_index = gps_index + gps_stride;
+  }
+
+  setInterval(move_point, 100);
+
 
 </script>

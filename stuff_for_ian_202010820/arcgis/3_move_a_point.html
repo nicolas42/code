@@ -7,8 +7,9 @@
 let map;
 let view;
 let graphics_layer;
-
-let point = { longitude: 154.0, latitude: -27.5 }
+var point;
+var point_longitude = 154.0;
+var point_latitude = -27.5;
 
 
 require([
@@ -36,7 +37,7 @@ require([
 
 function move_point() {
 
-  point.longitude = point.longitude - 0.01;
+  point_longitude = point_longitude - 0.01;
   
   require([
     "esri/Map",
@@ -45,11 +46,11 @@ function move_point() {
     "esri/layers/GraphicsLayer"
   ], function (Map, MapView, Graphic, GraphicsLayer) {
 
-    var point = new Graphic({
+    point = new Graphic({
       geometry: {
         type: "point",
-        longitude: point.longitude,
-        latitude: point.latitude
+        longitude: point_longitude,
+        latitude: point_latitude
       },
       symbol: {
         type: "simple-marker",
