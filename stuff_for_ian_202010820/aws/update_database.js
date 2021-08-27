@@ -6,7 +6,17 @@ Docs
 https://docs.aws.amazon.com/lambda/latest/dg/services-rds-tutorial.html
 https://www.npmjs.com/package/mssql
 
+
+
+
+Run this to demo
+
+var update_database = require('./update_database.js');
+update_database.handler();
+
+
 */
+
 const sql = require('mssql')
 var AWS = require('aws-sdk');
 const gpmfExtract = require('gpmf-extract');

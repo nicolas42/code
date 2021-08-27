@@ -22,12 +22,10 @@ var params = {
 
 
  ses.sendEmail(params, function (err, data) {
-    callback(null, {err: err, data: data});
     if (err) {
         console.log(err);
         context.fail(err);
     } else {
-        
         console.log(data);
     }
 });

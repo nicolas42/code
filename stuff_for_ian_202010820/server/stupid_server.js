@@ -1,3 +1,4 @@
+
 var http = require('http');
 var fs = require('fs');
 var path = require('path');
@@ -8,7 +9,7 @@ const WolframAlphaAPI = require('wolfram-alpha-api');
 const waApi = WolframAlphaAPI('RLX65E-KAUTW5RVLE');
 
 
-function get_pikachu_stats_from_wolfram_alpha()
+function doit(query)
 {
   return waApi.getFull({
     input: 'pikachu',
@@ -32,7 +33,7 @@ async function serve_pikachu(request, response)
   
     console.log(request.headers.referer)
     // 2. Write the announced text to the body of the page
-    var pikachu_stats = await get_pikachu_stats_from_wolfram_alpha();
+    var pikachu_stats = await doit(query);
     response.write('<h1>Pika pika</h1>\n');
     response.write('<pre>\n');
     response.write(pikachu_stats);
@@ -48,6 +49,7 @@ async function serve_pikachu(request, response)
 
 
 async function server_function(request, response) {
+
     console.log('request starting...');
 
     var filePath = '.' + request.url;
@@ -56,14 +58,11 @@ async function server_function(request, response) {
     // like ?var1=value&var2=value2 ... 
     filePath = filePath.split('?')[0]
     console.log(filePath)
-
     
     if (filePath == './pikachu'){
         serve_pikachu(request, response);
         return;
     }
-
-
 
 
     if (filePath == './')

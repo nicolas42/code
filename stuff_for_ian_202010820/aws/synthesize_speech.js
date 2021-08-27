@@ -1,5 +1,6 @@
 // The neural engine is more expensive but betterer from memory
 
+const fs = require('fs');
 const aws = require('aws-sdk');
 aws.config.loadFromPath('/Users/nick/aws_config.json');
 
@@ -7,12 +8,11 @@ const polly = new aws.Polly();
 
 
 var params = {
-  Engine="neural",
-  VoiceId="Salli",
-
+  Engine: "neural",
+  VoiceId: "Salli",
   OutputFormat: "mp3", 
   SampleRate: "8000", 
-  Text: "All Gaul is divided into three parts", 
+  Text: "Happy birthday dickhead", 
   TextType: "text", 
 };
 

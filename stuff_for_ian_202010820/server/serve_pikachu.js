@@ -20,7 +20,7 @@ function get_pikachu_stats_from_wolfram_alpha()
 
 }
 
-const le_serviteur = async function (request, response) {
+const server_function = async function (request, response) {
   // 1. Tell the browser everything is OK (Status code 200), and the data is in plain text
   response.writeHead(200, {
       'Content-Type': 'text/html'
@@ -42,7 +42,7 @@ const le_serviteur = async function (request, response) {
   response.end();
 }
 
-const server = http.createServer(le_serviteur);
+const server = http.createServer(server_function);
 server.listen(8080);
 
 

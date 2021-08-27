@@ -1,19 +1,21 @@
-// https://products.wolframalpha.com/api/libraries/javascript/
+/*
+https://products.wolframalpha.com/api/libraries/javascript/
 
-// APP NAME: test
-
-// APPID: RLX65E-KAUTW5RVLE
-
-// USAGE TYPE: Personal/Non-commercial Only
-
-
-// npm install https://products.wolframalpha.com/api/libraries/javascript/wolfram-alpha-api-1.0.0-rc.1.tgz
-// Next, import the class, and instantiate it with your 'AppID':
+APP NAME: test
+APPID: RLX65E-KAUTW5RVLE
+USAGE TYPE: Personal/Non-commercial Only
 
 
+npm install https://products.wolframalpha.com/api/libraries/javascript/wolfram-alpha-api-1.0.0-rc.1.tgz
 
-const WolframAlphaAPI = require('wolfram-alpha-api');
-const waApi = WolframAlphaAPI('RLX65E-KAUTW5RVLE');
+*/
+
+
+
+var WolframAlphaAPI = require('wolfram-alpha-api');
+var waApi = WolframAlphaAPI('RLX65E-KAUTW5RVLE');
+
+waApi.getShort('2+2').then(console.log, console.error);
 
 
 waApi.getFull('sin x').then(console.log).catch(console.error);
