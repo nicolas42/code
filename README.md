@@ -7,5 +7,12 @@
     # start the ssh-agent in the background
     eval "$(ssh-agent -s)"
 
-    # Add your SSH private key to the ssh-agent. If you created your key with a different name, or if you are adding an existing key that has a different name, replace id_ed25519 in the command with the name of your private key file.
+    # Add your SSH private key to the ssh-agent.
     ssh-add ~/.ssh/id_ed25519
+
+Then add the key to github.com in settings > ssh keys
+
+Then clone stuff like this
+
+git clone git@github.com/username:repo
+
