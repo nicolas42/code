@@ -138,6 +138,15 @@ int main(int argc, char** argv){
     zoom = 1024; 
     max_iterations = 855;
 
+    draw_mandelbrot(im, x,y,zoom,max_iterations);
+
+    char *filename = "out.png";
+    int ok = stbi_write_png(filename, im.w,im.h,im.c,im.data,im.w*im.c);
+    if (!ok) {
+        printf("There was a problem writing the file %s\n", filename);
+    }
+
+
 
     // Cool places in the mandelbrot image
     // { x: -0.6999687500000003, y: -0.2901249999999999, zoom: 1024 },
@@ -155,7 +164,6 @@ int main(int argc, char** argv){
     // { x: -1.7664619022752155, y: 0.041740019425749834, zoom: 1073741824, w: 800, h: 800, max_iterations: 855 },
 
 
-    draw_mandelbrot(im, x,y,zoom,max_iterations);
 
 
 
@@ -168,7 +176,6 @@ int main(int argc, char** argv){
 //    The *data pointer points to the first byte of the top-left-most pixel.
 //    For PNG, "stride_in_bytes" is the distance in bytes from the first byte of
 //    a row of pixels to the first byte of the next row of pixels.
-    int success = stbi_write_png("out.png", im.w,im.h,im.c,im.data,im.w*im.c);
 
 
     return 0;
