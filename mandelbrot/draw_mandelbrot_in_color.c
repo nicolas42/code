@@ -67,7 +67,8 @@ struct image {
 
 void draw_mandelbrot(struct image im, double x, double y, double zoom, double max_iterations )
 {
-    char black[4] = {0,0,0,255};
+    const unsigned char black[4] = {0, 0, 0, 255};
+    const unsigned char white[4] = {255, 255, 255, 255};
 
     for (double j = 0; j < im.h; j += 1) {
         for (double i = 0; i < im.w; i += 1) {
@@ -104,16 +105,17 @@ void draw_mandelbrot(struct image im, double x, double y, double zoom, double ma
                 im.data[pos + 2] = black[2];
                 im.data[pos + 3] = black[3];
             } else {
+
                 // hue is determined by the number of iterations taken
                 // double rgb = hsl_to_rgb((num_iterations % 255) / 255, 1, 0.5);
-                int rgb[3];
-                hsl2rgb((num_iterations % 255) / 255., 1., 0.5, rgb);
-                // printf("%d %d %d\n", rgb[0], rgb[1], rgb[2] );
+                int color[3];
+                hsl2rgb((num_iterations % 255) / 255., 1., 0.5, color);
+                // printf("%d %d %d\n", color[0], color[1], color[2] );
 
-                im.data[pos + 0] = rgb[0];
-                im.data[pos + 1] = rgb[1];
-                im.data[pos + 2] = rgb[2];
-                im.data[pos + 3] = black[3]; // no opacity
+                im.data[pos + 0] = color[0];
+                im.data[pos + 1] = color[1];
+                im.data[pos + 2] = color[2];
+                im.data[pos + 3] = 255;
             }
 
 
@@ -121,24 +123,33 @@ void draw_mandelbrot(struct image im, double x, double y, double zoom, double ma
     }
 }
 
+struct image make_image(double w, double h, double c)
+{
+    struct image im;
+    im.w = w;
+    im.h = h;
+    im.c = c;
+    im.data = malloc(im.w * im.h * im.c );
+    return im;
+}
 
+int save_image(struct image im, char *filename)
+{
+    int ok = stbi_write_png(filename, im.w,im.h,im.c,im.data,im.w*im.c);
+    if (!ok) {
+      return -1;
+    }
+    return 0;
+}
 
 int main(int argc, char** argv){
 
 
-    struct image im;
-    im.w = 800;
-    im.h = 800;
-    im.c = 4;
+    struct image im = { .w=800, .h = 800, .c = 4 };
     im.data = malloc(im.w * im.h * im.c );
 
-    double x,y,zoom,max_iterations;
-    x = -0.6999687500000003; 
-    y = -0.2901249999999999; 
-    zoom = 1024; 
-    max_iterations = 855;
-
-    draw_mandelbrot(im, x,y,zoom,max_iterations);
+    draw_mandelbrot(im, -0.6999687500000003, -0.2901249999999999, 1024, 855);
+    // draw_mandelbrot(im, x,y,zoom,max_iterations);
 
     char *filename = "out.png";
     int ok = stbi_write_png(filename, im.w,im.h,im.c,im.data,im.w*im.c);

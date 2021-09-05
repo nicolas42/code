@@ -4,7 +4,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-void draw_mandelbrot_image(int w, int h, int c, char **ret_image)
+void draw_mandelbrot_in_black_and_white(int w, int h, int c, char **ret_image)
 {
     double xcenter = 0;
     double ycenter = 0;
@@ -65,7 +65,7 @@ int main(int argc, char** argv){
     int c = 4;
     char *image = malloc(w*h*c*sizeof(char));
 
-    draw_mandelbrot_image(w,h,c,&image);
+    draw_mandelbrot_in_black_and_white(w,h,c,&image);
 
 //      int stbi_write_png(char const *filename, int w, int h, int comp, const void *data, int stride_in_bytes);
 //    The functions create an image file defined by the parameters. The image
