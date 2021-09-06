@@ -10,6 +10,7 @@ To Do:
 https://www.html5rocks.com/en/tutorials/file/dndfiles//
 load file using button or drag and drop file onto box
 
+maybe autosave???
  -->
 
 <!DOCTYPE html>
@@ -33,7 +34,12 @@ load file using button or drag and drop file onto box
 	color: #fff;
 }
 
-textarea { width: 600px; height: 800px; }
+textarea { 
+    width: 600px; height: 800px; 
+	font-weight: 400;
+	line-height: 1.5em;
+    font-size: 1.1em;
+}
 
 </style>
 <style>
@@ -138,9 +144,7 @@ function main()
 
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    main();
-});
+document.addEventListener("DOMContentLoaded", main);
 
 </script>
 
