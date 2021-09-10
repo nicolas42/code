@@ -1,5 +1,7 @@
 /*
 clang++ -framework SDL2 -framework SDL2_image -framework SDL2_mixer -framework SDL2_net -framework SDL2_ttf -Wno-c++11-extensions -ISDL2 render_random_pixels.cpp
+
+from https://stackoverflow.com/questions/33304351/sdl2-fast-pixel-manipulation
 */
 
 #include <SDL.h>

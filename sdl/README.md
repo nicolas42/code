@@ -14,3 +14,9 @@ CC = g++ $@.cpp -o $@
 ## Sometimes pkg-config can be used to find stuff :)
 
 // g++ main.cpp `pkg-config --cflags --libs sdl2`
+
+
+## Links
+
+https://stackoverflow.com/questions/33304351/sdl2-fast-pixel-manipulation
+

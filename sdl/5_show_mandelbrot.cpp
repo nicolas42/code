@@ -1,7 +1,8 @@
-// g++ -std=c++11 -Wall -Wpedantic show_mandelbrot.cpp -ISDL2 -framework SDL2 -framework SDL2_image -framework SDL2_mixer -framework SDL2_net -framework SDL2_ttf -Wno-c++11-extensions
+/*
+g++ 5_show_mandelbrot.cpp -ISDL2 -framework SDL2
 
 // from https://stackoverflow.com/questions/33304351/sdl2-fast-pixel-manipulation
-
+*/
 
 #include <SDL.h>        
 #include <iostream>
@@ -147,41 +148,35 @@ struct image make_image(double w, double h, double c)
 int main(int argc, char ** argv)
 {
 
-    int texture_width = 1000;
-    int texture_height = 1000;
+    int texture_width = 600;
+    int texture_height = 600;
     int num_channels = 4;
     struct image im = make_image(texture_width, texture_height, num_channels);
     draw_mandelbrot(im, -0.6999687500000003, -0.2901249999999999, 1024, 855);
 
 
     SDL_Init( SDL_INIT_EVERYTHING );
-    int window_width = 800;
-    int window_height = 800;
+    int window_width = 400;
+    int window_height = 400;
     SDL_Window* window = SDL_CreateWindow("title", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_width, window_height, SDL_WINDOW_SHOWN );
     SDL_Renderer* renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED );
     SDL_Texture* texture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, texture_width, texture_height );
     SDL_Event event;
     bool running = true;
 
+    int i=0;
     while ( running )
     {
+        SDL_WaitEvent(&event);
+        if ( event.type == SDL_QUIT ) running = false;
+        printf("event %d\n", i++);
+
         SDL_SetRenderDrawColor( renderer, 0, 0, 0, SDL_ALPHA_OPAQUE );
         SDL_RenderClear( renderer );
-
-        while ( SDL_PollEvent( &event ) )
-        {
-            running = false;
-            break;
-            if ( event.type == SDL_QUIT )
-            {
-                running = false;
-                break;
-            }
-        }
-        
         SDL_UpdateTexture( texture, NULL, im.data, texture_width * 4 );
         SDL_RenderCopy( renderer, texture, NULL, NULL );
         SDL_RenderPresent( renderer );
+
     }
 
     
