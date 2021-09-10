@@ -1,3 +1,4 @@
+*.tmp
 *.dmg
 .ipynb_checkpoints
 *.txt
