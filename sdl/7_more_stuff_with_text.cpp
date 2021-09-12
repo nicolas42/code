@@ -1,5 +1,4 @@
-// g++ 3_render_text.cpp -framework SDL2 -framework SDL2_image -framework SDL2_ttf
-
+// g++ -std=c++14 7_more_stuff_with_text.cpp -framework SDL2 -framework SDL2_image -framework SDL2_ttf
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -64,8 +63,12 @@ int main(int argc, char **argv) {
         fprintf(stderr, "error: font not found\n");
         exit(EXIT_FAILURE);
     }
-    get_text_and_rect(renderer, 0, 0, "hello", font, &texture1, &rect1);
-    get_text_and_rect(renderer, 0, rect1.y + rect1.h, "world", font, &texture2, &rect2);
+
+	std::vector<std::string> str = {"orange", "apple", "raspberry"};
+    printf("%s\n", str[0].c_str());
+
+    get_text_and_rect(renderer, 0, 0, (char*)(str[0].c_str()), font, &texture1, &rect1);
+    get_text_and_rect(renderer, 0, rect1.y + rect1.h, (char*)(str[1].c_str()), font, &texture2, &rect2);
 
     quit = 0;
     while (!quit) {

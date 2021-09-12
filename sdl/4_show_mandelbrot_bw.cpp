@@ -1,10 +1,10 @@
 /*
-g++ show_mandelbrot_bw.cpp -ISDL2 -framework SDL2
+g++ show_mandelbrot_bw.cpp -framework SDL2
 
 // from https://stackoverflow.com/questions/33304351/sdl2-fast-pixel-manipulation
 */
 
-#include <SDL.h>        
+#include <SDL2/SDL.h>        
 #include <iostream>
 #include <iomanip>
 #include <vector>

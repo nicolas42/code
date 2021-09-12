@@ -1,6 +1,8 @@
-// gcc -framework SDL2 1_open_a_window.c && ./a.out
+// macos
+// gcc 1_open_a_window.c -framework SDL2
+
+// linux
 // gcc 1_open_a_window.c -lSDL2
-// gcc 1_open_a_window.c ~/lib/libSDL2.a -ldl -lm -ldl -lpthread -lrt
 
 #include <SDL2/SDL.h>        
  

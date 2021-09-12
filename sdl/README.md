@@ -1,9 +1,13 @@
 # SDL frameworks
 
-## How to make an SDL project using all of the frameworks.  (It'll still work if you're not using some of these)
+## Make all the SDL extensions!
 
-clang++ a.cpp -ISDL2 -framework SDL2 -framework SDL2_image -framework SDL2_mixer -framework SDL2_net -framework SDL2_ttf -Wno-c++11-extensions
+clang++ a.cpp -ISDL2 -framework SDL2 -framework SDL2_image -framework SDL2_mixer -framework SDL2_net -framework SDL2_ttf
 
+
+what does this mean?
+
+-Wno-c++11-extensions
 
 
 ## Makefile foo whose function I've forgotten
@@ -26,32 +30,17 @@ https://stackoverflow.com/questions/33304351/sdl2-fast-pixel-manipulation
 
 Building and linking stuff between operating systems remains ridiculously challenging.
 
-Build the source like
+Build SDL
 
-./configure && make && make install
+./configure; make; make install
 
 then you can link a project like this
 
     gcc 1_open_a_window.c -lSDL2
 
-to statically link I looked at sdl2-config
+to statically link do this
 
-echo $(sdl2-config --static-libs)
+    gcc 1_open_a_window.c ~/lib/libSDL2.a -ldl -lm -ldl -lpthread -lrt
 
-It lists a bunch of linker flags which I used in addition to the .a files. 
-
-    gcc 1_open_a_window.c libSDL2.a -ldl -lm -ldl -lpthread -lrt
-
-The .a .la and .so files go into /usr/local.  You can get them from there.
-
-
-
-
-## Building my examples
-
-    sh make.sh <file.cpp>
-
-for example 
-
-    sh make.sh 5_show_mandelbrot.cpp
+I found the link flags from sdl2-config, specifically $(sdl2-config --static-libs)
 

@@ -1,10 +1,11 @@
 /*
-clang++ load_a_texture.cpp -ISDL2 -framework SDL2 -framework SDL2_image
+clang++ load_a_texture.cpp -framework SDL2 -framework SDL2_image
 */
 
 
-#include <SDL.h>
-#include <SDL_image.h>
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_image.h"
+
 #include <stdio.h>
 #include <string>
 

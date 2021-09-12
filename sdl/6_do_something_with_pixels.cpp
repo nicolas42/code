@@ -1,10 +1,10 @@
 /*
-g++ test.cpp -ISDL2 -framework SDL2
+g++ test.cpp -framework SDL2
 
 Get window surface then get the pixels array from that and then draw stuff on it.
 */
 
-#include <SDL.h>        
+#include <SDL2/SDL.h>        
 #include <iostream>
 #include <iomanip>
 #include <vector>
