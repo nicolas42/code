@@ -1,3 +1,5 @@
+// gcc -framework SDL2 1_open_a_window.c && ./a.out
+
 #include <SDL2/SDL.h>        
  
 int main(int argc, char ** argv)
