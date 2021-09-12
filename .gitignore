@@ -18,7 +18,6 @@ data/*
 *.aac
 
 *.jpg
-*.png
 *.gif
 *.ppm
 *.pgm
