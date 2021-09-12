@@ -44,3 +44,11 @@ to statically link do this
 
 I found the link flags from sdl2-config, specifically $(sdl2-config --static-libs)
 
+
+
+## Notes
+
+difference between surface and texture
+https://stackoverflow.com/questions/21392755/difference-between-surface-and-texture-sdl-general
+
+seems like a surface and a texture are both images but a texture is hardware rendered.
