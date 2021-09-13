@@ -20,25 +20,25 @@ int main( int argc, char* args[] )
     // use STBI_rgb if you don't want/need the alpha channel
     int req_format = STBI_rgb_alpha;
     int width, height, orig_format;
-    unsigned char* data = stbi_load("Valve_original.png", &width, &height, &orig_format, req_format);
-    if (data == NULL) {
+    unsigned char* original_image = stbi_load("Valve_original.png", &width, &height, &orig_format, req_format);
+    if (original_image == NULL) {
         SDL_Log("Loading image failed: %s", stbi_failure_reason());
         exit(1);
     }
 
     // make a greyscale image of floats which is centered around zero.
-    double *grey_image = (double*)calloc(height * width, sizeof(double));
+    double *grey_image_floats = (double*)calloc(height * width, sizeof(double));
     for (int j=0; j<height; j++ ){
         for (int i=0; i<width; i++ ){
             int pos = j*width*4 + i*4;
-            char r = data[pos+0];
-            char g = data[pos+1];
-            char b = data[pos+2];
-            char a = data[pos+3];
+            char r = original_image[pos+0];
+            char g = original_image[pos+1];
+            char b = original_image[pos+2];
+            char a = original_image[pos+3];
 
             char v = 0.212671f * r + 0.715160f * g + 0.072169f * b;
 
-            grey_image[j*width+i] = (double)((v-127.)); // "centered" around zero
+            grey_image_floats[j*width+i] = (double)((v-127.)); // "centered" around zero
 
         }
     }
@@ -49,8 +49,8 @@ int main( int argc, char* args[] )
     // for (int j=0; j<height; j++ ){
     //     for (int i=0; i<width; i++ ){
     //         int pos = j*width + i;
-    //         // printf("%f ", grey_image[j*width+i]);
-    //         sum_of_colors += grey_image[j*width+i];
+    //         // printf("%f ", grey_image_floats[j*width+i]);
+    //         sum_of_colors += grey_image_floats[j*width+i];
     //     }
     // }
     // average_color = sum_of_colors / (width*height);
@@ -58,54 +58,54 @@ int main( int argc, char* args[] )
 
     // for (int j=0; j<height; j++ ){
     //     for (int i=0; i<width; i++ ){
-    //         grey_image[j*width+i] -= average_color;
+    //         grey_image_floats[j*width+i] -= average_color;
     //     }
     // }
 
 
     // Apply x and y sobel filters
-    double *edge_image = (double*)calloc(height * width, sizeof(double));
+    double *edge_image_floats = (double*)calloc(height * width, sizeof(double));
     for (int j=1; j<height-1; j++ ){
         for (int i=1; i<width-1; i++ ){
             int pos = j*width + i;
             double x = 
-            -1 * grey_image[ pos-width - 1 ]    
-            +1 * grey_image[ pos-width + 1 ]
-            -2 * grey_image[ pos - 1 ]            
-            +2 * grey_image[ pos + 1 ]
-            -1 * grey_image[ pos+width - 1 ]    
-            +1 * grey_image[ pos+width + 1 ];
+            -1 * grey_image_floats[ pos-width - 1 ]    
+            +1 * grey_image_floats[ pos-width + 1 ]
+            -2 * grey_image_floats[ pos - 1 ]            
+            +2 * grey_image_floats[ pos + 1 ]
+            -1 * grey_image_floats[ pos+width - 1 ]    
+            +1 * grey_image_floats[ pos+width + 1 ];
 
             double y = 
-            -1 * grey_image[ pos-width - 1 ]    
-            -2 * grey_image[ pos-width ]
-            -1 * grey_image[ pos-width + 1 ]            
-            +1 * grey_image[ pos+width - 1 ]    
-            +2 * grey_image[ pos+width ]
-            +1 * grey_image[ pos+width + 1 ];            
+            -1 * grey_image_floats[ pos-width - 1 ]    
+            -2 * grey_image_floats[ pos-width ]
+            -1 * grey_image_floats[ pos-width + 1 ]            
+            +1 * grey_image_floats[ pos+width - 1 ]    
+            +2 * grey_image_floats[ pos+width ]
+            +1 * grey_image_floats[ pos+width + 1 ];            
 
             // x /= 9.;
             // y /= 9.;
             
-            edge_image[pos] = (double)sqrt( x*x + y*y );
+            edge_image_floats[pos] = (double)sqrt( x*x + y*y );
         }
     }
 
 
-    // Convert back to a regular image
-    double minimum_value = edge_image[0];
-    double maximum_value = edge_image[0];
+    double minimum_value = edge_image_floats[0];
+    double maximum_value = edge_image_floats[0];
     for (int j=1; j<height-1; j++ ){
         for (int i=1; i<width-1; i++ ){
             int pos = j*width + i;
-            if ( edge_image[pos] < minimum_value ) minimum_value = edge_image[pos];
-            if ( edge_image[pos] > maximum_value ) maximum_value = edge_image[pos];
+            if ( edge_image_floats[pos] < minimum_value ) minimum_value = edge_image_floats[pos];
+            if ( edge_image_floats[pos] > maximum_value ) maximum_value = edge_image_floats[pos];
         }
     }
     printf("min %f max %f\n", minimum_value, maximum_value);
 
-    printf("%f\n", maximum_value-minimum_value);
-    char *rgba = (char*)calloc(height * width * 4, sizeof(char));
+
+    // Convert back to a regular image
+    unsigned char *edge_image = (unsigned char*)calloc(height * width * 4, sizeof(char));
     for (int j=1; j<height-1; j++ ){
         for (int i=1; i<width-1; i++ ){
             int pos = j*width*4 + i*4;
@@ -114,17 +114,20 @@ int main( int argc, char* args[] )
             // min value goes to zero
             // max value goes to 255
             // y = (max-min)*(x - min)
-            char v = (unsigned char)( (edge_image[j*width+i] - minimum_value) / (maximum_value-minimum_value) * 255. );
+            char v = (unsigned char)( (edge_image_floats[j*width+i] - minimum_value) / (maximum_value-minimum_value) * 255. );
 
-            rgba[pos+0] = v;
-            rgba[pos+1] = v;
-            rgba[pos+2] = v;
-            rgba[pos+3] = 255;
+            edge_image[pos+0] = v;
+            edge_image[pos+1] = v;
+            edge_image[pos+2] = v;
+            edge_image[pos+3] = 255;
         }
     }
 
 
-
+    unsigned char *images[2];
+    int image_index = 1;
+    images[0] = original_image;
+    images[1] = edge_image;
 
     SDL_Init( SDL_INIT_EVERYTHING );
     SDL_Window* window = SDL_CreateWindow("title", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 800, SDL_WINDOW_SHOWN );
@@ -132,9 +135,8 @@ int main( int argc, char* args[] )
     SDL_Renderer* window_renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED );
     SDL_Texture* texture = SDL_CreateTexture( window_renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, width, height );
 
-        
-    SDL_UpdateTexture( texture, NULL, rgba, width * 4 );
-
+    
+    SDL_UpdateTexture( texture, NULL, images[image_index], width * 4 );
     SDL_SetRenderDrawColor( window_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE );
     SDL_RenderClear( window_renderer );
     SDL_RenderCopy( window_renderer, texture, NULL, NULL );
@@ -146,6 +148,15 @@ int main( int argc, char* args[] )
     {
         SDL_WaitEvent( &event );
         if ( event.type == SDL_QUIT ) running = false;
+        if ( event.type == SDL_KEYDOWN || event.type == SDL_MOUSEBUTTONDOWN ) {
+            if ( image_index == 0 ) image_index = 1; else image_index = 0;
+
+            SDL_UpdateTexture( texture, NULL, images[image_index], width * 4 );
+            SDL_SetRenderDrawColor( window_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE );
+            SDL_RenderClear( window_renderer );
+            SDL_RenderCopy( window_renderer, texture, NULL, NULL );
+            SDL_RenderPresent( window_renderer );
+        }
     }
 
 
