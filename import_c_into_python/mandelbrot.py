@@ -1,6 +1,6 @@
 from ctypes import *
 
-lib = CDLL("draw_mandelbrot_in_color.so", RTLD_GLOBAL)
+lib = CDLL("mandelbrot.so", RTLD_GLOBAL)
 
 class IMAGE(Structure):
     _fields_ = [("w", c_int),
@@ -22,13 +22,13 @@ save_image.argtypes = [IMAGE, POINTER(c_char)]
 save_image.restype = c_int
 
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
 
-#     im = make_image(800,800,4)
-#     draw_mandelbrot(im ,0,0,1,1000)
-#     print(im.data[0])
-#     filename = "out.png"
-#     save_image(im, filename.encode('ascii'))
+    im = make_image(800,800,4)
+    draw_mandelbrot(im ,0,0,1,1000)
+    # print(im.data[0])
+    filename = "out.png"
+    save_image(im, filename.encode('ascii'))
 
 
 
