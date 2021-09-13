@@ -17,6 +17,7 @@ data/*
 *.mp3
 *.aac
 
+*.png
 *.jpg
 *.gif
 *.ppm
