@@ -1,4 +1,4 @@
-// g++ edge_detection.cpp -framework SDL2 -I../SDL2 && ./a.out
+// g++ sobel_edge_detection.cpp -framework SDL2 -ISDL2 && ./a.out
 
 
 #include <stdio.h>
