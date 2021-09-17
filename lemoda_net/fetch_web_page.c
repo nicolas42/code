@@ -128,7 +128,7 @@ int fetch_webpage_main (const char *host)
 
 int main(int argc, char **argv)
 {
-    const char *host = argv[1];
+    const char *host = "raw.githubusercontent.com/unimonkiez/c-linux-example/master/src/wget.c"; // argv[1];
     fetch_webpage_main(host);
     return 0;
 }

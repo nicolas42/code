@@ -5,11 +5,11 @@
 
 // prime sieve.
 // only checks odd numbers
-void make_prime_numbers( int total_number_to_make, int *data, int* ret_length )
+void make_prime_numbers_basic( int total_number_to_make, int *data, int* ret_length )
 {
 	int length = *ret_length;
-	// needs data to be at least {2,3} since it only checks odd numbers
 	if ( length < 2 ) {
+	    // needs data to be at least {2,3} since it only checks odd numbers
 		printf("Oh noes!!!\n");
 		data[0] = 2; data[1] = 3;
 		length = 2;
@@ -40,9 +40,9 @@ int main(int argc, char** argv)
 	// int length = 100;
 
 	// int data[1000000] = {};
-	int *data = malloc( 100 * sizeof(int) );
+	int *data = (int*)malloc( 100 * sizeof(int) );
 	int length = 0;
-	make_prime_numbers(100, data, &length);
+	make_prime_numbers_basic(100, data, &length);
 	// for ( int i=0; i<length; i+=1 ) printf("%d, ", data[i] );
 	return 0;
 }

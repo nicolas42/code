@@ -74,7 +74,7 @@ void make_vector_in_spherical_coordinates(double r, double theta, double phi, do
 }\
 
 
-int multivector_main() // int argc, char **argv)
+int multivector_demo() // int argc, char **argv)
 {
     #define TWOPI 6.28318530718
 
@@ -109,7 +109,10 @@ int multivector_main() // int argc, char **argv)
 
 
 
-
+int main()
+{
+    multivector_demo();
+}
 
 
 

@@ -159,8 +159,7 @@ int newtons_method_main()
 }
 
 
-
-
-
-
-
+int main()
+{
+    eulers_method_main();
+}

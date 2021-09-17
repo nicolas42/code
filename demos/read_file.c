@@ -7,14 +7,14 @@
 
 void read_file (char *filename, char **ret_char_array, int *ret_char_length)
 {
-	// string
-    char *char_array = (char*)malloc(1000);
-	int chars_allocated = 1000;
+	// allocate a character array
+    char *char_array = (char*)malloc(4000);
+	int chars_allocated = 4000;
 	int char_length = 0;
 	
-    // open file for reading
-	FILE *f = fopen(filename, "r");
-	if (f == NULL) {
+    // open file to read
+	FILE *file = fopen(filename, "r");
+	if (file == NULL) {
 		char err[200];
 		snprintf(err, 200, "Error in opening file %s", filename);
 		perror(err);
@@ -22,18 +22,18 @@ void read_file (char *filename, char **ret_char_array, int *ret_char_length)
 	}
 
 	while (1) {
-		// read character
-		int character = fgetc(f);
-		// at the end of the file add a null byte to work with c-string functions
-		if (feof(f)) { 
+		// read a character
+		int character = fgetc(file);
+		// at the end add a null byte and exit
+		if (feof(file)) { 
 			char_array[char_length] = '\0'; 
-			char_length += 1;
+            // cstrings don't count the null byte in the length
 			break; 
 		}
 		char_array[char_length] = (char)character;
 		char_length += 1;
 
-        // maybe grow string
+        // double the allocation size if the char array has reached capacity
         if (char_length == chars_allocated){
             chars_allocated *= 2;
             char_array = (char*)realloc(char_array, chars_allocated);
@@ -41,7 +41,7 @@ void read_file (char *filename, char **ret_char_array, int *ret_char_length)
         }
 
 	}
-	fclose(f);
+	fclose(file);
 	
     *ret_char_array = char_array;
     *ret_char_length = char_length;
@@ -49,14 +49,12 @@ void read_file (char *filename, char **ret_char_array, int *ret_char_length)
 
 
 
-// /* 
-// https://www.reddit.com/r/Cprog/comments/kaapdr/prints_itself/
-// */
+// // Print file out slowly
+// // https://www.reddit.com/r/Cprog/comments/kaapdr/prints_itself/
 // #include <stdio.h>
 // #include <unistd.h>
 // #include <stdint.h>
 
-// namespace misc {
 
 // int prints_itself(void)
 // {
@@ -72,7 +70,6 @@ void read_file (char *filename, char **ret_char_array, int *ret_char_length)
 //     }
 // }
 
-// }
 
 static void print_char(unsigned char theChar) {
 
@@ -97,34 +94,49 @@ static void print_char(unsigned char theChar) {
    }
 }
 
+double min(double a, double b )
+{
+    if ( a < b ) return a;
+    return b;
+}
 
-int read_file_main() 
+int read_file_demo1() 
 {
 	// __FILE__ appears to be the filename of this file
 	// putting two string immediately next to each other concatenates them in c
 	// "./"__FILE__
 	// or "alskjdf""alksjdflka" => "alskjdfalksjdflka"
 
-    char *data = NULL; 
+    char *file_data = NULL; 
 	int length = -1;
-	char *filename = __FILE__; // the filename of this file
+	char *filename = __FILE__; 
 
 	printf("reading %s\n", filename);
+    read_file( filename, &file_data, &length );
 
+	printf("\n{");
+	for (int i=0; i<min(length, 10000); ++i) print_char(file_data[i]); // printf("%c",file_data[i]); 
+	printf("}...\n");
 
-    read_file( filename , &data, &length );
-
-	// print slice
-	int start = 0;
-	int end   = 100;
-
-	fputs("\n{", stdout);
-	for (int i=start; i<end; ++i) print_char(data[i]);
-	fputs("}", stdout);
-	printf("\n");
-
-
-
-	free(data);
+	free(file_data);
     return 0;
+}
+
+void read_file_demo()
+{
+    char *file_data; 
+	int length = -1;
+    read_file( __FILE__, &file_data, &length );
+
+    char str[1000];
+    snprintf(str, 1000, "%s", file_data);
+    printf("%s\n", str);
+}
+
+
+int main()
+{
+    read_file_demo();
+    // read_file_demo1();
+    // prints_itself();
 }

@@ -176,3 +176,8 @@ int draw_mandelbrot_main(){
     return 0;
 }
 
+
+int main()
+{
+    draw_mandelbrot_main();
+}

@@ -45,8 +45,16 @@ int caesar_cipher_main()
 {
     char text[] = "The quick brown fox jumps over the lazy dog.";
     int shift = 13;
+    char *code = caesar_cipher(text, shift);
 
     printf("%s => ", text );
-    printf("%s\n",caesar_cipher(text, shift));
+    printf("%s\n", code );
+
+    free(code);
     return 0;
+}
+
+int main()
+{
+    caesar_cipher_main();
 }

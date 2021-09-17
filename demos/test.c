@@ -3,13 +3,13 @@
 #include <string.h>
 #include <time.h>
 
-#include "caesar_cipher.h"
-#include "multivector.h"
-#include "read_file.h"
-#include "eulers_method.h"
-#include "draw_mandelbrot.h"
-#include "thread_race.h"
-#include "time_elapsed.h"
+#include "caesar_cipher.c"
+#include "multivector.c"
+#include "read_file.c"
+#include "eulers_method.c"
+#include "draw_mandelbrot.c"
+#include "thread_race.c"
+#include "time_elapsed.c"
 
 #define HR printf("\n\n-------------------------------------------------------\n\n"); 
 

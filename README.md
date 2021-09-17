@@ -1,6 +1,6 @@
 # everything
 
-## SSH Key for github 
+## Making an SSH Key for github 
 
     ssh-keygen -t ed25519 -C "your_email@example.com"
 
@@ -19,22 +19,38 @@ git clone git@github.com/username:repo
 
 
 
-# How to compile on windows using visual studio on the command line
+## Using visual studio from the command line
 
 Run vcvarsall.bat, wherever the hell it may be in the future, 
 then use the compiler cl ... 
 
 
-call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+    call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 
-cl /nologo /Zi /MD <input files>
+    cl /nologo /Zi /MD draw_mandelbrot_in_color.c
 
+    del *.pdb *.ilk *.obj 
 
-@REM source: https://hero.handmade.network/forums/code-discussion/t/2691-day_001_with_visual_studio_2017
+source https://hero.handmade.network/forums/code-discussion/t/2691-day_001_with_visual_studio_2017
 
-@REM Another example from the imgui repository
+Here's an example of how to use visual studio from the command line from the imgui repository
 
 mkdir Debug
 cl /nologo /Zi /MD /I .. /I ..\.. /I "%WindowsSdkDir%Include\um" /I "%WindowsSdkDir%Include\shared" /I "%DXSDK_DIR%Include" /D UNICODE /D _UNICODE *.cpp ..\imgui_impl_win32.cpp ..\imgui_impl_dx10.cpp ..\..\imgui*.cpp /FeDebug/example_win32_directx10.exe /FoDebug/ /link /LIBPATH:"%DXSDK_DIR%/Lib/x86" d3d10.lib d3dcompiler.lib
 
+
+## Cool repos
+
+darknet
+uwimg
+stb
+imgui
+nanogui-sdl
+wyoos
+mkernel
+ganga.js
+three.js
+exfat
+
+https://github.com/phoboslab/pl_mpeg  mpeg 1 player in sdl and opengl
 
