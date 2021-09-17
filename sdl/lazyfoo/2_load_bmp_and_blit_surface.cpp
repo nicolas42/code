@@ -21,13 +21,13 @@
 
 int main( int argc, char* args[] )
 {
-    SDL_Surface *lenna = SDL_LoadBMP( "lenna.bmp" );
+    SDL_Surface *image_surface = SDL_LoadBMP( "lenna.bmp" );
 
     SDL_Init( SDL_INIT_VIDEO );
-    SDL_Window *window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, lenna->w;, lenna->h;, SDL_WINDOW_SHOWN );
+    SDL_Window *window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, image_surface->w, image_surface->h, SDL_WINDOW_SHOWN );
     SDL_Surface *surface = SDL_GetWindowSurface( window );
 
-    SDL_BlitSurface( lenna, NULL, surface, NULL );
+    SDL_BlitSurface( image_surface, NULL, surface, NULL );
     SDL_UpdateWindowSurface( window );
 
     SDL_Event event;

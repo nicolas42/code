@@ -129,6 +129,8 @@ int main( int argc, char* args[] )
     images[0] = original_image;
     images[1] = edge_image;
 
+
+
     SDL_Init( SDL_INIT_EVERYTHING );
     SDL_Window* window = SDL_CreateWindow("title", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 800, SDL_WINDOW_SHOWN );
     

@@ -1,5 +1,6 @@
 /*
-g++ 5_show_mandelbrot.cpp -framework SDL2
+g++ 5_show_mandelbrot.cpp -framework SDL2 && ./a.out
+g++ 5_show_mandelbrot.cpp -lSDL2 && ./a.out
 
 // from https://stackoverflow.com/questions/33304351/sdl2-fast-pixel-manipulation
 */
@@ -145,42 +146,76 @@ struct image make_image(double w, double h, double c)
 }
 
 
-int main(int argc, char ** argv)
+int texture_main(int argc, char ** argv)
 {
-
-    int texture_width = 600;
-    int texture_height = 600;
-    int num_channels = 4;
-    struct image im = make_image(texture_width, texture_height, num_channels);
-    draw_mandelbrot(im, -0.6999687500000003, -0.2901249999999999, 1024, 855);
-
-
+    int WINDOW_WIDTH = 800;
+    int WINDOW_HEIGHT = 800;
     SDL_Init( SDL_INIT_EVERYTHING );
-    int window_width = 400;
-    int window_height = 400;
-    SDL_Window* window = SDL_CreateWindow("title", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_width, window_height, SDL_WINDOW_SHOWN );
-    SDL_Renderer* renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED );
-    SDL_Texture* texture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, texture_width, texture_height );
+    SDL_Window* window_surface = SDL_CreateWindow("title", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN );
+    SDL_Renderer* window_renderer = SDL_CreateRenderer( window_surface, -1, SDL_RENDERER_ACCELERATED );
+
+    struct image image;
+    SDL_Texture* texture;
+
+    image = make_image(WINDOW_WIDTH, WINDOW_HEIGHT, 4); // width, height, number of channels
+    draw_mandelbrot(image, -0.6999687500000003, -0.2901249999999999, 1000, 1000); // x,y,zoom,max_iterations
+
+    texture = SDL_CreateTexture( window_renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, image.w, image.h );
+    SDL_SetRenderDrawColor( window_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE );
+    SDL_UpdateTexture( texture, NULL, image.data, image.w * image.c );
+    SDL_RenderClear( window_renderer );
+    SDL_RenderCopy( window_renderer, texture, NULL, NULL );
+    SDL_RenderPresent( window_renderer );
+
     SDL_Event event;
     bool running = true;
-
-    int i=0;
+    int i = 0;
     while ( running )
     {
         SDL_WaitEvent(&event);
         if ( event.type == SDL_QUIT ) running = false;
         printf("event %d\n", i++);
+    }
 
-        SDL_SetRenderDrawColor( renderer, 0, 0, 0, SDL_ALPHA_OPAQUE );
-        SDL_RenderClear( renderer );
-        SDL_UpdateTexture( texture, NULL, im.data, texture_width * 4 );
-        SDL_RenderCopy( renderer, texture, NULL, NULL );
-        SDL_RenderPresent( renderer );
+    SDL_DestroyTexture(texture);
+    free(image.data);
+    SDL_Quit();
+ 
+    return 0;
+}
+
+
+
+int main( int argc, char* args[] )
+{
+    const int w  = 800;
+    const int h = 800;
+    const int c = 4; // # channels
+
+    SDL_Init( SDL_INIT_VIDEO );
+    SDL_Window *window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_SHOWN );
+    SDL_Surface *window_surface = SDL_GetWindowSurface( window );
+
+    SDL_Surface *image_surface = SDL_CreateRGBSurface(0,w,h,32,0xff000000,0x00ff0000,0x0000ff00,0x000000ff);
+    struct image image = { .w = w, .h = h, .c = c };
+    image.data = (char*)(image_surface->pixels);
+    
+    // SDL_LockSurface(image_surface);
+    draw_mandelbrot(image, -0.6999687500000003, -0.2901249999999999, 1000, 1000);
+    SDL_BlitSurface( image_surface, NULL, window_surface, NULL );
+    // SDL_UnlockSurface(image_surface);
+    SDL_UpdateWindowSurface(window);
+
+    SDL_Event event;
+    int running = 1;
+    while ( running ) {
+        SDL_WaitEvent(&event);
+        if ( event.type == SDL_QUIT ) running = 0;
 
     }
 
-    
+
+    SDL_DestroyWindow( window );
     SDL_Quit();
- 
     return 0;
 }
