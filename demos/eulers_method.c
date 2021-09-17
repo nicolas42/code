@@ -1,7 +1,4 @@
 #include <stdio.h>
-
-
-#include <stdio.h>
 #include <math.h>
 
 // float f_dash(float x, float y, float *dx, float *dy) { return y; }
