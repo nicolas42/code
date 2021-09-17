@@ -12,13 +12,14 @@ data/*
 *.mp4
 *.avi
 *.mkv
+*.mpg
 
 *.m4a
 *.mp3
 *.aac
 
 *.png
-# *.jpg
+*.jpg
 *.gif
 *.ppm
 *.pgm
