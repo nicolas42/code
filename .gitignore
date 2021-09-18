@@ -19,7 +19,7 @@ data/*
 *.aac
 
 *.png
-*.jpg
+# *.jpg
 *.gif
 *.ppm
 *.pgm
