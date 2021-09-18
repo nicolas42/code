@@ -51,6 +51,16 @@ mkernel
 ganga.js
 three.js
 exfat
+fasm - good community
 
-https://github.com/phoboslab/pl_mpeg  mpeg 1 player in sdl and opengl
+https://github.com/phoboslab/pl_mpeg  mpeg 1 player with audio in sdl and opengl
+
+
+
+# Make with SDL2
+
+g++ <input.cpp> -framework SDL2 -framework SDL2_image -framework SDL2_mixer -framework SDL2_net -framework SDL2_ttf
+
+Linux
+g++ <input.cpp> -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_net -lSDL2_ttf
 
