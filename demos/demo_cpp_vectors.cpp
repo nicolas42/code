@@ -1,6 +1,4 @@
-/*
-clang++ -std=c++14 cpp-vector-demo.cpp ; ./a.out
-*/
+// clang++ -std=c++14 cpp-vector-demo.cpp ; ./a.out
 
 #include <iostream>
 #include <vector>
