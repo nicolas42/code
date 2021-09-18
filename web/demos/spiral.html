@@ -1,0 +1,198 @@
+<!DOCTYPE html><style> * { margin: 0; padding: 0; box-sizing: border-box; } </style>
+
+<p>Click me</p>
+<canvas id="spiral_basic">click me</canvas><br>
+<script>
+function spiral_basic(query_selector)
+{
+    function draw_circular_pattern(canvas, angle, color)
+    {
+        let ctx = canvas.getContext('2d');
+
+        ctx.setTransform(); // reset translation and rotation transforms
+
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.scale(.5, .5);
+
+        for (let distance = 0; distance < 500; distance += 1) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, distance);
+            ctx.stroke();
+
+            ctx.translate(0, distance);
+            ctx.rotate(angle);
+        }
+    }
+
+
+    function main(qs)
+    {
+        let canvas = document.querySelector(qs);
+        canvas.width = 800;
+        canvas.height = 800;
+
+        var angle = Math.random() * 2 * Math.PI;
+        var color = "#" + Math.floor(Math.random() * 16777216).toString(16);
+        draw_circular_pattern(canvas, angle, color);
+
+        canvas.addEventListener("click", function (event) {
+            console.log(canvas, angle, color)
+            var angle = Math.random() * 2 * Math.PI;
+            var color = "#" + Math.floor(Math.random() * 16777216).toString(16);
+            draw_circular_pattern(canvas, angle, color);
+        });
+
+    }
+
+    main(query_selector);
+}
+spiral_basic("canvas#spiral_basic");
+</script>
+
+
+
+<div>
+    <p>Click me</p>
+    <canvas id="spiral">click me</canvas><br>
+    <audio controls>
+        <source src="12monkeys.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio><br>
+    <input id="show_angle" type="checkbox"><span>show angle?</span></input><br>
+    <input  id="angle" style="width:100%" type="range" min="1" max="10000" value="5000"><br>
+    <input  id="scale" style="width:100%" type="range" min="1" max="200" value="100"><br>
+    <input  id="max_distance" style="width:100%" type="range" min="1" max="1000" value="500"><br>
+    <input  id="line_width" style="width:100%" type="range" min="1" max="10" value="1"><br>
+    <pre></pre>
+    
+</div>
+<script>
+function spiral()
+{
+
+    function draw_spiral(canvas, pattern)
+    {
+        let ctx = canvas.getContext('2d');
+        // reset all transforms
+        ctx.setTransform();
+
+
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.scale(pattern.scale, pattern.scale);
+
+
+        ctx.strokeStyle = pattern.color;
+        ctx.lineWidth = pattern.line_width;
+
+        for (let stroke_length = 0; stroke_length < pattern.max_distance; stroke_length += 1) {
+
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, stroke_length);
+            ctx.stroke();
+
+            ctx.translate(0, stroke_length);
+            ctx.rotate(pattern.angle);
+        }
+    }
+
+    function make_random_color()
+    {
+        return "#" + Math.floor(Math.random() * 16777216).toString(16);
+    }
+
+
+    function main()
+    {
+        // ============== Globals ==================
+        var canvas = document.querySelector('#spiral');
+        canvas.width = window.innerWidth - 20;
+        canvas.height = window.innerHeight;
+
+        var pattern = { 
+            angle: Math.random() * 2 * Math.PI,
+            color: make_random_color(),
+            max_distance: 500,
+            scale: 1,
+            line_width: 1,
+            // step: 1
+        }
+        
+        draw_spiral(canvas, pattern);
+
+
+        document.querySelector("#angle").oninput = function () {
+            pattern.angle = this.value / 10000 * 2 * Math.PI;
+        }
+
+        document.querySelector("#max_distance").oninput = function () {
+            pattern.max_distance = this.value;
+        }
+
+        document.querySelector("#scale").oninput = function () {
+            pattern.scale = this.value / 100;
+        }
+
+        document.querySelector("#line_width").oninput = function () {
+            pattern.line_width = this.value;
+        }
+
+
+        var interval_id = 0;
+        var has_music_started = false;
+        var interval_duration = 10; // ms?
+
+        function draw_rotating_spiral()
+        {
+            pattern.angle = Math.random() * 2 * Math.PI;
+            pattern.color = make_random_color();
+            // console.log(pattern);
+
+            clearInterval(interval_id);
+
+            interval_id = setInterval(function(){
+                pattern.angle += 0.00001
+                // pattern.color = make_random_color();
+                draw_spiral(canvas, pattern);
+
+                if ( document.querySelector('input#show_angle').checked ) {
+                    var the_text = JSON.stringify(pattern.angle)
+                    var ctx = canvas.getContext("2d");
+                    ctx.setTransform(); // reset all transforms
+                    ctx.fillStyle = "grey";
+                    ctx.font = "20px Verdana";
+                    ctx.fillText(the_text, 20 , canvas.height - 20);
+                }
+
+            }, interval_duration ); 
+
+
+            var pre = document.querySelector('pre');
+            pre.innerText += JSON.stringify(pattern) + '\n';
+
+
+            var audio = document.querySelector('audio')
+            if ( audio.paused && !has_music_started ) { audio.play(); has_music_started = true; }
+        }
+
+        canvas.addEventListener('click', draw_rotating_spiral);
+    }
+
+    main();
+
+}
+spiral()
+
+</script>
+
+</html>
