@@ -64,3 +64,13 @@ g++ <input.cpp> -framework SDL2 -framework SDL2_image -framework SDL2_mixer -fra
 Linux
 g++ <input.cpp> -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_net -lSDL2_ttf
 
+
+
+
+# Linux
+
+sudo apt install nasm qemu-system-x86 xorriso pkg-config emacs
+
+sudo apt install libsdl2-dev libsdl2-gfx-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev libsdl2-ttf-dev
+sudo apt install libopengl-dev libglew-dev
+# sudo apt install libssl-dev
