@@ -1,8 +1,24 @@
 # Web Shit
 
-go run serve.go
+Run this
 
-localhost:8080
+    go run serve.go
+
+then put this in a browser
+
+    localhost:8080
+
+Then click stuff
+
+
+The go default http server has quite a nice habit of displaying links to all files in a directory if there's no index.html file.  It's neat.
+That way you can try all the different stuff quite conveniently.
+
+Also in the future it'd be nice to make a markdown server.  So when a markdown (.md) file is requested it can be dynamically transformed into html.
+
+woo.
+
+There's also a server in node scripts that you could copy to this directory then run but it sucks more.
 
 
 ## AWS Javascript SDK
