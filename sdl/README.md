@@ -1,5 +1,20 @@
 # SDL frameworks
 
+## To Do - How to install SDL, opengl, glew on different operating systems and link with your programs
+
+How to make the thing
+
+install SDL and SDL_image with a package manager or from https://libsdl.org/download-2.0.php
+
+run something like this
+
+macos:
+	g++ -ISDL2 -framework SDL2 -framework SDL2_image -std=c++11 show_images.cpp 
+
+linux:
+	g++ -ISDL2 -lSDL2 -lSDL2_image -std=c++11 show_images.cpp
+
+
 ## Make all the SDL extensions!
 
 clang++ a.cpp -ISDL2 -framework SDL2 -framework SDL2_image -framework SDL2_mixer -framework SDL2_net -framework SDL2_ttf

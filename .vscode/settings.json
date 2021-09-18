@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "stb_image_write.h": "c"
+        "stdint.h": "c",
+        "time.h": "c",
+        "string_view": "c"
     }
 }

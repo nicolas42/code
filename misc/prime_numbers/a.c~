@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef uint64_t u64;
+
+int main()
+{
+
+    FILE *f = fopen("primes.dat", "rb");
+    fseek(f, 0, SEEK_END); // seek to end of file
+    int size = ftell(f);   // get current file pointer
+    fseek(f, 0, SEEK_SET); // seek back to beginning of file
+    char *str = (char*)malloc(size * sizeof(char));
+    fread(str, size, 1, f);
+    fclose(f);
+
+    printf("%s\n\n", str);
+
+    printf("%s\n\n", str+size-1);
+
+    int allocated = 100;
+    int length = 0;
+    u64 *primes = (u64*)malloc( allocated * sizeof(u64));
+   
+    char *pos = str;
+    int i =0;
+    while (pos != NULL) {
+        printf("%d ", i++);
+        sscanf(pos, "%lu", &(primes[length++]));
+        if ( length == allocated ) { 
+            allocated *= 2; 
+            primes = (u64*)malloc( allocated * sizeof(u64)); 
+        }
+
+        pos = strstr(pos, " ");
+        pos += 1;
+    }
+
+    for (int i=0; i<length; i++) printf("%lu ", primes[i]);
+
+
+
+
+
+
+
+
+    // printf("%lu\n", primes[length-1]);
+
+    // int max = length+100;
+	// for ( u64 candidate = primes[length-1]; length < max; candidate += 2 ) {
+		
+	// 	int is_prime = 1;
+	// 	for ( int i = 0; i < length; i++){
+	// 		if ( candidate % primes[i] == 0){
+	// 			is_prime = 0;
+	// 			break;
+	// 		}
+	// 	}
+	// 	if (is_prime) {
+	// 		primes[length++] = candidate;
+    //         if ( length == allocated ) {
+    //           allocated *= 2;
+    //           primes = (u64*)malloc( allocated * sizeof(u64));
+    //         }
+	// 		printf("%lu\n", candidate);			
+	// 	}
+	// }
+
+    
+    return 0;
+}
+

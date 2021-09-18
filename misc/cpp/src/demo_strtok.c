@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void demo_strtok(void)
+void main(void)
 {
 
     printf(
