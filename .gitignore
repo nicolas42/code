@@ -38,3 +38,6 @@ data/*
 
 node_modules
 
+linux
+macos
+windows
