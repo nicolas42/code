@@ -6,22 +6,21 @@ See [pl_mpeg.h](https://github.com/phoboslab/pl_mpeg/blob/master/pl_mpeg.h) for
 the documentation.
 
 
-## OMG Building
-
-On ubuntu, install the libraries then link them
+## Build - ubuntu
 
     sudo apt install libsdl2-dev libopengl-dev libglew-dev
 
     gcc pl_mpeg_player.c -L/usr/local/lib -lSDL2 -lGLEW -lGL
 
-To make the executable run I had to copy the GLEW library files from /usr/local/lib64 to /usr/local/lib
+I had to copy the GLEW library files from /usr/local/lib64 to /usr/local/lib to make it work
 
     ./a.out <video.mpg>
 
 
 
+## Build Tips
 
-I found the library packages with apt search
+Find library packages with apt search
 
     apt search libsdl2 libopengl libglew
 
@@ -39,7 +38,7 @@ Example of static linking using local library files
     gcc pl_mpeg_player.c -L/home/nick/everything/linux/lib -I/home/nick/everything/linux/include -Wl,--enable-new-dtags -lSDL2 -lm -ldl -lpthread -lrt -lOpenGL -lGLEW -lGL -lX11 -lGLU -lm -lGL
 
 
-Oh my god.  It's full of linker flags...
+
 
 
 
