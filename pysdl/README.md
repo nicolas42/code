@@ -1,5 +1,11 @@
 # PySDL2
 
+## Install
+
+    pip install pysdl2
+
+
+
 docs available here https://pysdl2.readthedocs.io
 
 
