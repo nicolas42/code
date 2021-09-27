@@ -1,5 +1,10 @@
 # everything
 
+# Date time in python
+
+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
+
 ## Making an SSH Key for github 
 
     ssh-keygen -t ed25519 -C "your_email@example.com"
