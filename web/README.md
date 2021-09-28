@@ -1,15 +1,16 @@
-# Web Shit
+# Get started
 
 Run this
 
     go run serve.go
 
-then put this in a browser
+then this
 
     localhost:8080
 
 Then click stuff
 
+# Notes
 
 The go default http server has quite a nice habit of displaying links to all files in a directory if there's no index.html file.  It's neat.
 That way you can try all the different stuff quite conveniently.

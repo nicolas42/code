@@ -1,171 +1,313 @@
 <!DOCTYPE html>
-<script src="/js/draw_mandelbrot.js"></script>
-
-<!-- 
-<canvas id="mandelbrot_basic"></canvas>
 <script>
-function mandelbrot_basic()
+
+function hue2rgb(p, q, t) {
+    if (t < 0) {
+        t += 1;
+    }
+    if (t > 1) {
+        t -= 1;
+    }
+    if (t < 1 / 6) {
+        return p + (q - p) * 6 * t;
+    }
+    if (t < 1 / 2) {
+        return q;
+    }
+    if (t < 2 / 3) {
+        return p + (q - p) * (2 / 3 - t) * 6;
+    }
+    return p;
+}
+
+function hsl_to_rgb(h, s, l) {
+    let r;
+    let g;
+    let b;
+
+    let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    let p = 2 * l - q;
+
+    if (s === 0) {
+        r = 1;
+        g = 1;
+        b = 1; // achromatic
+    } else {
+
+        r = hue2rgb(p, q, h + 1 / 3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1 / 3);
+    }
+
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+function pixel_coordinates_to_mandelbrot_coordinate(canvas, mandelbrot, x, y)
 {
-    var canvas = document.querySelector('#mandelbrot_basic');
-    canvas.width = 500; canvas.height = 500;
-    var mandelbrot = { x: -0.6999687500000003, y: -0.2901249999999999, zoom: 1024 }
+    // at a particular zoom level the pixel space is defined to have a particular size in mandelbrot space
+    // the width is 4/zoom and the height is smaller than that in accordance to the aspect ratio
+
+    var aspect_ratio = canvas.width / canvas.height 
+
+    var offset_x = ( x - (canvas.width / 2) ) / ( canvas.width / 2 ) * ( 2 / mandelbrot.zoom );
+    var offset_y = ( y - (canvas.height / 2) ) / ( canvas.height / 2 ) * ( 2 / mandelbrot.zoom ) / aspect_ratio;
+
+    var cx = mandelbrot.x + offset_x;
+    var cy = mandelbrot.y + offset_y;
+
+    return [cx, cy]; 
+}
+
+function draw_mandelbrot(canvas, mandelbrot) {
+
+    var im = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height);
+
+    // main loop
+    // x and y are the pixel coordinates which starts top left and goes down
+    for (var y = 0; y < im.height; y += 1) {
+        for (var x = 0; x < im.width; x += 1) {
+
+            var cx, cy;
+            [cx, cy] = pixel_coordinates_to_mandelbrot_coordinate(canvas, mandelbrot, x, y);
+
+            var zx = 0;
+            var zy = 0;
+
+            var in_set = true;
+            var num_iterations = 1;
+            for ( ; num_iterations <= mandelbrot.max_iterations; num_iterations += 1 ) {
+                // z = z^2 + c
+                // z = (zx+izy)^2 + (cx+icy) = ((zx)^2 - (zy)^2 + cx) + i(2xy + cy)
+                var zx_temp = zx * zx - zy * zy + cx;
+                zy = 2 * zx * zy + cy;
+                zx = zx_temp;
+                // if the length of complex vector exceeds 4 then assume the pixel is not in the set
+                if (zx * zx + zy * zy > 4) {
+                    in_set = false;
+                    break;
+                }
+            }
+
+            // color in pixel
+            let black = [0, 0, 0, 255];
+            let stride = 4;
+            var pos = (y * im.width * stride) + (x * stride);
+            if (in_set) {
+                im.data[pos + 0] = black[0];
+                im.data[pos + 1] = black[1];
+                im.data[pos + 2] = black[2];
+                im.data[pos + 3] = black[3];
+            } else {
+                // hue is determined by the number of iterations taken
+                var rgb = hsl_to_rgb((num_iterations % 255) / 255, 1, 0.5);
+                im.data[pos + 0] = rgb[0];
+                im.data[pos + 1] = rgb[1];
+                im.data[pos + 2] = rgb[2];
+                im.data[pos + 3] = black[3]; // no opacity
+            }
+
+
+        }
+
+    }
+    canvas.getContext("2d").putImageData(im, 0, 0);
+
+    // return img;
+}
+
+function redraw_mandelbrot(canvas, parameters, event) 
+{
+    // zoom in on left click, zoom out on right click
+
+    // get position of clicked mouse cursor
+    var rect = event.currentTarget.getBoundingClientRect();
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
+
+    [ parameters.x, parameters.y ] = pixel_coordinates_to_mandelbrot_coordinate(canvas, parameters, x, y);
+
+    if (event.which === 1) {
+        parameters.zoom *= 2;
+    } else if (event.which === 3) {
+        parameters.zoom /= 2;
+    }
+
+    draw_mandelbrot(canvas, parameters);
+}
+
+
+
+function toggle_fullscreen( canvas, mandelbrot )
+{ 
+    mandelbrot.fullscreen = !mandelbrot.fullscreen; 
+    // console.log( mandelbrot.fullscreen ); 
+    if ( mandelbrot.fullscreen ) {
+        canvas.width = window.innerWidth - 20;
+        canvas.height = window.innerHeight - 20;
+    } else {
+        canvas.width = mandelbrot.w;
+        canvas.height = mandelbrot.h;
+    }
     draw_mandelbrot(canvas, mandelbrot);
 }
-mandelbrot_basic()
-</script>
 
 
+// make element tree
+function elt(type, ...children) {
+    // from eloquent javascript
+    // var tree = elt( "div", elt( "button", "toggle fullscreen") );
+    // document.body.appendChild( tree );
 
-
-<canvas id="mandelbrot_interactive" width="500" height="500"></canvas>
-<script>
-
-function mandelbrot_interactive()
-{
-    var canvas = document.querySelector('#mandelbrot_interactive')
-    var parameters = { x: -0.6999687500000003, y: -0.2901249999999999, zoom: 1024 };
-    draw_mandelbrot(canvas, parameters);
-
-
-    function redraw_mandelbrot(event) 
-    {
-        // on left click zoom in
-        // on right click zoom out
-
-        if (event.which === 1) {
-
-            // get position of clicked mouse cursor
-            var rect = event.currentTarget.getBoundingClientRect();
-            var x_pixel = event.clientX - rect.left;
-            var y_pixel = event.clientY - rect.top;
-
-            var math_height = 4 / parameters.zoom;
-            var math_width = 4 / parameters.zoom;
-
-            parameters.x = (parameters.x - math_width / 2) + x_pixel / (canvas.width / math_width);
-            parameters.y = (parameters.y - math_height / 2) + y_pixel / (canvas.height / math_height);
-            parameters.zoom *= 2;
-
-        } else if (event.which === 3) {
-            parameters.zoom /= 2;
-        }
-
-        draw_mandelbrot(canvas, parameters);
+    let node = document.createElement(type);
+    for (let child of children) {
+        if (typeof child != "string") node.appendChild(child);
+        else node.appendChild(document.createTextNode(child));
     }
+    return node;
+}
 
-    canvas.addEventListener("mousedown", redraw_mandelbrot, false);
-    canvas.addEventListener("contextmenu", function(event) { event.preventDefault() });
+// function hide_scrollbars() {
+//     document.documentElement.style.overflow = 'hidden';  // firefox, chrome
+//     document.body.scroll = "no"; // ie only
+// }
+
+// function show_scrollbars() {
+//     document.documentElement.style.overflow = 'auto';  // firefox, chrome
+//     document.body.scroll = "yes"; // ie only
+// }
+
+
+function toggle_content_editable(){
+    // html element
+    if ( document.documentElement.contentEditable === 'true' ) document.documentElement.contentEditable = 'false'; 
+    else document.documentElement.contentEditable = 'true';
+}
+
+
+
+function load_object_from_url(parameters)
+{
+    // the argument allows for default parameters to be overriden
+    window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (_, key, value) {
+        var result = parseFloat(value);
+        if ( !isNaN(result) ) parameters[key] = result;
+    });
+    return parameters;
+}
+
+function save_object_to_url(obj)
+{
+    var str = "?"
+    Object.keys(obj).forEach(function(key,index) {
+        // key: the name of the object key
+        // index: the ordinal position of the key within the object 
+        str = str + key +"="+ (obj[key]).toString() +"&";
+    });
+
+    window.history.replaceState(
+        "object or string", "Title", str // "?x=" + p.x + "&y=" + p.y + "&zoom=" + p.zoom + "&max_iterations=" + p.max_iterations
+    );
+}
+
+
+function append_elements(parent, arr )
+{
+    for ( var i=0; i<arr.length; i+= 1){
+        // console.log(arr[i])
+        var child = document.createElement(arr[i][0]);
+        if ( arr[i][1] !== undefined ) child.innerText = arr[i][1];
+        if ( arr[i][0] === "a" ){
+            child.href = arr[i][2] ;
+        } else {
+            // event handler
+            if ( arr[i][2] !== undefined && arr[i][3] !== undefined ) child.addEventListener(arr[i][2], arr[i][3])
+        }
+        parent.appendChild(child);
+    }
+}
+
+// ruin all chances of using jquery
+var $ = function(id) { return document.querySelector(id); }
+
+
+function demo_mandelbrot()
+{
+    // draw mandelbrot, set up its event handlers
+    var mandelbrot = { 
+        x: -0.6999687500000003, y: -0.2901249999999999, zoom: 500, 
+        max_iterations: 600, w: 800, h: 500, fullscreen: 0 
+    }
+    mandelbrot = load_object_from_url(mandelbrot);
+
+    var canvas = document.createElement('canvas');
+    canvas.width = mandelbrot.w;
+    canvas.height = mandelbrot.h;
+    canvas.addEventListener("contextmenu", function (event) { event.preventDefault() } );
+    canvas.addEventListener("mousedown",  function(event){ redraw_mandelbrot(canvas, mandelbrot, event); save_object_to_url(mandelbrot); } );
+
+    draw_mandelbrot(canvas, mandelbrot);
+
+
+    var buttons = document.createElement("div");
+
+    
+    append_elements(buttons, [ 
+        [ "button", "toggle fullscreen",        "click", (e) => toggle_fullscreen( canvas, mandelbrot )   ],
+        [ "label", "max iterations" ],
+        [ "input", "max iterations",            "keyup", (e) => mandelbrot.max_iterations = parseFloat(elem.children[2].value) ],
+        [ "button", "draw",                     "click", (e) =>  draw_mandelbrot( canvas, mandelbrot ) ],
+        [ "button", "toggle content editable",  "click", (e) => toggle_content_editable() ],
+        [ "button", "reset",                    "click", (e) => { mandelbrot = { x:0,y:0,zoom:1, max_iterations: 600, w: 800, h: 500, fullscreen: 0 }; draw_mandelbrot(canvas, mandelbrot); } ],
+
+        [ "a", "[ ]", "mandelbrot.html?x=-0.6999687500000003&y=-0.2901249999999999&zoom=1024&max_iterations=1000&fullscreen=1" ],
+        [ "a", "[ ]", "mandelbrot.html?x=-0.6980494359334312&y=-0.29024059804280583&zoom=65536&max_iterations=1000&fullscreen=1" ],
+        [ "a", "[ ]", "mandelbrot.html?x=-0.027120712995529206&y=0.6441158065199851&zoom=67108864&max_iterations=1000&fullscreen=1" ],
+        [ "a", "[ ]", "mandelbrot.html?x=-0.027099643200635935&y=0.6440290103852749&zoom=268435456&max_iterations=1000&fullscreen=1" ],
+        [ "a", "[ ]", "mandelbrot.html?x=-0.02709963878151032&y=0.6440290090395138&zoom=4294967296&max_iterations=1000&fullscreen=1" ],
+        [ "a", "[ ]", "mandelbrot.html?x=0.31923687500000003&y=-0.4990148437499999&zoom=1024000&max_iterations=1000&fullscreen=1" ],
+        [ "a", "[ ]", "mandelbrot.html?x=0.31923733207893373&y=-0.499014675590515&zoom=8388608000&max_iterations=1000&fullscreen=1" ],
+        [ "a", "[ ]", "mandelbrot.html?x=0.38715883591593053&y=-0.25874134865963394&zoom=1073741824&max_iterations=1000&fullscreen=1" ],
+        [ "a", "[ ]", "mandelbrot.html?x=0.1347109374999998&y=-0.6361328125&zoom=2048&max_iterations=1000&fullscreen=1" ],
+        [ "a", "[ ]", "mandelbrot.html?x=0.2681601562500003&y=-0.004765624999999972&zoom=4096&max_iterations=1000&fullscreen=1" ],
+        [ "a", "[ ]", "mandelbrot.html?x=0.38715883594200756&y=-0.2587413487062&zoom=536870912&max_iterations=1000&fullscreen=1" ],
+        [ "a", "[ ]", "mandelbrot.html?x=0.32898730468750015&y=-0.4237490234374998&zoom=16384&max_iterations=1000&fullscreen=1" ],
+        [ "a", "[ ]", "mandelbrot.html?x=-1.7664619022752155&y=0.041740019425749834&zoom=1073741824&max_iterations=1000&fullscreen=1" ],
+        [ "a", "[ ]", "mandelbrot.html?x=-0.7439357975892299&y=-0.1146920373210634&zoom=1024&max_iterations=1000&fullscreen=1" ],
+        [ "a", "[ ]", "mandelbrot.html?x=0.3329420522857653&y=-0.48999702139063206&zoom=512000&max_iterations=1000&w=500&h=500&fullscreen=1" ],
+        [ "pre", "\n\
+        If the picture gets too black try upping max_iterations.\n\
+        https://stackoverflow.com/questions/242608/disable-browsers-vertical-and-horizontal-scrollbars\n\
+        https://computerrock.com/blog/html5-changing-the-browser-url-without-refreshing-page/\n\
+        \n\
+        http://localhost:8080/demos/mandelbrot.html?x=0.3329432949920641&y=-0.4899976562478098&zoom=524288000&max_iterations=1000&w=500&h=500&fullscreen=1&\n\
+        "]
+    ]);
+
+    document.body.appendChild(canvas)
+    document.body.appendChild(buttons)
 
 }
 
-mandelbrot_interactive();
-
-</script>
-
- -->
-
-
-<canvas id="mandelbrot_load_url" width="800" height="800"></canvas>
-<script>
-
-function mandelbrot_load_url()
+function main()
 {
-
-    function load_url(parameters)
-    {
-        // get parameters from url
-        // taking an argument allows for default parameters to be provided and optionally overriden.
-
-        window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (_, key, value) {
-            parameters[key] = parseFloat(value);
-        });
-        return parameters;
-    }
-
-    function show_url(p)
-    {
-        window.history.replaceState(
-            "object or string", "Title", "?x=" + p.x + "&y=" + p.y + "&zoom=" + p.zoom + "&max_iterations=" + p.max_iterations
-        );
-        // window.history.replaceState(“object or string”, “Title”, “/another-new-url”);
-        // from https://computerrock.com/blog/html5-changing-the-browser-url-without-refreshing-page/
-    }
-
-
-    
-
-    var parameters = { x: -0.6999687500000003, y: -0.2901249999999999, zoom: 1024}; // default
-    var canvas = document.querySelector('#mandelbrot_load_url')
-    parameters = load_url(parameters);
-    draw_mandelbrot(canvas, parameters);
-    show_url(parameters)
-
-    
-
-    function redraw_mandelbrot(event) 
-    {
-        // on left click zoom in
-        // on right click zoom out
-
-        if (event.which === 1) {
-
-            // get position of clicked mouse cursor
-            var rect = event.currentTarget.getBoundingClientRect();
-            var x_pixel = event.clientX - rect.left;
-            var y_pixel = event.clientY - rect.top;
-
-            var math_height = 4 / parameters.zoom;
-            var math_width = 4 / parameters.zoom;
-
-            parameters.x = (parameters.x - math_width / 2) + x_pixel / (canvas.width / math_width);
-            parameters.y = (parameters.y - math_height / 2) + y_pixel / (canvas.height / math_height);
-            parameters.zoom *= 2;
-
-        } else if (event.which === 3) {
-            parameters.zoom /= 2;
-        }
-
-        draw_mandelbrot(canvas, parameters);
-
-    }
-
-    canvas.addEventListener("mousedown", function(e){ redraw_mandelbrot(e); show_url(parameters) }, false);
-    canvas.addEventListener("contextmenu", function(event) { event.preventDefault() });
-
-
+    demo_mandelbrot();
 }
 
-mandelbrot_load_url();
+// To Do
+// Make object to form function
+//
+// <form action="/action_page.php">
+// <label for="fname">First name:</label><br>
+// <input type="text" id="fname" name="fname" value="John"><br>
+// <label for="lname">Last name:</label><br>
+// <input type="text" id="lname" name="lname" value="Doe"><br><br>
+// <input type="submit" value="Submit">
+// </form>
+
 
 </script>
 
 
+<!-- <style> body { padding: 0; margin: 0; box-sizing: 'border-box'; line-height: 1.5em; } </style> -->
+<body onload="main()"></body>
 
-
-
-
-
-
-<pre>
-Append arguments after the url to go to different places
-e.g. ...mandelbrot.html?x=-0.6980494359334312&y=-0.29024059804280583&zoom=65536
-
-Interesting Places
-------------------------------------------------
-?x=-0.6999687500000003&y=-0.2901249999999999&zoom=1024&fullscreen=1
-?x=-0.6980494359334312&y=-0.29024059804280583&zoom=65536&max_iterations=1000
-?x=-0.027120712995529206&y=0.6441158065199851&zoom=67108864
-?x=-0.027099643200635935&y=0.6440290103852749&zoom=268435456
-?x=-0.02709963878151032&y=0.6440290090395138&zoom=4294967296
-?x=0.31923687500000003&y=-0.4990148437499999&zoom=1024000
-?x=0.31923733207893373&y=-0.499014675590515&zoom=8388608000
-?x=0.38715883591593053&y=-0.25874134865963394&zoom=1073741824
-?x=0.1347109374999998&y=-0.6361328125&zoom=2048
-?x=0.2681601562500003&y=-0.004765624999999972&zoom=4096
-?x=0.38715883594200756&y=-0.2587413487062&zoom=536870912
-?x=0.32898730468750015&y=-0.4237490234374998&zoom=16384
-?x=-1.7664619022752155&y=0.041740019425749834&zoom=1073741824&max_iterations=855
-
-If the picture gets too black try upping max_iterations.  Ordinarily max iterations
- is approximated according to the zoom level but it's overrided if you provide it.
-</pre>
