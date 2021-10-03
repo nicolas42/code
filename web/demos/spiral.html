@@ -1,5 +1,5 @@
 <!DOCTYPE html><style> * { margin: 0; padding: 0; box-sizing: border-box; } </style>
-
+<!-- 
 <p>Click me</p>
 <canvas id="spiral_basic">click me</canvas><br>
 <script>
@@ -56,7 +56,7 @@ function spiral_basic(query_selector)
 spiral_basic("canvas#spiral_basic");
 </script>
 
-
+ -->
 
 <div>
     <p>Click me</p>
@@ -166,7 +166,8 @@ function spiral()
                 draw_spiral(canvas, pattern);
 
                 if ( document.querySelector('input#show_angle').checked ) {
-                    var the_text = JSON.stringify(pattern.angle)
+                    angle = 1 / ( pattern.angle / 2 / Math.PI )
+                    var the_text = '1 / ' + JSON.stringify(angle).slice(0,10) + ' of a rotation';
                     var ctx = canvas.getContext("2d");
                     ctx.setTransform(); // reset all transforms
                     ctx.fillStyle = "grey";

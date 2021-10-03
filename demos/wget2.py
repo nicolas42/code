@@ -1,4 +1,4 @@
-# can't call this file wget.py or you'll get a circular dependency error
+# This script can't be called wget.py otherwise you get a circular dependency error
 #
 # usage: 
 # python wget2.py url

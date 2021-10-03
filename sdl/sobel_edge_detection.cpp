@@ -1,4 +1,4 @@
-// g++ sobel_edge_detection.cpp -framework SDL2 -ISDL2 && ./a.out
+// g++ sobel_edge_detection.cpp -framework SDL2 -ISDL2 -fsanitize=address && ./a.out
 
 
 #include <stdio.h>
@@ -10,22 +10,23 @@
 #include "../stb_image.h"
 
 
-int main( int argc, char* args[] )
+
+
+#include <stdint.h>
+typedef uint8_t     u8;
+typedef int8_t      s8;
+typedef uint16_t    u16;
+typedef int16_t     s16;
+typedef uint32_t    u32;
+typedef int32_t     s32;
+typedef uint64_t    u64;
+typedef int64_t     s64;
+typedef float       f32;
+typedef double      f64;
+
+
+void sobel_edge_detection(u8* original_image, int width, int height, u8** edge_image_arg)
 {
-
-    // This example shows how to create a SDL_Surface* with the data loaded
-    // from an image file with stb_image.h (https://github.com/nothings/stb/)
-
-    // the color format you request stb_image to output,
-    // use STBI_rgb if you don't want/need the alpha channel
-    int req_format = STBI_rgb_alpha;
-    int width, height, orig_format;
-    unsigned char* original_image = stbi_load("Valve_original.png", &width, &height, &orig_format, req_format);
-    if (original_image == NULL) {
-        SDL_Log("Loading image failed: %s", stbi_failure_reason());
-        exit(1);
-    }
-
     // make a greyscale image of floats which is centered around zero.
     double *grey_image_floats = (double*)calloc(height * width, sizeof(double));
     for (int j=0; j<height; j++ ){
@@ -61,7 +62,6 @@ int main( int argc, char* args[] )
     //         grey_image_floats[j*width+i] -= average_color;
     //     }
     // }
-
 
     // Apply x and y sobel filters
     double *edge_image_floats = (double*)calloc(height * width, sizeof(double));
@@ -101,11 +101,12 @@ int main( int argc, char* args[] )
             if ( edge_image_floats[pos] > maximum_value ) maximum_value = edge_image_floats[pos];
         }
     }
-    printf("min %f max %f\n", minimum_value, maximum_value);
+    // printf("min %f max %f\n", minimum_value, maximum_value);
 
 
     // Convert back to a regular image
-    unsigned char *edge_image = (unsigned char*)calloc(height * width * 4, sizeof(char));
+    // u8 *edge_image = (u8*)calloc(height * width * 4, sizeof(u8));
+    u8* edge_image = *edge_image_arg;
     for (int j=1; j<height-1; j++ ){
         for (int i=1; i<width-1; i++ ){
             int pos = j*width*4 + i*4;
@@ -114,7 +115,7 @@ int main( int argc, char* args[] )
             // min value goes to zero
             // max value goes to 255
             // y = (max-min)*(x - min)
-            char v = (unsigned char)( (edge_image_floats[j*width+i] - minimum_value) / (maximum_value-minimum_value) * 255. );
+            u8 v = (u8)( (edge_image_floats[j*width+i] - minimum_value) / (maximum_value-minimum_value) * 255. );
 
             edge_image[pos+0] = v;
             edge_image[pos+1] = v;
@@ -124,8 +125,33 @@ int main( int argc, char* args[] )
     }
 
 
-    unsigned char *images[2];
-    int image_index = 1;
+    free(grey_image_floats);
+    free(edge_image_floats);
+
+    // edge_image_arg = &edge_image;
+}
+
+int main( int argc, char* args[] )
+{
+
+    // This example shows how to create a SDL_Surface* with the data loaded
+    // from an image file with stb_image.h (https://github.com/nothings/stb/)
+
+    // the color format you request stb_image to output,
+    // use STBI_rgb if you don't want/need the alpha channel
+    int req_format = STBI_rgb_alpha;
+    int width, height, orig_format;
+    u8* original_image = stbi_load("Valve_original.png", &width, &height, &orig_format, req_format);
+    if (original_image == NULL) {
+        SDL_Log("Loading image failed: %s", stbi_failure_reason());
+        exit(1);
+    }
+
+    u8 *edge_image = (u8*)calloc(height * width * 4, sizeof(u8));
+    sobel_edge_detection(original_image, width, height, &edge_image);
+
+    u8 *images[2];
+    int image_index = 0;
     images[0] = original_image;
     images[1] = edge_image;
 
@@ -151,6 +177,7 @@ int main( int argc, char* args[] )
         SDL_WaitEvent( &event );
         if ( event.type == SDL_QUIT ) running = false;
         if ( event.type == SDL_KEYDOWN || event.type == SDL_MOUSEBUTTONDOWN ) {
+            printf("woo keydown or mouse button\n");
             if ( image_index == 0 ) image_index = 1; else image_index = 0;
 
             SDL_UpdateTexture( texture, NULL, images[image_index], width * 4 );
