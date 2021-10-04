@@ -1,3 +1,5 @@
+// jquery pffft
+// var $ = function(id) { return document.querySelector(id); }
 
 function hue2rgb(p, q, t) {
     if (t < 0) {
@@ -114,176 +116,154 @@ function draw_mandelbrot(canvas, mandelbrot) {
 }
 
 
-// function update_mandelbrot_from_click(parameters, event) 
-//     {
-//         // zoom in on left click, zoom out on right click
-//         // get position of clicked mouse cursor
-//         var rect = event.currentTarget.getBoundingClientRect();
-//         var x = event.clientX - rect.left;
-//         var y = event.clientY - rect.top;
+function update_mandelbrot_from_click(parameters, event) 
+{
+    // zoom in on left click, zoom out on right click
+    // get position of clicked mouse cursor
+    var rect = event.currentTarget.getBoundingClientRect();
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
 
-//         [ parameters.x, parameters.y ] = pixel_coordinates_to_mandelbrot_coordinate(canvas, parameters, x, y);
+    [ parameters.x, parameters.y ] = pixel_coordinates_to_mandelbrot_coordinate(canvas, parameters, x, y);
 
-//         if (event.which === 1) {
-//             parameters.zoom *= 2;
-//         } else if (event.which === 3) {
-//             parameters.zoom /= 2;
-//         }
+    if (event.which === 1) {
+        parameters.zoom *= 2;
+    } else if (event.which === 3) {
+        parameters.zoom /= 2;
+    }
 
-//     }
+}
 
-// function toggle_fullscreen( canvas, mandelbrot )
-// { 
-//     mandelbrot.fullscreen = !mandelbrot.fullscreen; 
-//     // console.log( mandelbrot.fullscreen ); 
-//     if ( mandelbrot.fullscreen ) {
-//         canvas.width = window.innerWidth - 20;
-//         canvas.height = window.innerHeight - 20;
-//     } else {
-//         canvas.width = mandelbrot.w;
-//         canvas.height = mandelbrot.h;
-//     }
-// }
+function toggle_fullscreen( canvas, mandelbrot )
+{ 
+    mandelbrot.fullscreen = !mandelbrot.fullscreen; 
+    // console.log( mandelbrot.fullscreen ); 
+    if ( mandelbrot.fullscreen ) {
+        canvas.width = window.innerWidth - 20;
+        canvas.height = window.innerHeight - 20;
+    } else {
+        canvas.width = mandelbrot.w;
+        canvas.height = mandelbrot.h;
+    }
+}
 
-// function load_object_from_url(parameters)
-// {
-//     // the argument allows for default parameters to be overriden
-//     window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (_, key, value) {
-//         var result = parseFloat(value);
-//         if ( !isNaN(result) ) parameters[key] = result;
-//     });
-//     return parameters;
-// }
+function load_object_from_url(parameters)
+{
+    // the argument allows for default parameters to be overriden
+    window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (_, key, value) {
+        var result = parseFloat(value);
+        if ( !isNaN(result) ) parameters[key] = result;
+    });
+    return parameters;
+}
 
-// function save_object_to_url(obj)
-// {
-//     var str = "?"
-//     Object.keys(obj).forEach(function(key,index) {
-//         // key: the name of the object key
-//         // index: the ordinal position of the key within the object 
-//         str = str + key +"="+ (obj[key]).toString() +"&";
-//     });
+function save_object_to_url(obj)
+{
+    var str = "?"
+    Object.keys(obj).forEach(function(key,index) {
+        // key: the name of the object key
+        // index: the ordinal position of the key within the object 
+        str = str + key +"="+ (obj[key]).toString() +"&";
+    });
 
-//     window.history.replaceState(
-//         "object or string", "Title", str // "?x=" + p.x + "&y=" + p.y + "&zoom=" + p.zoom + "&max_iterations=" + p.max_iterations
-//     );
-// }
+    window.history.replaceState(
+        "object or string", "Title", str // "?x=" + p.x + "&y=" + p.y + "&zoom=" + p.zoom + "&max_iterations=" + p.max_iterations
+    );
+}
 
-// // make element tree
-// function elt(type, ...children) {
-//     // from eloquent javascript
-//     // var tree = elt( "div", elt( "button", "toggle fullscreen") );
-//     // document.body.appendChild( tree );
+// make element tree
+function elt(type, ...children) {
+    // from eloquent javascript
+    // var tree = elt( "div", elt( "button", "toggle fullscreen") );
+    // document.body.appendChild( tree );
 
-//     let node = document.createElement(type);
-//     for (let child of children) {
-//         if (typeof child != "string") node.appendChild(child);
-//         else node.appendChild(document.createTextNode(child));
-//     }
-//     return node;
-// }
+    let node = document.createElement(type);
+    for (let child of children) {
+        if (typeof child != "string") node.appendChild(child);
+        else node.appendChild(document.createTextNode(child));
+    }
+    return node;
+}
 
-// function hide_scrollbars() {
-//     document.documentElement.style.overflow = 'hidden';  // firefox, chrome
-//     document.body.scroll = "no"; // ie only
-// }
+function hide_scrollbars() {
+    document.documentElement.style.overflow = 'hidden';  // firefox, chrome
+    document.body.scroll = "no"; // ie only
+}
 
-// function show_scrollbars() {
-//     document.documentElement.style.overflow = 'auto';  // firefox, chrome
-//     document.body.scroll = "yes"; // ie only
-// }
-
-
-// function toggle_content_editable(){
-//     // html element
-//     if ( document.documentElement.contentEditable === 'true' ) document.documentElement.contentEditable = 'false'; 
-//     else document.documentElement.contentEditable = 'true';
-// }
+function show_scrollbars() {
+    document.documentElement.style.overflow = 'auto';  // firefox, chrome
+    document.body.scroll = "yes"; // ie only
+}
 
 
-// function append_elements(parent, arr )
-// {
-//     for ( var i=0; i<arr.length; i+= 1){
-//         // console.log(arr[i])
-//         var child = document.createElement(arr[i][0]);
-//         if ( arr[i][1] !== undefined ) child.innerText = arr[i][1];
-//         if ( arr[i][0] === "a" ){
-//             child.href = arr[i][2] ;
-//         } else {
-//             // event handler
-//             if ( arr[i][2] !== undefined && arr[i][3] !== undefined ) child.addEventListener(arr[i][2], arr[i][3])
-//         }
-//         parent.appendChild(child);
-//     }
-// }
-
-// ruin all chances of using jquery
-// var $ = function(id) { return document.querySelector(id); }
+function toggle_content_editable(){
+    // html element
+    if ( document.documentElement.contentEditable === 'true' ) 
+    {
+        document.documentElement.contentEditable = 'false'; 
+    } 
+    else {
+        document.documentElement.contentEditable = 'true';
+    }
+}
 
 
-// function demo_mandelbrot1()
-// {
-//     // draw mandelbrot, set up its event handlers
-//     var mandelbrot = { 
-//         x: -0.6999687500000003, y: -0.2901249999999999, zoom: 500, 
-//         max_iterations: 600, w: 800, h: 500, fullscreen: 0 
-//     }
-//     mandelbrot = load_object_from_url(mandelbrot);
+function append_elements(parent, arr )
+{
+    for ( var i=0; i<arr.length; i+= 1){
+        // console.log(arr[i])
+        var child = document.createElement(arr[i][0]);
+        if ( arr[i][1] !== undefined ) child.innerText = arr[i][1];
+        if ( arr[i][0] === "a" ){
+            child.href = arr[i][2] ;
+        } else {
+            // event handler
+            if ( arr[i][2] !== undefined && arr[i][3] !== undefined ) child.addEventListener(arr[i][2], arr[i][3])
+        }
+        parent.appendChild(child);
+    }
+}
 
-//     var canvas = document.createElement('canvas');
-//     canvas.width = mandelbrot.w;
-//     canvas.height = mandelbrot.h;
-//     canvas.addEventListener("contextmenu", function (event) { event.preventDefault() } );
-//     canvas.addEventListener("mousedown",  function(event){ update_mandelbrot_from_click(canvas, mandelbrot, event); save_object_to_url(mandelbrot); } );
 
-//     draw_mandelbrot(canvas, mandelbrot);
+function demo_mandelbrot1()
+{
+    // draw mandelbrot, set up its event handlers
+    var mandelbrot = { 
+        x: -0.6999687500000003, y: -0.2901249999999999, zoom: 500, 
+        max_iterations: 600, w: 800, h: 500, fullscreen: 0 
+    }
+    mandelbrot = load_object_from_url(mandelbrot);
+
+    var canvas = document.createElement('canvas');
+    canvas.width = mandelbrot.w;
+    canvas.height = mandelbrot.h;
+    canvas.addEventListener("contextmenu", function (event) { event.preventDefault() } );
+    canvas.addEventListener("mousedown",  function(event){ update_mandelbrot_from_click(canvas, mandelbrot, event); save_object_to_url(mandelbrot); } );
+
+    draw_mandelbrot(canvas, mandelbrot);
 
 
-//     var buttons = document.createElement("div");
+    var buttons = document.createElement("div");
 
-    
-//     append_elements(buttons, [ 
-//         [ "button", "toggle fullscreen",        "click", (e) => toggle_fullscreen( canvas, mandelbrot )   ],
-//         [ "label", "max iterations" ],
-//         [ "input", "max iterations",            "keyup", (e) => mandelbrot.max_iterations = parseFloat(elem.children[2].value) ],
-//         [ "button", "draw",                     "click", (e) =>  draw_mandelbrot( canvas, mandelbrot ) ],
-//         [ "button", "toggle content editable",  "click", (e) => toggle_content_editable() ],
-//         [ "button", "reset",                    "click", (e) => { mandelbrot = { x:0,y:0,zoom:1, max_iterations: 600, w: 800, h: 500, fullscreen: 0 }; draw_mandelbrot(canvas, mandelbrot); } ],
+    append_elements(buttons, [ 
+        [ "button", "toggle fullscreen",        "click", (e) => toggle_fullscreen( canvas, mandelbrot )   ],
+        [ "label", "max iterations" ],
+        [ "input", "max iterations",            "keyup", (e) => mandelbrot.max_iterations = parseFloat(elem.children[2].value) ],
+        [ "button", "draw",                     "click", (e) =>  draw_mandelbrot( canvas, mandelbrot ) ],
+        [ "button", "toggle content editable",  "click", (e) => toggle_content_editable() ],
+        [ "button", "reset",                    "click", (e) => { mandelbrot = { x:0,y:0,zoom:1, max_iterations: 600, w: 800, h: 500, fullscreen: 0 }; draw_mandelbrot(canvas, mandelbrot); } ],
+    ]);
 
-//         [ "a", "[ ]", "mandelbrot.html?x=-0.6999687500000003&y=-0.2901249999999999&zoom=1024&max_iterations=1000&fullscreen=1" ],
-//         [ "a", "[ ]", "mandelbrot.html?x=-0.6980494359334312&y=-0.29024059804280583&zoom=65536&max_iterations=1000&fullscreen=1" ],
-//         [ "a", "[ ]", "mandelbrot.html?x=-0.027120712995529206&y=0.6441158065199851&zoom=67108864&max_iterations=1000&fullscreen=1" ],
-//         [ "a", "[ ]", "mandelbrot.html?x=-0.027099643200635935&y=0.6440290103852749&zoom=268435456&max_iterations=1000&fullscreen=1" ],
-//         [ "a", "[ ]", "mandelbrot.html?x=-0.02709963878151032&y=0.6440290090395138&zoom=4294967296&max_iterations=1000&fullscreen=1" ],
-//         [ "a", "[ ]", "mandelbrot.html?x=0.31923687500000003&y=-0.4990148437499999&zoom=1024000&max_iterations=1000&fullscreen=1" ],
-//         [ "a", "[ ]", "mandelbrot.html?x=0.31923733207893373&y=-0.499014675590515&zoom=8388608000&max_iterations=1000&fullscreen=1" ],
-//         [ "a", "[ ]", "mandelbrot.html?x=0.38715883591593053&y=-0.25874134865963394&zoom=1073741824&max_iterations=1000&fullscreen=1" ],
-//         [ "a", "[ ]", "mandelbrot.html?x=0.1347109374999998&y=-0.6361328125&zoom=2048&max_iterations=1000&fullscreen=1" ],
-//         [ "a", "[ ]", "mandelbrot.html?x=0.2681601562500003&y=-0.004765624999999972&zoom=4096&max_iterations=1000&fullscreen=1" ],
-//         [ "a", "[ ]", "mandelbrot.html?x=0.38715883594200756&y=-0.2587413487062&zoom=536870912&max_iterations=1000&fullscreen=1" ],
-//         [ "a", "[ ]", "mandelbrot.html?x=0.32898730468750015&y=-0.4237490234374998&zoom=16384&max_iterations=1000&fullscreen=1" ],
-//         [ "a", "[ ]", "mandelbrot.html?x=-1.7664619022752155&y=0.041740019425749834&zoom=1073741824&max_iterations=1000&fullscreen=1" ],
-//         [ "a", "[ ]", "mandelbrot.html?x=-0.7439357975892299&y=-0.1146920373210634&zoom=1024&max_iterations=1000&fullscreen=1" ],
-//         [ "a", "[ ]", "mandelbrot.html?x=0.3329420522857653&y=-0.48999702139063206&zoom=512000&max_iterations=1000&w=500&h=500&fullscreen=1" ],
-//         [ "pre", "\n\
-//         If the picture gets too black try upping max_iterations.\n\
-//         https://stackoverflow.com/questions/242608/disable-browsers-vertical-and-horizontal-scrollbars\n\
-//         https://computerrock.com/blog/html5-changing-the-browser-url-without-refreshing-page/\n\
-//         \n\
-//         http://localhost:8080/demos/mandelbrot.html?x=0.3329432949920641&y=-0.4899976562478098&zoom=524288000&max_iterations=1000&w=500&h=500&fullscreen=1&\n\
-//         "]
-//     ]);
+    document.body.appendChild(canvas)
+    document.body.appendChild(buttons)
 
-//     document.body.appendChild(canvas)
-//     document.body.appendChild(buttons)
-
-// }
+}
 
 
 
 // To Do
 // Make object to form function
-//
+
 // <form action="/action_page.php">
 // <label for="fname">First name:</label><br>
 // <input type="text" id="fname" name="fname" value="John"><br>
@@ -299,3 +279,25 @@ function update_object(obj, new_stuff)
         obj[key] = new_stuff[key];
     }
 }
+
+
+// save a file
+// https://stackoverflow.com/questions/2897619/using-html5-javascript-to-generate-and-save-a-file
+// usage
+// save_file('test.txt', 'Hello world!');
+
+function save_file(filename, text) {
+    var pom = document.createElement('a');
+    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    pom.setAttribute('download', filename);
+
+    if (document.createEvent) {
+        var event = document.createEvent('MouseEvents');
+        event.initEvent('click', true, true);
+        pom.dispatchEvent(event);
+    }
+    else {
+        pom.click();
+    }
+}
+

@@ -132,21 +132,18 @@ function draw_mandelbrot(canvas, mandelbrot) {
 
 <script>
 
-function update_object(obj, new_stuff)
-{
-    for (var key in new_stuff) {
-        obj[key] = new_stuff[key];
-    }
-}
-
 function main()
 {
+    var div = document.querySelector("div#mandelbrot");
+
     window.mandelbrot = { x: 0, y: 0, zoom: 1, max_iterations: 1000 }
     var fullscreen = 0;
     var width = 500;
     var height = 500;
     // mandelbrot = load_object_from_url(mandelbrot);
-    window.canvas = document.querySelector('canvas');
+    
+    window.canvas = div.querySelector('canvas');
+
     canvas.width = width;
     canvas.height = height;
 
@@ -154,7 +151,6 @@ function main()
 
     window.places_index = 0;
     window.places = [
-        // default
         { x: 0, y: 0, zoom: 1, max_iterations: 1000 },
         { x: -0.6999687500000003, y: -0.2901249999999999, zoom: 1024, max_iterations: 1000 },
         { x: -0.027285156250000026, y: 0.6443066406250001, zoom: 2048, max_iterations: 1000 },
@@ -173,6 +169,9 @@ function main()
         { x: -0.16050877460837365, y: -1.0390565924942496, zoom: 33554432, max_iterations: 1000 },
         { x: 0.2869768066406246, y: 0.011402801513671967, zoom: 32768, max_iterations: 1000 },
         { x: 0.3618167114257812, y: -0.6025224914550779, zoom: 262144, max_iterations: 1000 },
+        {"x":-0.11343920898437498,"y":-0.8826583251953125,"zoom":32768,"max_iterations":1000},
+        {"x":0.3618113804276967,"y":-0.6025235319523451,"zoom":16777216,"max_iterations":2000},
+    
     ];
 
     canvas.addEventListener("contextmenu", function (event) 
@@ -251,7 +250,6 @@ function main()
         var elem = document.createElement("pre");
         elem.innerText = JSON.stringify(mandelbrot);
         document.body.appendChild(elem);
-
     });
 
 
