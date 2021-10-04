@@ -23,6 +23,7 @@ training_outputs = np.array([[0,1,1,0]]).T
 np.random.seed(1)
 
 # initialize weights randomly with mean 0 to create weight matrix, synaptic weights
+# this is a column matrix
 synaptic_weights = 2 * np.random.random((3,1)) - 1
 
 print('Random starting synaptic weights: ')

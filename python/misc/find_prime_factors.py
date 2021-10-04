@@ -1,4 +1,4 @@
-def factorize(n):
+def find_prime_factors(n):
     i = 2
     factors = []
     while i * i <= n:
@@ -11,6 +11,9 @@ def factorize(n):
         factors.append(n)
     return factors
 
-print(factorize(2009))
-
-
+if __name__ == "__main__":
+    for n in [ 2009, 720720, 999983 ]:
+        s=str(n)+" = 1"
+        for p in find_prime_factors(n):
+            s=s+" * "+str(p)
+        print(s)

@@ -1,7 +1,7 @@
 import math
 
 
-def newtons_method(f, fdash, x0):
+def find_roots_with_newtons_method(f, fdash, x0):
     while True:
         y0 = f(x0)
         m = fdash(x0)
@@ -17,7 +17,7 @@ def find_roots(f, fdash, xs):
     roots = set()
     for x in xs:
         try:
-            r = newtons_method(f, fdash, x)
+            r = find_roots_with_newtons_method(f, fdash, x)
             r = round(r, 7)
             roots.add(r)
         except Exception as e:

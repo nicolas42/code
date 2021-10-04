@@ -13,7 +13,7 @@
 
 import math
 
-def quadratic_equation(a,b,c):
+def find_roots_of_quadratic_equation(a,b,c):
     # ax^2 + bx + c = 0
     roots = []
     if b*b >= 4*a*c: 
@@ -31,7 +31,7 @@ def find_angle_from_distance(x = 30, y = 0, v = 20, g = -9.81):
     b = x
     c = -y + g * x**2 / 2 / v**2
 
-    roots = quadratic_equation(a,b,c)
+    roots = find_roots_of_quadratic_equation(a,b,c)
     return [ math.atan(i)*180/math.pi for i in roots ]
 
 def find_distance_from_angle(angle = math.pi/4, v = 20, y = 0, g = -9.81):
@@ -43,7 +43,7 @@ def find_distance_from_angle(angle = math.pi/4, v = 20, y = 0, g = -9.81):
     b = math.tan(angle) 
     c = y
 
-    roots = quadratic_equation(a,b,c)
+    roots = find_roots_of_quadratic_equation(a,b,c)
     return roots
 
 if __name__ == "__main__":

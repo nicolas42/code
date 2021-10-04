@@ -1,5 +1,8 @@
 import tkinter as tk
 
+default_font = tk.tkFont.nametofont("TkDefaultFont")
+default_font.configure(size=48)
+
 class Application(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
