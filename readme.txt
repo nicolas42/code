@@ -45,6 +45,8 @@ Here's a more complicated example of usage from the imgui repository
 mkdir Debug
 cl /nologo /Zi /MD /I .. /I ..\.. /I "%WindowsSdkDir%Include\um" /I "%WindowsSdkDir%Include\shared" /I "%DXSDK_DIR%Include" /D UNICODE /D _UNICODE *.cpp ..\imgui_impl_win32.cpp ..\imgui_impl_dx10.cpp ..\..\imgui*.cpp /FeDebug/example_win32_directx10.exe /FoDebug/ /link /LIBPATH:"%DXSDK_DIR%/Lib/x86" d3d10.lib d3dcompiler.lib
 
+How to set path in windows
+SET PATH=%PATH%;c:\nick\sdl_cross_platform\lib_win64
 
 
 Awesome Stuff
