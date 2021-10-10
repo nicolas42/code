@@ -46,10 +46,12 @@ typedef struct multivector Multivector;
 //     return memory + old_memory_offset;
 // }
 
-Multivector *multivector_allocate()
-{
-    return (Multivector *)calloc(0, sizeof(Multivector));
-}
+
+
+// Multivector *multivector_allocate()
+// {
+//     return (Multivector *)calloc(0, sizeof(Multivector));
+// }
 
 Multivector multivector_multiply(Multivector a, Multivector b)
 {
