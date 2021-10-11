@@ -1,3 +1,5 @@
+*.iso
+
 *.tmp
 *.dmg
 .ipynb_checkpoints
