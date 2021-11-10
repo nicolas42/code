@@ -1,0 +1,11 @@
+file system
+-----------------------------------------
+* use a single file 1gb
+* use fseek    int fseek(FILE *stream, long int offset, int whence)
+* flat file system 
+* search function
+
+u64 file_offset u64 file_length u64 filename_length filename
+
+offsets and lengths are all in bytes
+
