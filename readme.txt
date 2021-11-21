@@ -1,6 +1,6 @@
 Screen
 --------------------------------------
-Make a new screen with screen. exit using exit. reattach to a screen using screen -r <id>. list the screens with screen -ls 
+Make a new screen with screen. detatch using ctrl+a d. reattach with screen -r <id>. list the screens with screen -ls. exit using exit.
 
 screen
 screen -ls
