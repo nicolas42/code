@@ -1,3 +1,12 @@
+Screen
+--------------------------------------
+Make a new screen with screen. exit using exit. reattach to a screen using -r <id>. list the screens with -ls 
+
+screen
+screen -ls
+screen -r <screen id>
+
+
 Python datetime filenames
 ------------------------------------
 
