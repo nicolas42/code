@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <style> body { margin: 0; padding: 0; } </style>
 <div id="mandelbrot">
-    <div>
-    <button>previous</button>
-    <button>next</button>
-    <button>reset</button>
-    <button>toggle_fullscreen</button>
-    <button>save place</button>
+    <div class="menu">
+        <button class="prev">previous</button>
+        <button class="next">next</button>
+        <button class="reset">reset</button>
+        <button class="fullscreen">toggle_fullscreen</button>
+        <!-- <button class="save">save place</button> -->
+        <button class="goto">go to</button>
+        <br>
+        <input class="input" style="width: 100%"></textarea>
     </div>
-    <canvas></canvas>
+    <canvas class="canvas"></canvas>
 </div>
 
 <script> // draw_mandelbrot.js 
@@ -69,6 +72,7 @@ function pixel_coordinates_to_mandelbrot_coordinate(canvas, mandelbrot, x, y)
 
     return [cx, cy]; 
 }
+
 
 function draw_mandelbrot(canvas, mandelbrot) {
 
@@ -132,25 +136,32 @@ function draw_mandelbrot(canvas, mandelbrot) {
 
 <script>
 
+
+// alternative to eval
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval
+function looseJsonParse(obj){
+    return Function('"use strict";return (' + obj + ')')();
+}
+
 function main()
 {
-    var div = document.querySelector("div#mandelbrot");
+    var mandelbrot_div = document.querySelector("#mandelbrot");
+    var canvas = mandelbrot_div.querySelector('canvas');
 
-    window.mandelbrot = { x: 0, y: 0, zoom: 1, max_iterations: 1000 }
-    var fullscreen = 0;
-    var width = 500;
-    var height = 500;
-    // mandelbrot = load_object_from_url(mandelbrot);
-    
-    window.canvas = div.querySelector('canvas');
+    // let buttons = document.querySelectorAll('button');
 
-    canvas.width = width;
-    canvas.height = height;
+    var prev_button = mandelbrot_div.querySelector(".prev");
+    var next_button = mandelbrot_div.querySelector(".next");
+    var reset_button = mandelbrot_div.querySelector(".reset");
+    var fullscreen_button = mandelbrot_div.querySelector(".fullscreen");
+    var save_button = mandelbrot_div.querySelector(".save");
+    var goto_button = mandelbrot_div.querySelector(".goto");
+    var input_field = mandelbrot_div.querySelector(".input");
 
-    draw_mandelbrot(canvas, mandelbrot);
+    input_field.value = "{\"x\":-0.18801757812500003,\"y\":-0.8209140624999999,\"zoom\":8192,\"max_iterations\":1000}";
 
-    window.places_index = 0;
-    window.places = [
+    var places_index = 0;
+    var places = [
         { x: 0, y: 0, zoom: 1, max_iterations: 1000 },
         { x: -0.6999687500000003, y: -0.2901249999999999, zoom: 1024, max_iterations: 1000 },
         { x: -0.027285156250000026, y: 0.6443066406250001, zoom: 2048, max_iterations: 1000 },
@@ -171,8 +182,21 @@ function main()
         { x: 0.3618167114257812, y: -0.6025224914550779, zoom: 262144, max_iterations: 1000 },
         {"x":-0.11343920898437498,"y":-0.8826583251953125,"zoom":32768,"max_iterations":1000},
         {"x":0.3618113804276967,"y":-0.6025235319523451,"zoom":16777216,"max_iterations":2000},
-    
+        {"x":-0.18801757812500003,"y":-0.8209140624999999,"zoom":8192,"max_iterations":1000},
     ];
+
+
+    // var mandelbrot = places[places_index];
+    var fullscreen = 0;
+    var width = 500;
+    var height = 500;
+    // mandelbrot = load_object_from_url(mandelbrot);
+    
+    canvas.width = width;
+    canvas.height = height;
+
+    draw_mandelbrot(canvas, places[places_index]);
+
 
     canvas.addEventListener("contextmenu", function (event) 
     { 
@@ -187,49 +211,49 @@ function main()
         var x = event.clientX - rect.left;
         var y = event.clientY - rect.top;
 
-        [ mandelbrot.x, mandelbrot.y ] = pixel_coordinates_to_mandelbrot_coordinate(canvas, mandelbrot, x, y);
+        [ places[places_index].x, places[places_index].y ] = pixel_coordinates_to_mandelbrot_coordinate(canvas, places[places_index], x, y);
 
         if (event.which === 1) {
-            mandelbrot.zoom *= 2;
+            places[places_index].zoom *= 2;
         } else if (event.which === 3) {
-            mandelbrot.zoom /= 2;
+            places[places_index].zoom /= 2;
         }
         
-        draw_mandelbrot(canvas, mandelbrot);
+        input_field.value = JSON.stringify(places[places_index]);
+        draw_mandelbrot(canvas, places[places_index]);
     });
 
 
-    let buttons = document.querySelectorAll('button');
-    buttons[0].addEventListener("click", function(e)
+    prev_button.addEventListener("click", function(e)
     { 
         places_index -= 1; 
         console.log(places[places_index]);
         if ( places_index < 0 ) {
             places_index = places.length-1;
         }
-        mandelbrot = places[places_index];
-        draw_mandelbrot(canvas, mandelbrot);
+        input_field.value = JSON.stringify(places[places_index]);
+        draw_mandelbrot(canvas, places[places_index]);
     });
 
-    buttons[1].addEventListener("click", function(e)
+    next_button.addEventListener("click", function(e)
     { 
         places_index += 1; 
         console.log(places[places_index]);
         if ( places_index > places.length-1 ) {
             places_index = 0;
         }
-        mandelbrot = places[places_index];
-        draw_mandelbrot(canvas, mandelbrot);
+        input_field.value = JSON.stringify(places[places_index]);
+        draw_mandelbrot(canvas, places[places_index]);
     });
 
-    buttons[2].addEventListener("click", function(e)
+    reset_button.addEventListener("click", function(e)
     { 
         places_index = 0
-        mandelbrot = places[places_index];
-        draw_mandelbrot(canvas, mandelbrot)
+        input_field.value = JSON.stringify(places[places_index]);
+        draw_mandelbrot(canvas, places[places_index])
     });
 
-    buttons[3].addEventListener("click", function(e)
+    fullscreen_button.addEventListener("click", function(e)
     { 
         fullscreen = !fullscreen; 
         // console.log( fullscreen ); 
@@ -240,18 +264,29 @@ function main()
             canvas.width = width;
             canvas.height = height;
         }
-        draw_mandelbrot(canvas, mandelbrot);
+        input_field.value = JSON.stringify(places[places_index]);
+        draw_mandelbrot(canvas, places[places_index]);
     });
 
-    buttons[4].addEventListener("click", function(e)
+    // save_button.addEventListener("click", function(e)
+    // { 
+    //     places.push(places[places_index]);
+    //     console.log(places[places_index])
+    //     var monospace_text = document.createElement("pre");
+    //     monospace_text.innerText = JSON.stringify(places[places_index]);
+    //     document.body.appendChild(monospace_text);
+    // });
+
+    goto_button.addEventListener("click", function(e)
     { 
-        places.push(mandelbrot);
-        console.log(mandelbrot)
-        var elem = document.createElement("pre");
-        elem.innerText = JSON.stringify(mandelbrot);
-        document.body.appendChild(elem);
-    });
+        var here = looseJsonParse(input_field.value)
+        places.push(here);
+        places_index = places.length-1;
 
+        input_field.value = JSON.stringify(places[places_index]);
+        draw_mandelbrot(canvas, here);
+
+    });
 
 }
 
