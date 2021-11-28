@@ -21,8 +21,8 @@ np.random.shuffle(X)
 
 K = 3
 # np.random.seed(142)
-centroids = X[ np.random.choice(np.arange(len(X)), K), :]
-for i in range(5):
+centroids = X[(1,2,3),:] # X[ np.random.choice(np.arange(len(X)), K), :]
+for i in range(10):
     # Cluster Assignment step
     C = np.array(
         [ np.argmin( [np.dot(x_i-y_k, x_i-y_k) for y_k in centroids]) for x_i in X ] 

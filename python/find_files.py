@@ -17,23 +17,42 @@ def find(a,b):
 		return True
 
 
-current_dir = os.getcwd()
+def find_files( top_dir, query ):
 
-query_words = [""]
-if len(sys.argv) >= 2:
-	query_words = sys.argv[1:]
-print(query_words)
 
-for root, dirs, files in os.walk(current_dir, topdown=False):
-	# print(root,dirs,files)
+    for root, dirs, files in os.walk(top_dir, topdown=False):
+        # print(root,dirs,files)
 
-	files = dirs + files  # join the two lists together
+        files = dirs + files  # join the two lists together
 
-	for file in files:
-		full_path = os.path.join(root, file)
-		was_found = True	
-		for query_word in query_words:
-			if not find(full_path, query_word):
-				was_found = False
-		if was_found:
-			print(full_path)
+        for file in files:
+            full_path = os.path.join(root, file)
+            was_found = True	
+            for query_word in query:
+                if not find(full_path, query_word):
+                    was_found = False
+            if was_found:
+                print(full_path)
+
+
+import pathlib 
+
+if __name__ == "__main__":
+
+    print("usage: python find_files.py dir query")
+    print("args:", sys.argv)
+
+    query = [""]
+    top_dir = os.getcwd()
+
+    if ( len(sys.argv) >= 2 ):
+        script_name = sys.argv[0]
+        top_dir = sys.argv[1]
+        query = sys.argv[2:]
+        if ( top_dir == "." ): top_dir = os.getcwd()
+        if ( top_dir == "~" ): top_dir = pathlib.Path.home()
+    
+
+    print(script_name, top_dir, query, "\n")
+    find_files( top_dir, query )
+

@@ -5,15 +5,7 @@ import os
 
 def read_thru(url):
 
-    # read data from url_file if possible
-    # otherwise read from the url and write to a file for later
-    
-    # to make a file which is roughly equivalenet to a url we 
-    # take of http(s):// and then just convert all forward slashes
-    # to dashes.  this is reasonably collision avoidant
-    # the other option might be to percent encode forward slashes 
-    # but that looks too ugly
-
+    # read url file and cache it for future usage.
 
     # url2filename
     filename = url.split('//')[-1].replace('/','-')
@@ -38,8 +30,10 @@ def read_thru(url):
     return data
 
 
+# moby dick
 url = 'https://www.gutenberg.org/files/2701/2701-0.txt'
 data = read_thru(url)
+
 
 # # write to file
 # f = open('moby_dick.txt','w',encoding="utf-8")
