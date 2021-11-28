@@ -1,7 +1,5 @@
 import tkinter as tk
-
-default_font = tk.tkFont.nametofont("TkDefaultFont")
-default_font.configure(size=48)
+from tkinter import font 
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -9,6 +7,11 @@ class Application(tk.Frame):
         self.master = master
         self.pack()
         self.create_widgets()
+
+        # resize fonts
+        for font_name in [ "TkDefaultFont", "TkTextFont", "TkFixedFont", "TkMenuFont", "TkHeadingFont", "TkCaptionFont", "TkSmallCaptionFont", "TkIconFont", "TkTooltipFont" ]:
+            that_font = tk.font.nametofont(font_name)
+            that_font.configure(size=48)
 
     def create_widgets(self):
         self.hi_there = tk.Button(self)
@@ -23,7 +26,12 @@ class Application(tk.Frame):
     def say_hi(self):
         print("hi there, everyone!")
 
+
 root = tk.Tk()
 app = Application(master=root)
+
+
+
+
 app.mainloop()
 

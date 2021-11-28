@@ -1,4 +1,4 @@
-# importing cv2 
+# draw a wave with a changing frequency.  dynamically loads config.py so the output can be changed while the program is running
 import cv2 
 import sys
 import math

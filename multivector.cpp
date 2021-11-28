@@ -157,7 +157,7 @@ Multivector multivector_multiply_n(int num_args, Multivector...) {
    return out;
 }
 
-Multivector multivector_rotate(Multivector arg, double xy_angle, double xz_angle, double yz_angle )
+Multivector multivector_compose_orthogonal_rotations(Multivector arg, double xy_angle, double xz_angle, double yz_angle )
 {
     Multivector v = multivector_copy(arg);
 
@@ -227,26 +227,26 @@ int main()
         printf("Multiply x unit vector around xy,yz, and xz planes by TAU/8 TAU/8 0 \n");
         Multivector v;
         v.e1 = 1;
-        Multivector vdash = multivector_rotate(v,TAU/8., 0, TAU/8.);
+        Multivector vdash = multivector_compose_orthogonal_rotations(v,TAU/8., 0, TAU/8.);
         multivector_print(vdash);
     }
 
 
     {
-        printf("Rotate x unit vector 180 degrees around plane with normal x-y \n");
+        printf("Rotate x unit vector 90 degrees around plane with normal x-y \n");
         printf("That is towards the third quadrant.\n");
 
-        Multivector v;
-        v.e1 = 1;
+        Multivector x; 
+        x.e1 = 1;
 
         Multivector axis;
         axis.e1 = 1./sqrt(2.);
         axis.e2 = -1./sqrt(2.);
         multivector_print(axis);
 
-        double angle = 180./2.*PI/180.;
+        double angle = 90./2.*PI/180.;
         Multivector q = make_quaternion_from_axis_and_angle(axis, angle);
-        Multivector vdash = multivector_multiply_n(3, make_conjugate(q), v, q);
+        Multivector vdash = multivector_multiply_n(3, make_conjugate(q), x, q);
         multivector_print(vdash);
         
     }

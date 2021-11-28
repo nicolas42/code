@@ -29,10 +29,6 @@ def approximate_circle_with_derivative(n = 10):
     return X,Y
 
 
-
-
-
-
     
 if __name__ == "__main__":
 
