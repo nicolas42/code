@@ -1,15 +1,12 @@
-// How to make the thing
-//
-// install SDL and SDL_image with a package manager or from https://libsdl.org/download-2.0.php
-//
-// run something like this
-// 
-// macos:
-// 	g++ -ISDL2 -framework SDL2 -framework SDL2_image -std=c++11 show_images.cpp 
+/*
+Install SDL and SDL_image
 
-// linux:
-// 	g++ -ISDL2 -lSDL2 -lSDL2_image -std=c++11 show_images.cpp
+macos:
+	g++ -ISDL2 -framework SDL2 -framework SDL2_image -std=c++11 show_images.cpp 
 
+linux:
+	g++ -ISDL2 -lSDL2 -lSDL2_image -std=c++11 show_images.cpp
+*/
 
 
 #include <stdio.h>
@@ -173,15 +170,15 @@ double get_scaler_to_fit( SDL_Surface* a, SDL_Surface* b )
 
 int main( int argc, char* argv[] )
 {
-    int window_width = 400;
+    int window_width = 800;
     int window_height = 800;
 
-	const char *dir;
+	const char *dir = ".";
 	if (argc==2){
 		dir = argv[1];
 	} else {
         printf("show_images <dir>\n");
-        return -1;
+        // return -1;
 	}
 
 	const char *desired_extensions[] = {"jpg", "png", "bmp", "jpeg"};
