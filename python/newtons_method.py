@@ -1,5 +1,18 @@
 
 """
+
+# Newton's method is a way of solving an equation using its derivative
+
+# It requires that a starting input value is chosen
+# If there are multiple solutions, it will only return one of them
+# Different starting values will retunr different different solutions
+
+# Any one variable equation can be reformulated as a calculation 
+# that equals zero.  In this way the input variable that solves the equation 
+# can be solved by finding the root of the equation.
+# A derivative is a tangent line.  Tangent lines can be followed to the 
+# 
+
 Newton's method
 start at an arbitrary x0
 calculate the tangent line

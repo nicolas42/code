@@ -1,13 +1,10 @@
-Concurrently download a bunch of files
+Concurrently download a bunch of files.  Edit the urls file then run 
 
-Run demo with "go run downloader.go".  It will download a bunch of bear images.
-
-Optionally add the url file and output directory "go run downloader.go urls-file  output-dir".  It will download a bunch of images.
+    go run downloader.go
 
 based on https://medium.com/@dhanushgopinath/concurrent-http-downloads-using-go-32fecfa1ed27
 
-
-# Get a bunch of image urls
+# How to get a bunch of image urls
 
 Open a browser and make sure your adblocker is off.  Using privacy mode can sometimes be an easy way of disabling all extensions.
 
