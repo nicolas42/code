@@ -22,8 +22,9 @@ function draw_image(canvas, img)
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // resize to fit window and center
-    var img_size = resize_to_fit(img.naturalWidth, img.naturalHeight, canvas.width, canvas.height);
+    // resize and center
+    var scaler = Math.min(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight);
+    img_size = { width: img.naturalWidth*scaler, height: img.naturalHeight*scaler };
     offset_y = (canvas.height - img_size.height)/2;
     offset_x = (canvas.width - img_size.width)/2;
 
