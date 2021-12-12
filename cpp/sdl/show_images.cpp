@@ -167,6 +167,35 @@ double get_scaler_to_fit( SDL_Surface* a, SDL_Surface* b )
     return scaler;
 }
 
+void show( SDL_Window *window, std::vector<std::string> filenames, int filenames_index ) 
+{
+    SDL_Surface *window_surface = SDL_GetWindowSurface( window );
+    SDL_Surface* image_surface;
+    SDL_Surface *optimised_image_surface;
+
+    // set title to filename
+    SDL_SetWindowTitle(window, filenames[filenames_index].c_str());
+
+    // optimise image
+    image_surface = IMG_Load( filenames[filenames_index].c_str() );
+    optimised_image_surface = SDL_ConvertSurface( image_surface, window_surface->format, 0 );
+    SDL_FreeSurface(image_surface);
+
+    // draw optimised
+    SDL_FillRect(window_surface, NULL, SDL_MapRGB(window_surface->format, 0, 0, 0));
+    double scaler = get_scaler_to_fit( image_surface, window_surface );
+    SDL_Rect image_size;
+    image_size.w = (int)(scaler * image_surface->w);
+    image_size.h = (int)(scaler * image_surface->h);
+    image_size.y = (window_surface->h - image_size.h)/2;
+    image_size.x = (window_surface->w - image_size.w)/2;
+
+    SDL_BlitScaled( optimised_image_surface, NULL, window_surface, &image_size );
+    SDL_FreeSurface(optimised_image_surface);
+
+    SDL_UpdateWindowSurface( window );
+    
+}
 
 int main( int argc, char* argv[] )
 {
@@ -181,7 +210,6 @@ int main( int argc, char* argv[] )
 
     // get image filenames
     std::vector<std::string> filenames;
-
 	const char *desired_extensions[] = {"jpg", "png", "bmp", "jpeg"};
 	std::vector<std::string> all_filenames;
 	list_dir(dir, &all_filenames);
@@ -201,51 +229,50 @@ int main( int argc, char* argv[] )
 	const int filenames_length = filenames.size();
 
 
-
     int window_width = 800;
     int window_height = 800;
 
-	SDL_Init( SDL_INIT_VIDEO );
-	IMG_Init( IMG_INIT_PNG & IMG_INIT_JPG );
-
 	SDL_Window* window;
 	SDL_Surface* window_surface;
+    // SDL_Surface* image_surface;
+    // SDL_Surface *optimised_image_surface;
+	SDL_Event event;
+	bool time_to_quit = false;
+	bool is_fullscreen = false;
 
-    SDL_Surface* image_surface;
-    SDL_Surface *optimised_image_surface;
-
-	window = SDL_CreateWindow( "Press any key :)", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_width, window_height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE ); // SDL_WINDOW_FULLSCREEN_DESKTOP ); // 
-
-	// SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-
+	SDL_Init( SDL_INIT_VIDEO );
+	IMG_Init( IMG_INIT_PNG & IMG_INIT_JPG );
+	window = SDL_CreateWindow( "Press any key :)", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_width, window_height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE ); 
 	window_surface = SDL_GetWindowSurface( window );
 
 
-	bool do_update = false;
-	bool running = true;
-	bool is_fullscreen = false;
+	show( window, filenames, filenames_index );
 
-
-    while (running)
+    while (!time_to_quit)
     {
-		SDL_Event event;
         SDL_WaitEvent(&event);
- 
+
 		switch (event.type){
 
 		case SDL_QUIT:
-			running = false;
+			time_to_quit = true;
 			break;
 
         case SDL_WINDOWEVENT:
-            printf("window event\n");
+            printf("window event %d\n", (int)(event.window.event) );
 
+            // resize window
             if ( event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED ) {
-                
                 SDL_FreeSurface(window_surface);
                 window_surface = SDL_GetWindowSurface( window );
                 printf("%d %d\n", window_surface->w, window_surface->h );
+                show( window, filenames, filenames_index );
             }
+
+            if ( event.window.event == SDL_WINDOWEVENT_MAXIMIZED || event.window.event == SDL_WINDOWEVENT_RESTORED ) { 
+                show( window, filenames, filenames_index );
+            }
+
             break;
 
 		case SDL_KEYDOWN:
@@ -253,21 +280,22 @@ int main( int argc, char* argv[] )
 			if ( event.key.keysym.sym == SDLK_RIGHT ) {
 				filenames_index += 1;
 				if ( filenames_index >= filenames_length ) filenames_index = 0;
-				do_update = true;
+				show( window, filenames, filenames_index );
             }
 
             if ( event.key.keysym.sym == SDLK_LEFT ) {
 				filenames_index += -1;
 				if ( filenames_index < 0 ) filenames_index = filenames_length-1;
-				do_update = true;
+				show( window, filenames, filenames_index );
             }
             
             if ( event.key.keysym.sym == SDLK_f ) {
-				printf("fullscreen\n");
 				if (is_fullscreen) {
 					SDL_SetWindowFullscreen(window, 0);
+
 				} else {
-					SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+					SDL_SetWindowFullscreen( window, SDL_WINDOW_FULLSCREEN_DESKTOP );
+                    // SDL_WINDOW_FULLSCREEN disables fullscreen window switching on macos
 				}
 				is_fullscreen = !is_fullscreen;
 			}
@@ -277,30 +305,9 @@ int main( int argc, char* argv[] )
 		case SDL_MOUSEBUTTONDOWN:
 			filenames_index += -1;
 			if ( filenames_index < 0 ) filenames_index = filenames_length-1;
-			do_update = true;
+			show( window, filenames, filenames_index );
 			break;
 
-		}
-
-		if ( do_update ) {
-            // set title to filename
-			SDL_SetWindowTitle(window, filenames[filenames_index].c_str());
-
-            // optimise image
-			image_surface = IMG_Load( filenames[filenames_index].c_str() );
-			optimised_image_surface = SDL_ConvertSurface( image_surface, window_surface->format, 0 );
-            SDL_FreeSurface(image_surface);
-
-            // draw optimised
-			SDL_FillRect(window_surface, NULL, SDL_MapRGB(window_surface->format, 0, 0, 0));
-            double scaler = get_scaler_to_fit( image_surface, window_surface );
-            SDL_Rect image_size = { .x = 0, .y = 0, .w = (int)(scaler * image_surface->w), .h = (int)(scaler * image_surface->h) };
-			SDL_BlitScaled( optimised_image_surface, NULL, window_surface, &image_size );
-            SDL_FreeSurface(optimised_image_surface);
-
-			SDL_UpdateWindowSurface( window );
-            
-            do_update = false;
 		}
 
     }
