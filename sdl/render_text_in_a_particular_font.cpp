@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
     int quit;
 
     char font_path[100];
-    sprintf(font_path, "Sans.ttf");
+    sprintf(font_path, "data/Sans.ttf");
     if (argc == 2) {
         sprintf(font_path, "%s", argv[1]);
     } else {

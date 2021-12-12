@@ -15,6 +15,8 @@ from https://stackoverflow.com/questions/33304351/sdl2-fast-pixel-manipulation
 #include "SDL.h"
 
 
+
+
 float hue2rgb(float p, float q, float t) {
     if (t < 0.) {
         t += 1.;
@@ -64,8 +66,6 @@ void hsl2rgb(float h, float s, float l, int rgb[3]) {
 
 }
     
-
-
 struct image {
     // width, height, number of channels, image data
     int w;
@@ -75,16 +75,24 @@ struct image {
 };
 
 
+struct image make_image(double w, double h, double c)
+{
+    struct image im;
+    im.w = w;
+    im.h = h;
+    im.c = c;
+    im.data = (char*)malloc(im.w * im.h * im.c );
+    return im;
+}
+
+
 void draw_mandelbrot(struct image im, double x, double y, double zoom, double max_iterations )
 {
     const unsigned char black[4] = {0, 0, 0, 255};
-    // const unsigned char white[4] = {255, 255, 255, 255};
 
     for (double j = 0; j < im.h; j += 1) {
         for (double i = 0; i < im.w; i += 1) {
 
-            // get math point from image point
-            // image is flipped vertically. numbers go up, pixels go down. i don't care.
             double h = 4. / zoom;
             double w = 4. / zoom;
 
@@ -99,8 +107,6 @@ void draw_mandelbrot(struct image im, double x, double y, double zoom, double ma
                 double zxtemp = zx * zx - zy * zy + cx;
                 zy = 2 * zx * zy + cy;
                 zx = zxtemp;
-                // if length of complex vector exceeds 4 then 
-                // assume the pixel is not in the set
                 if (zx * zx + zy * zy > 4) {
                     in_set = 0;
                     break;
@@ -126,7 +132,8 @@ void draw_mandelbrot(struct image im, double x, double y, double zoom, double ma
                 im.data[pos + 0] = color[2];
                 im.data[pos + 1] = color[1];
                 im.data[pos + 2] = color[0];
-                im.data[pos + 3] = 255;
+                im.data[pos + 3] = (char)255;
+
             }
 
 
@@ -135,15 +142,38 @@ void draw_mandelbrot(struct image im, double x, double y, double zoom, double ma
 }
 
 
-struct image make_image(double w, double h, double c)
-{
-    struct image im;
-    im.w = w;
-    im.h = h;
-    im.c = c;
-    im.data = (char*)malloc(im.w * im.h * im.c );
-    return im;
-}
+
+// #define STB_IMAGE_IMPLEMENTATION
+// #include "stb_image.h"
+// #define STB_IMAGE_WRITE_IMPLEMENTATION
+// #include "stb_image_write.h"
+
+// #include "types.h"
+
+// void draw_mandelbrot_main(){
+
+
+//     struct image im;
+//     im.w = 800;
+//     im.h = 800;
+//     im.c = 4;
+//     im.data = (char*)malloc(im.w * im.h * im.c );
+
+//     double x,y,zoom,max_iterations;
+//     x = -0.6999687500000003; 
+//     y = -0.2901249999999999; 
+//     zoom = 1024; 
+//     max_iterations = 855;
+
+//     printf("Drawing a mandelbrot image %dx%d...\n", im.w, im.h);
+//     draw_mandelbrot(im, x,y,zoom,max_iterations);
+
+//     int success = stbi_write_png("mandelbrot_image.png", im.w,im.h,im.c,im.data,im.w*im.c);
+//     stbi_write_png("mandelbrot_image.png", im.w,im.h,im.c,im.data,im.w*im.c);
+
+// }
+
+
 
 
 // int texture_main(int argc, char ** argv)

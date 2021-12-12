@@ -1,29 +1,11 @@
 // g++ sobel_edge_detection.cpp -framework SDL2 -ISDL2 -fsanitize=address && ./a.out
 
-
 #include <stdio.h>
-
 #include "SDL.h"
 // #include "SDL_image.h"
-
 #define STB_IMAGE_IMPLEMENTATION
-#include "../stb_image.h"
-
-
-
-
-#include <stdint.h>
-typedef uint8_t     u8;
-typedef int8_t      s8;
-typedef uint16_t    u16;
-typedef int16_t     s16;
-typedef uint32_t    u32;
-typedef int32_t     s32;
-typedef uint64_t    u64;
-typedef int64_t     s64;
-typedef float       f32;
-typedef double      f64;
-
+#include "stb_image.h"
+#include "types.h"
 
 void sobel_edge_detection(u8* original_image, int width, int height, u8** edge_image_arg)
 {
@@ -141,7 +123,7 @@ int main( int argc, char* args[] )
     // use STBI_rgb if you don't want/need the alpha channel
     int req_format = STBI_rgb_alpha;
     int width, height, orig_format;
-    u8* original_image = stbi_load("Valve_original.png", &width, &height, &orig_format, req_format);
+    u8* original_image = stbi_load("data/Valve_original.png", &width, &height, &orig_format, req_format);
     if (original_image == NULL) {
         SDL_Log("Loading image failed: %s", stbi_failure_reason());
         exit(1);

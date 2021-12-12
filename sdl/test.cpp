@@ -44,7 +44,7 @@ int open_a_window( int argc, char* args[] )
 
 int load_a_bmp_and_blit_it_to_the_screen( int argc, char* args[] )
 {
-    SDL_Surface *image_surface = SDL_LoadBMP( "lenna.bmp" );
+    SDL_Surface *image_surface = SDL_LoadBMP( "data/lenna.bmp" );
 
     SDL_Init( SDL_INIT_VIDEO );
     SDL_Window *window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, image_surface->w, image_surface->h, SDL_WINDOW_SHOWN );
@@ -78,8 +78,8 @@ int respond_to_left_and_right_keyboard_events( int argc, char* args[] )
     SDL_Surface *surface = SDL_GetWindowSurface( window );
 
     SDL_Surface *surfaces[2];
-    surfaces[0] = SDL_LoadBMP( "lenna.bmp" );
-    surfaces[1] = SDL_LoadBMP( "smiley.bmp" );
+    surfaces[0] = SDL_LoadBMP( "data/lenna.bmp" );
+    surfaces[1] = SDL_LoadBMP( "data/smiley.bmp" );
     int surface_index = 1;
 
     SDL_Event event;
@@ -143,7 +143,7 @@ int scale_an_image_and_optimise_it_for_faster_blitting( int argc, char* args[] )
     SDL_Surface *image_surfaces[2];
     int image_index = 0;
 
-    char filenames[2][20] = { "lenna.bmp", "smiley.bmp" };
+    char filenames[2][20] = { "data/lenna.bmp", "data/smiley.bmp" };
 
     // load images
     if (0) 
