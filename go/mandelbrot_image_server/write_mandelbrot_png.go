@@ -1,11 +1,17 @@
-package mandelbrot
+package main
 
 import (
+	"bytes"
+	"image/png"
+	"log"
+	"os"
 	"image"
 	"image/color"
+	// "./mandelbrot"
 )
 
-func Draw(width int, height int) image.Image {
+
+func mandelbrot_Draw(width int, height int) image.Image {
 	var x, y int
 	var xmin, xmax, ymin, ymax float64
 	var xscale, yscale, zx, zy, cx, cy, zxtemp float64
@@ -81,38 +87,31 @@ func Draw(width int, height int) image.Image {
 	return img
 }
 
-// func main() {
 
-// 	img := drawMandelbrot(1000, 1000)
+func main() {
 
-// 	var buffer bytes.Buffer
-// 	png.Encode(&buffer, img)
+	img := mandelbrot_Draw(1000, 1000)
 
-// 	f, err := os.Create("image.png")
-// 	defer f.Close()
+	var buffer bytes.Buffer
+	png.Encode(&buffer, img)
 
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
+	f, err := os.Create("image.png")
+	defer f.Close()
 
-// 	f.Write(buffer.Bytes())
+	if err != nil {
+		log.Fatal(err)
+	}
 
-// }
+	f.Write(buffer.Bytes())
+	f.Close()
+	println("Wrote mandelbrot image to image.png");
 
-// func testOsCreate() {
-// 	img := drawMandelbrot(1000, 1000)
+}
 
-// 	f, err := os.Create("image.png")
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	if err := png.Encode(f, img); err != nil {
-// 		f.Close()
-// 		log.Fatal(err)
-// 	}
-
-// 	if err := f.Close(); err != nil {
-// 		log.Fatal(err)
+// func TestDraw(t *testing.T) {
+// 	var v float64
+// 	v = Average([]float64{1, 2})
+// 	if v != 1.5 {
+// 		t.Error("Expected 1.5, got ", v)
 // 	}
 // }
