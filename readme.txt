@@ -1,8 +1,21 @@
+Resize and center an image
+-----------------------------
+
+An image must be scaled by the minimum ratio of the max_width / image_width or the max_height / image_height
+to be scaled while maintaining its aspect to fit inside a box
+
+var scaler = Math.min(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight);
+img_size = { width: img.naturalWidth*scaler, height: img.naturalHeight*scaler };
+offset_y = (canvas.height - img_size.height)/2;
+offset_x = (canvas.width - img_size.width)/2;
+
+
 Javascript Calculator
 ---------------------------
 (function () { Object.getOwnPropertyNames(Math).forEach(function (a) { eval(a + "=" + "Math." + a + "\t") }); })();
 
 This will import the javascript math object into the global namespace
+
 
 Screen
 --------------------------------------
@@ -11,6 +24,12 @@ Make a new screen with screen. detatch using ctrl+a d. list the screens with scr
 screen
 screen -ls
 screen -r <screen id>
+
+Nohup
+--------------------------------------
+Run background processes in linux with nohup <command> & 
+Kill the background process by deleting nohup.out 
+
 
 
 Python datetime filenames
@@ -92,23 +111,20 @@ fabrice bellard - made FFmpeg, QEMU, and the Tiny C Compiler
 Building and Linking C/C++ Repositories
 -----------------------------------------------------
 
-Typically, backbone repositories use this method to be built in a unix style system.  
+Typical unix build
 
 ./configure; make; make install
 
-Pkg-config is a convenient tool to get the linker flags that are necessary to link your project with other libraries.
-Pkg-config can also output the linker flags necessary to statically link libraries which is awesome (I think with --static)
-Example:
+Linking with pkg-config e.g.
 
 pkg-config --libs sdl2 opengl
 
-
-To link libraries in mac os use the -framework flag
+To link in macos use the -framework flag, e.g.
 
 g++ <input.cpp> -framework SDL2 -framework SDL2_image -framework SDL2_mixer -framework SDL2_net -framework SDL2_ttf
 
-To link libraries in linux environments use -l<lib name>  where the library name is the filename without the "lib" prefix 
-and without the file extension
+To link libraries in unix use -l<lib name>.  The library name is the filename without its "lib" prefix 
+and without the file extension.  
 
 g++ <input.cpp> -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_net -lSDL2_ttf
 
@@ -135,5 +151,57 @@ sudo apt install nasm qemu-system-x86 xorriso pkg-config emacs
 sudo apt install libsdl2-dev libsdl2-gfx-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev libsdl2-ttf-dev
 sudo apt install libopengl-dev libglew-dev
 # sudo apt install libssl-dev
+
+
+
+
+
+------------------------------------------------------------------------------
+IDEAS FOR PROJECTS
+------------------------------------------------------------------------------
+
+
+file system
+-----------------------------------------
+* use a single file 1gb
+* use fseek    int fseek(FILE *stream, long int offset, int whence)
+* flat file system 
+* search function
+
+u64 file_offset u64 file_length u64 filename_length filename
+
+offsets and lengths are all in bytes
+
+
+html wiki
+--------------------------------
+just creates pure html sites from the browser, and saves them in a persistent way.
+start from go wiki example 
+could use version control like nit version control system that I made 
+
+20100820_<fixed_length_hash>_description
+
+
+pixel_os
+-------------------------------
+
+more like a bootable program.  simplest possible way to boot a graphical program in a x86 environment
+
+
+SDL based GUI.  
+-------------------------------
+
+buttons
+basic text editor
+archie quasimode and leap interface :)
+
+
+Make networked chat program
+------------------------------
+
+
+Basic file sharing program
+------------------------------
+like https://wormhole.app/
 
 
