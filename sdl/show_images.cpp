@@ -259,20 +259,8 @@ int main( int argc, char* argv[] )
 			break;
 
         case SDL_WINDOWEVENT:
-            printf("window event %d\n", (int)(event.window.event) );
-
-            // resize window
-            if ( event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED ) {
-                SDL_FreeSurface(window_surface);
-                window_surface = SDL_GetWindowSurface( window );
-                printf("%d %d\n", window_surface->w, window_surface->h );
-                show( window, filenames, filenames_index );
-            }
-
-            if ( event.window.event == SDL_WINDOWEVENT_MAXIMIZED || event.window.event == SDL_WINDOWEVENT_RESTORED ) { 
-                show( window, filenames, filenames_index );
-            }
-
+            // printf("window event %d\n", (int)(event.window.event) );
+            show( window, filenames, filenames_index );
             break;
 
 		case SDL_KEYDOWN:
@@ -292,14 +280,11 @@ int main( int argc, char* argv[] )
             if ( event.key.keysym.sym == SDLK_f ) {
 				if (is_fullscreen) {
 					SDL_SetWindowFullscreen(window, 0);
-
 				} else {
 					SDL_SetWindowFullscreen( window, SDL_WINDOW_FULLSCREEN_DESKTOP );
-                    // SDL_WINDOW_FULLSCREEN disables fullscreen window switching on macos
 				}
 				is_fullscreen = !is_fullscreen;
 			}
-
 			break;
 
 		case SDL_MOUSEBUTTONDOWN:
@@ -307,7 +292,6 @@ int main( int argc, char* argv[] )
 			if ( filenames_index < 0 ) filenames_index = filenames_length-1;
 			show( window, filenames, filenames_index );
 			break;
-
 		}
 
     }
