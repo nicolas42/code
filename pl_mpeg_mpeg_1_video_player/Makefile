@@ -1,4 +1,4 @@
-all: macos_player
+all: macos
 
 macos:
 	gcc pl_mpeg_player.c -framework SDL2 -framework opengl -framework SDL2_mixer

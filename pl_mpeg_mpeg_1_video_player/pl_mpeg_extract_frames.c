@@ -1,4 +1,8 @@
 /*
+macos:
+g++ -ISDL2 -framework SDL2 -framework SDL2_image -std=c++11 pl_mpeg_extract_frames.c
+
+
 PL_MPEG Example - extract all frames of an mpg file and store as PNG
 
 Dominic Szablewski - https://phoboslab.org

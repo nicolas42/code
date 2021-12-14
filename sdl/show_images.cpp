@@ -231,15 +231,13 @@ int main( int argc, char* argv[] )
 
     int window_width = 800;
     int window_height = 800;
-
-	SDL_Window* window;
-	SDL_Surface* window_surface;
-    // SDL_Surface* image_surface;
-    // SDL_Surface *optimised_image_surface;
-	SDL_Event event;
 	bool time_to_quit = false;
 	bool is_fullscreen = false;
 
+
+	SDL_Window* window;
+	SDL_Surface* window_surface;
+	SDL_Event event;
 	SDL_Init( SDL_INIT_VIDEO );
 	IMG_Init( IMG_INIT_PNG & IMG_INIT_JPG );
 	window = SDL_CreateWindow( "Press any key :)", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_width, window_height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE ); 
