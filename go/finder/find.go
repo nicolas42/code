@@ -35,7 +35,6 @@ func visit(path string, f os.FileInfo, err error) error {
 func main() {
 
 	fmt.Printf("usage: find dir search terms\r\n")
-	return 
 
 	root = os.Args[1]
 	search_terms = os.Args[2:]

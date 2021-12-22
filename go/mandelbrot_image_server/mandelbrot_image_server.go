@@ -103,7 +103,7 @@ func main() {
 func handler(w http.ResponseWriter, r *http.Request) {
 	// https://stackoverflow.com/questions/26744814/serve-image-in-go-that-was-just-created
 
-	img := mandelbrot_Draw(1000, 1000)
+	img := mandelbrot_Draw(100, 100)
 
 	var buffer bytes.Buffer
 	png.Encode(&buffer, img)
