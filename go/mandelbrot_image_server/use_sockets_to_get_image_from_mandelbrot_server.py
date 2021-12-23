@@ -19,10 +19,6 @@ f.write(d[start:end+4])
 f.close()
 
 
-
-
-
-
 def pwd(): 
     return os.getcwd()
 

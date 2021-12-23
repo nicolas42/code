@@ -1,12 +1,8 @@
-# vigenere cipher
-
-alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-# i=0
-# while i<26:
-#     print(alphabet[i:] + alphabet[:i])
-#     i+=1
 
 def vigenere_cipher(plaintext, key):
+
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
     table = [
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
     "BCDEFGHIJKLMNOPQRSTUVWXYZA",
@@ -48,7 +44,7 @@ def vigenere_cipher(plaintext, key):
     return ciphertext
 
 
-if __name__ == "__main__":
+def demo_vigenere_cipher():
     # test
     plaintext = "attackatdawn"
     key = "LEMON"
@@ -58,3 +54,5 @@ if __name__ == "__main__":
     
     print(ciphertext)
 
+if __name__ == "__main__":
+    demo_vigenere_cipher()

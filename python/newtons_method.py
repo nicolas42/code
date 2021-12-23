@@ -1,89 +1,37 @@
 
-"""
-
-# Newton's method is a way of solving an equation using its derivative
-
-# It requires that a starting input value is chosen
-# If there are multiple solutions, it will only return one of them
-# Different starting values will retunr different different solutions
-
-# Any one variable equation can be reformulated as a calculation 
-# that equals zero.  In this way the input variable that solves the equation 
-# can be solved by finding the root of the equation.
-# A derivative is a tangent line.  Tangent lines can be followed to the 
-# 
-
-Newton's method
-start at an arbitrary x0
-calculate the tangent line
-find its x-intercept
-find the tangent line at that x-intercept
-repeat
-
-y-y0 = m(x-x0)
-find x-intercept when y=0
--y0 / m + x0 = x
-
-"""
-
 
 import math
-
-def get_derivative_of(eq):
-    # eq = [ 12, 31, 23, 123, 123, 123 ]
-    # remove first number
-    out = eq.copy()
-    for i,v in enumerate(eq):
-        # print(i,v)
-        out[i] = i * eq[i]
-    out = out[ 1: ]
-    return out
-
-
-def evaluate(f, x):
-    result = 0.0
-    for i,v in enumerate(f):
-        result += f[i] * math.pow(x,i)
-    return result
-
-
-def newtons_method(f,x0):
-    df_dx = get_derivative_of(f)
-    while True:
-        y0 = evaluate(f,x0)
-        m = evaluate(df_dx, x0)
-        x_intercept = -y0 / m + x0
-        # print(x_intercept)
-        if (abs(x_intercept - x0) < 1e-10):
-            break
-        x0 = x_intercept
-        # print(x0)
-    return x_intercept
-
-
-def find_roots(f,xs):
-    roots = set()
-    for x in xs:
-        r = newtons_method(f,x)
-        r = round(r, 7)
-        roots.add(r)
-    roots = list(roots)
-    roots.sort()
-    return roots
-
 import numpy as np
 
-if __name__ == "__main__":
-    # y = 2 +x -x^2
-    f = [ 2,1,-1]
-    xs = range(-100,100)
-    find_roots(f,xs)
 
-    #  y = 1 + 23x + 12x^2 + 213x^3 ...
-    f = [1,23,12,312,31,23,123,-123]
-    xs = np.arange(-100,100, 0.1)
-    roots = find_roots(f,xs)
-    print(roots)
-    # check with wolfram alpha 
-    # https://www.wolframalpha.com/input/?i=roots+of+1%2B23x%2B12x%5E2%2B312x%5E3%2B31x%5E4%2B23x%5E5%2B123x%5E6-123x%5E7
+def newtons_method(f, dydx):
 
+    # Newton's method approximates solutions to equations by successive calculation of 
+    # tangent lines. It requires an initial starting point.  Different starting points 
+    # will yield different solutions. 
+
+    # An arbitrary tangent line of a curve that goes through point (x0,y0) can be 
+    # formulated as y-y0 = m(x-x0).  The x-intercept of this line is (-y0 / m + x0)
+
+    equality_distance = 1e-10 # float equality is defined as being closer than this
+    decimal_places = 5 # needs to be low enough to prevent duplicate solutions
+
+    solutions = set()
+    for x in np.arange(-100,100, 0.1):
+        while True:
+            y = f(x)
+            dydx = dfdx(x)
+            x_next = -y / dydx + x 
+            if abs(x_next - x) < equality_distance:
+                break
+            x = x_next
+        solutions.add(round(x, decimal_places))
+    
+    return sorted(solutions)
+    print(solutions)
+
+def demo_newtons_method():
+    f = lambda x : 1 -23*x + 12*x**2 + 213*x**3
+    dfdx = lambda x : -23 + 24*x + 213*3*x**2
+    solutions = newtons_method(f, dfdx)
+    print(solutions)
