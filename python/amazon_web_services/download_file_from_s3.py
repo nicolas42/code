@@ -27,9 +27,9 @@ s3_client = boto3.client('s3')
 
 # download('a.mp4', 'nschmidt', 'greenview-1007/clark_hill_vineyard/R33_GH010108.MP4')
 
-
-local_file_name = 'a.mp4'
-s3_bucket = 'nschmidt'
-s3_object_key = 'greenview-1007/clark_hill_vineyard/R33_GH010108.MP4'
-with open(local_file_name, 'wb') as f:
-    s3_client.download_fileobj(s3_bucket, s3_object_key, f)
+if __name__ == "__main__":
+    local_file_name = 'R33_GH010108.MP4'
+    s3_bucket = 'nschmidt'
+    s3_object_key = 'greenview-1007/clark_hill_vineyard/R33_GH010108.MP4'
+    with open(local_file_name, 'wb') as f:
+        s3_client.download_fileobj(s3_bucket, s3_object_key, f)

@@ -1,14 +1,8 @@
 # in r3 there's one scalar and 3 vectors
-
 # vectors anticommute
-
 # 0 1 2 3
-
 # 0 1 2 3 12 23 31 123
-
-
 # 3221
-
 
 def bubble_sort(arr):
     # using adjacent swaps
@@ -22,8 +16,6 @@ def bubble_sort(arr):
             if arr[j] > arr[j + 1]:
                 arr[j], arr[j + 1] = arr[j + 1], arr[j]
                 print(arr)
-
-
 
 def get_sign_of_multivector(arr):
     # every time a swap occurs between different elements
@@ -42,8 +34,10 @@ def get_sign_of_multivector(arr):
     
     print(sign, list(set(arr)))
 
-multivector_directions = [ [],[1],[2],[3],[1,2],[2,3],[3,1],[1,2,3]]
-arr = [3,1]
-print(arr)
-get_sign_of_multivector(arr)
+
+if __name__ == "__main__":
+    multivector_directions = [ [],[1],[2],[3],[1,2],[2,3],[3,1],[1,2,3]]
+    arr = [3,1]
+    print(arr)
+    get_sign_of_multivector(arr)
  

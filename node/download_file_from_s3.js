@@ -6,8 +6,6 @@ const fs = require('fs');
 AWS.config.loadFromPath('/Users/nick/aws_config.json');
 const s3 = new AWS.S3();
 
-
-
 var obj = { 
     Bucket: 'nschmidt-public',
     Key: 'funwebsite/files/owlhat.gif',
