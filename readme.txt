@@ -4,17 +4,22 @@ Net cat is a handy utility for tcp and udp stuff.
 The examples below were tested on macos 10.12
 -l listen -v verbose -u udp
 
-Chat program
+To Do: Make a version of netcat that doesn't care whether it's a client or a server.
+The program should start of as a client then if it fails to connect then it becomes a server
+and waits for someone else to connect.
+
+1. Chat program
 
 nc -l 127.0.0.1 8888
 nc 127.0.0.1 8888
 
-port scanner
+
+2. port scanner
 
 nc -v <your public IP address> 1-1000
 
 
-http
+3. HTTP
 
 nc google.com 80
 GET / HTTP/1.1
@@ -58,6 +63,10 @@ fasm - good community
 https://github.com/phoboslab/pl_mpeg
 http://dwm.suckless.org/
 fabrice bellard - made FFmpeg, QEMU, and the Tiny C Compiler
+https://github.com/kokke/tiny-AES-c
+https://github.com/guzlewski/netcat
+http://beej.us/guide/bgnet/html/
+
 
 
 jdh - made bootable tetris https://www.youtube.com/channel/UCUzQJ3JBuQ9w-po4TXRJHiA
