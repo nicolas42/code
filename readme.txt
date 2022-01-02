@@ -1,3 +1,29 @@
+Net Cat (nc)
+---------------------
+Net cat is a handy utility for tcp and udp stuff.
+The examples below were tested on macos 10.12
+-l listen -v verbose -u udp
+
+Chat program
+
+nc -l 127.0.0.1 8888
+nc 127.0.0.1 8888
+
+port scanner
+
+nc -v <your public IP address> 1-1000
+
+
+http
+
+nc google.com 80
+GET / HTTP/1.1
+
+nc www.rssweather.com 80
+GET /wx/in/kanpur/wx.php HTTP/1.0
+Host: www.rssweather.com
+
+
 
 
 Alert from macos terminal 
