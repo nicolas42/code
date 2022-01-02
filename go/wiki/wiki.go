@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"regexp"
+	"fmt"
 )
 
 type Page struct {
@@ -66,6 +67,9 @@ func editHandler(w http.ResponseWriter, r *http.Request, title string) {
 }
 
 func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
+	r.ParseForm()
+	fmt.Println(*r)
+	
 	body := r.FormValue("body")
 	p := &Page{Title: title, Body: []byte(body)}
 	err := p.save()

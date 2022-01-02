@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!-- <SCRIPT type="text/javascript" src="lib.js"></SCRIPT> -->
+<STYLE>
+/* * { box-sizing: border-box; border: 1px solid grey; margin: 1px; padding: 1px; } */
+body, iframe, div { box-sizing: border-box; margin: 0; padding: 0; } 
+iframe { background-color: black; }
+* { font: 20pt Sans-serif; color: #333; }
+iframe { border: 0; }
+/* button { width: 100%; } */
+div { display: flex; flex-direction: row; flex-wrap: wrap; }
+</STYLE>
+
+<BODY>
+<LABEL for="autoplay">autoplay</LABEL>
+<INPUT type="checkbox" id="autoplay" checked>
+<BUTTON id="refresh" onclick="refresh()">refresh</BUTTON>
+<LABEL for="divide_by">divide_by </LABEL>
+<INPUT id="divide_by" type="text" value="3">
+<BUTTON id="prev" onclick="prev()">prev</BUTTON>
+<BUTTON id="next" onclick="next()">next</BUTTON>
+
+<SPAN id="span"></SPAN>
+<DIV id="div"></DIV>
+
+</BODY>
+
+<SCRIPT>
+
+youtube_ids = [ "LBTNKzZLo-s", "ACZC_XEyg9U", "ix9nJmz4mGg", "ix68oRfI5Gw", "GQZ3R81iyE0", "EpzlRnzNCQ0", "tX4H_ctggYo", "OLpnugLJ4C8", "F7V8DRfZBQI", "3m5qxZm_JqM", "QP-W-AV_WIQ", "EpzlRnzNCQ0", "CiAaEPcnlOg", "3q_iqrvnC_4", "QH2-TGUlwu4", "v_DWbBmTZ2g", "nZMwKPmsbWE", "tX4H_ctggYo", "sGQAOeSnErs", "5Qk9o_ZeR7s", "fjyV2-5FPAE", "Ui0uddDSwkw", "QZShA_a-5r8", "f3lUEnMaiAU", "gd9d_BAXWvg", "PYSqkEhVe6k", "sAHNJdxF6Cw", "GTJ3LIA5LmA", "B4QGtVyIRHc", "HttF5HVYtlQ", "QGw-cy0ylCc", "OtQ1n54bxxw", "iUR6fNZeyy4", "PAHk1x3XVko", "JnGMYl-njsg", "6wm-NtMkqz8", "p6q54q2iam8", "ip4qpKXPyd4", "_ou_xswB2b0", "c6Jqis6wrbk", "e0FjhMROhgM", "WeVcey0Ng-w", "ZSRHeXYDLko", "A0qt0hdCQtg", "-skA4GhVX7k", "R1lcb_7gj5k", "aFQFB5YpDZE", "sp8smJFaKYE", "Z1PCtIaM_GQ", "GXjhVZPYYRU", "5UE3jz_O_EM", "d1sr6aVzW9M", "8mjky2QE9DA", "aHsljVnY6oI", "vpTHi7O66pI", "KFKTEaq-WA4", "3AXpEvpPGa0", "ix9nJmz4mGg", "R2o9D9EQbiQ", "rStL7niR7gs", "WXUiVLBifpk", "S0TuTM3Y97M", "bJMYoj4hHqU", "t0xBDYgx5Ek", "AM5-Ihrztc4", "QgNDao7m41M", "Bd8_vO5zrjo&list=PLdH3eYNvyv3cEvUWSGON_IH3imjDwz7-E", "tN7_eBrctCQ", "PDRWQUUUCF0", "zShYE18avNc", "ssQJnDHCBOw", "zDFo2Iok06Y", "eQ3DmdduyyQ", "AM5-Ihrztc4", "4-2nqd6-ZXg", "sn1Y6zIS91g", "D6Nb2Mhyi8A", "fT2nYGKyqPw", "1Q_Mz8RDTVM", "ZVYqB0uTKlE", "-t1_ffaFXao", "CchPemGaEmw", "yJIhxKFH9gI", "u6UeaGYEXEw&t=1750", "rtZs-MPFcHo", "_FVMfr6q8wM", "iKatwD2eoHw", "1Zn958rN-H4", "t8QEOBgLBQU", "OV5J6BfToSw&t=496", "Uv5TDBdxLjE&t=767", "pqzcCfUglws", "oTH3mq7SsK4", "Kju6_EwQjVM", "9oA78WgIoO0&t=645", "sn1Y6zIS91g&t=415", "KPt1am18lR4&t=109", "PfxabSYFs88", "s-33i2b17nc", "zsDwFGz0Okg", "HbwV-EzP67Q", "s1HA9LlFNM0", "oqgKXQM8FpU", "0T5aGLybXEs", "XKMvpxsxxvw", "p8GcHoSIPDg", "ldkSV0gElxg", "4usUy2QLjRc", "e3N8ZW6fCa4", "Of2HU3LGdbo", "iJ4T9CQA0UM", "pR6z-gm5_cY", "SA_oQ_DAFqE", "bSXdYNbS9DQ", "PLnuaD0X8-cRIfsFefatg", "qr014ZuFwE8", "_K-L9uhsBLM", "liiVX55tJ7E", "xm41dHucxmM", "GQZ3R81iyE0", "T38JRqe5tYQ", "-SrvreW-E80", ]
+
+let index = 0;
+let div = document.getElementById("div");
+let divide_by = document.getElementById("divide_by");
+let span = document.getElementById("span");
+let autoplay = document.getElementById("autoplay");
+
+function refresh()
+{
+    div.innerHTML = ''; // delete all children
+    let i = index;
+    for (; i < index + divide_by.value**2 ; i+=1) 
+    {
+        let iframe = document.createElement("iframe");
+        iframe.src = "https://www.youtube.com/embed/" + youtube_ids[i];
+        if ( autoplay.checked ) { iframe.src += "?autoplay=1"; };
+        iframe.style.width = (window.innerWidth / divide_by.value -10).toString() + "px";
+        iframe.style.height = (window.innerHeight / divide_by.value).toString() + "px";
+        iframe.style.display = 'block';
+        span.innerHTML = iframe.src;
+        // iframe.loading = "lazy";
+
+        div.appendChild(iframe);
+    }
+    // index = i;
+}
+
+function next()
+{
+    index += divide_by.value**2;
+    refresh()
+}
+
+function prev()
+{
+    index -= divide_by.value**2;
+    refresh()
+}
+
+
+refresh();
+
+</SCRIPT>

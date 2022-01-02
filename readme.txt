@@ -1,3 +1,15 @@
+HTML Forms 
+------------------
+https://www.w3schools.com/tags/att_form_method.asp
+
+
+HTML forms make GET and POST requests and send the data in the form as name/value pairs.
+The html tags must have name="something"
+A server can be made that responds to this information appropriately.
+POST requests have no limitations on data length https://www.w3schools.com/tags/ref_httpmethods.asp.
+
+
+
 Net Cat (nc)
 ---------------------
 Net cat is a handy utility for tcp and udp stuff.
