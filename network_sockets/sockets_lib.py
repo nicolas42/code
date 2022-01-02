@@ -1,11 +1,7 @@
-# Echo server program
 import socket
 
 def run_echo_server(HOST, PORT):
-    # run_echo_server('', 50007) 
-
-    # HOST = ''                 # Symbolic name meaning all available interfaces
-    # PORT = 50007              # Arbitrary non-privileged port
+    # e.g. run_echo_server('127.0.0.1', 50007) 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((HOST, PORT))
     s.listen(1)
@@ -23,14 +19,9 @@ def run_echo_server(HOST, PORT):
 
 
 
-import socket
 
 def send_message(HOST, PORT, message):
-    # send_message('127.0.0.1', 50007, "Hello World!")
-
-
-    # HOST = '127.0.0.1'    # The remote host
-    # PORT = 50007              # The same port as used by the server
+    # e.g. send_message('127.0.0.1', 50007, "Hello World!")
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((HOST, PORT))
     s.sendall(bytes(message, "utf8"))
@@ -40,12 +31,8 @@ def send_message(HOST, PORT, message):
 
 
 
-
 from threading import Thread
 from time import sleep
-
-import socket
-
 
 def threaded_function(conn):
     while True:
