@@ -145,7 +145,7 @@ and copy the text into an ssh key in github's settings > ssh keys section.
 
 Repos have to be cloned in this fashion.
 
-git clone git@github.com/username:repo
+git clone git@github.com:username/repo
 
 
 
