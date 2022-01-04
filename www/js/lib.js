@@ -203,8 +203,7 @@ function toggle_content_editable(){
         document.documentElement.contentEditable = 'false'; 
     } 
     else {
-        document.documentElement.contentEditable = 'true';
-    }
+l    }
 }
 
 
@@ -301,3 +300,8 @@ function save_file(filename, text) {
     }
 }
 
+// alternative to eval
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval
+function looseJsonParse(obj){
+    return Function('"use strict";return (' + obj + ')')();
+}

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<style> body { margin: 0; padding: 0; } </style>
+<!-- <style> body { margin: 0; padding: 0; } </style> -->
 <div id="mandelbrot">
     <div class="menu">
         <button class="prev">previous</button>
@@ -8,8 +8,7 @@
         <button class="fullscreen">toggle_fullscreen</button>
         <!-- <button class="save">save place</button> -->
         <button class="goto">go to</button>
-        <br>
-        <input class="input" style="width: 100%">
+        <input class="input" style="width:100%">
     </div>
     <canvas class="canvas"></canvas>
 </div>
@@ -145,24 +144,24 @@ function looseJsonParse(obj){
 
 function main()
 {
-    var mandelbrot_div = document.querySelector("#mandelbrot");
-    var canvas = mandelbrot_div.querySelector('canvas');
+    var div = document.querySelector("#mandelbrot");
+    var canvas = div.querySelector('canvas');
 
     // let buttons = document.querySelectorAll('button');
 
-    var prev_button = mandelbrot_div.querySelector(".prev");
-    var next_button = mandelbrot_div.querySelector(".next");
-    var reset_button = mandelbrot_div.querySelector(".reset");
-    var fullscreen_button = mandelbrot_div.querySelector(".fullscreen");
-    var save_button = mandelbrot_div.querySelector(".save");
-    var goto_button = mandelbrot_div.querySelector(".goto");
-    var input_field = mandelbrot_div.querySelector(".input");
+    var prev_button = div.querySelector(".prev");
+    var next_button = div.querySelector(".next");
+    var reset_button = div.querySelector(".reset");
+    var fullscreen_button = div.querySelector(".fullscreen");
+    var save_button = div.querySelector(".save");
+    var goto_button = div.querySelector(".goto");
+    var input_field = div.querySelector(".input");
 
     input_field.value = "{\"x\":-0.18801757812500003,\"y\":-0.8209140624999999,\"zoom\":8192,\"max_iterations\":1000}";
 
     var places_index = 0;
     var places = [
-        { x: 0, y: 0, zoom: 1, max_iterations: 1000 },
+        // { x: 0, y: 0, zoom: 1, max_iterations: 1000 },
         { x: -0.6999687500000003, y: -0.2901249999999999, zoom: 1024, max_iterations: 1000 },
         { x: -0.027285156250000026, y: 0.6443066406250001, zoom: 2048, max_iterations: 1000 },
         { x: -0.027120712995529206, y: 0.6441158065199851, zoom: 67108864, max_iterations: 1000 },
