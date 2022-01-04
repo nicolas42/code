@@ -1,3 +1,14 @@
+Git
+-------------------
+
+remove all files from staging area 
+git reset
+
+clone a repo 
+git clone git@github.com:username/repo
+
+
+
 Regular Expressions
 ----------------------
 abc…	Letters
