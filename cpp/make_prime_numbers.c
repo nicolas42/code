@@ -128,8 +128,8 @@ void signal_handler(int signal)
 struct list make_prime_numbers(char *filename)
 {
 
-    if ( signal(SIGINT, signal_handler) == SIG_ERR ) { printf("\ncan't catch SIGINT\n"); }
-
+    // register signal handler
+    if ( signal(SIGINT, signal_handler) == SIG_ERR ) { printf("\nERROR registering signal handler\n"); }
 
 
     // char *filename = "primes.dat";

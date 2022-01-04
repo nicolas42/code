@@ -1,3 +1,8 @@
+*.o
+*.a
+*.so
+*.out
+
 data
 
 *.iso
@@ -28,15 +33,12 @@ data/*
 *.ppm
 *.pgm
 
-*.o
-*.a
-*.so
+
 *.dSYM
 *.so.dSYM
 *.dll
 
 *.exe
-*.out
 *.dat
 
 
