@@ -1,10 +1,5 @@
-# Find files in the current directory that have all the supplied keywords in them
-# 
-# For example
-# python find.py something
-# python find.py misc ass1 .c misc
-# 
-# Searches the entire file path
+# e.g. 
+# python find_files.py . txt
 
 import os
 import sys

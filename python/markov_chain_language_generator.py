@@ -1,0 +1,68 @@
+import random
+import requests
+import os
+
+
+def read_thru(url):
+    # read a url or its locally cached file
+    # url2filename
+    local_url_filename = url.split('//')[-1].replace('/','-')
+
+    # if local file exists use that
+    if os.path.exists(local_url_filename):
+        f = open(local_url_filename,'r')
+        data = f.read()
+        f.close()
+        return data
+
+    # download url
+    print('\nreading', url, '...\n')
+    response = requests.get(url)
+    response.encoding = 'utf-8'
+    data = response.text
+    f = open(local_url_filename,'w')
+    f.write(data)
+    f.close()
+    return data
+
+
+def markov_chain_language_generator(data):
+    output = []
+    data = data.split() # split at whitespace
+
+    position = random.randint(0, len(data)-3) # 24158 
+
+    output.append(data[position])
+    output.append(data[position+1])
+
+    for j in range(100):
+        # print(j)
+        locations_of_matches = []
+        for i,_ in enumerate(data):
+            if data[i].lower() == output[-2].lower() and data[i+1].lower() == output[-1].lower():
+                # print(i)
+                locations_of_matches.append(i)
+
+        # print(locations_of_matches)        
+        # for l in locations_of_matches:
+        #     print(data[l], data[l+1], data[l+2])
+        random_match_location = random.choice(locations_of_matches)
+        new_word = data[random_match_location+2]
+        output.append(new_word)
+        print(new_word, end=' ', flush=True)
+
+
+    print()
+
+    # joined_result = ' '.join(output)
+    # print(joined_result)
+
+def demo():
+    # moby dick
+    # url = 'https://www.gutenberg.org/files/2701/2701-0.txt'
+    url = 'https://nschmidt-public.s3.ap-southeast-2.amazonaws.com/2701-0.txt' # mirror
+    data = read_thru(url)
+    markov_chain_language_generator(data)
+
+if __name__ == "__main__":
+    demo()
