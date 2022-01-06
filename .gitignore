@@ -1,51 +1,46 @@
+# directories
+data
+node_modules
+
+*.txt
+!readme.txt
+
+*.iso
+*.tmp
+
+# compillation objects
 *.o
 *.a
 *.so
 *.out
+*.dSYM
+*.so.dSYM
+*.dll
+*.exe
+*.dat
+*.obj
 
-data
-
-*.iso
-
-*.tmp
-*.dmg
-.ipynb_checkpoints
-*.txt
-
-data/*
-
+# python
 *.pyc
 *.gch
+*.ipynb_checkpoints
 
-.DS_Store
+# mac
+*.DS_Store
+*.dmg
+
+# video
 *.mp4
 *.avi
 *.mkv
 *.mpg
-
+# audio
 *.m4a
 *.mp3
 *.aac
-
-# *.png
-# *.jpg
+# image
+*.png
+*.jpg
 *.gif
 *.ppm
 *.pgm
-
-
-*.dSYM
-*.so.dSYM
-*.dll
-
-*.exe
-*.dat
-
-
-node_modules
-
-linux
-macos
-windows
-
-*.obj
