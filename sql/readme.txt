@@ -1,4 +1,15 @@
-Structured Query Language (SQL) 
+SQL 
+-----------------
+Join combines two tables
+
+SELECT *
+FROM OrderDetails
+INNER JOIN Orders
+ON Orders.OrderID = OrderDetails.OrderID
+
+
+
+SQL stands for Structured Query Language.
 
 SQLite is the most used database engine in the world apparently.
 https://sqlite.org/download.html
