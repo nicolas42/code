@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Real-time LaTeX in browser</title>
+<!-- https://github.com/mathjax/MathJax/blob/master/test/sample-dynamic-2.html -->
+<!-- Copyright (c) 2012-2015 The MathJax Consortium -->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    showProcessingMessages: false,
+    tex2jax: { inlineMath: [['$','$'],['\\(','\\)']] }
+  });
+</script>
+<script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+
+<script>
+var Preview = {
+  delay: 10,        // delay after keystroke before updating
+  preview: null,     // filled in by Init below
+  buffer: null,      // filled in by Init below
+  timeout: null,     // store setTimout id
+  mjRunning: false,  // true when MathJax is processing
+  mjPending: false,  // true when a typeset has been queued
+  oldText: null,     // used to check if an update is needed
+  //
+  //  Get the preview and buffer DIV's
+  //
+  Init: function () {
+    this.preview = document.getElementById("MathPreview");
+    this.buffer = document.getElementById("MathBuffer");
+  },
+  //
+  //  Switch the buffer and preview, and display the right one.
+  //  (We use visibility:hidden rather than display:none since
+  //  the results of running MathJax are more accurate that way.)
+  //
+  SwapBuffers: function () {
+    var buffer = this.preview, preview = this.buffer;
+    this.buffer = buffer; this.preview = preview;
+    buffer.style.visibility = "hidden"; buffer.style.position = "absolute";
+    preview.style.position = ""; preview.style.visibility = "";
+  },
+  //
+  //  This gets called when a key is pressed in the textarea.
+  //  We check if there is already a pending update and clear it if so.
+  //  Then set up an update to occur after a small delay (so if more keys
+  //    are pressed, the update won't occur until after there has been 
+  //    a pause in the typing).
+  //  The callback function is set up below, after the Preview object is set up.
+  //
+  Update: function () {
+    if (this.timeout) {clearTimeout(this.timeout)}
+    this.timeout = setTimeout(this.callback,this.delay);
+  },
+  //
+  //  Creates the preview and runs MathJax on it.
+  //  If MathJax is already trying to render the code, return
+  //  If the text hasn't changed, return
+  //  Otherwise, indicate that MathJax is running, and start the
+  //    typesetting.  After it is done, call PreviewDone.
+  //  
+  CreatePreview: function () {
+    Preview.timeout = null;
+    if (this.mjPending) return;
+    var text = document.getElementById("MathInput").value;
+    if (text === "")
+    {
+      text = document.getElementById("MathInput").placeholder;
+    }
+    if (text === this.oldtext) return;
+    if (this.mjRunning) {
+      this.mjPending = true;
+      MathJax.Hub.Queue(["CreatePreview",this]);
+    } else {
+      this.buffer.innerHTML = this.oldtext = text;
+      this.mjRunning = true;
+      MathJax.Hub.Queue(
+	["Typeset",MathJax.Hub,this.buffer],
+	["PreviewDone",this]
+      );
+    }
+  },
+  //
+  //  Indicate that MathJax is no longer running,
+  //  and swap the buffers to show the results.
+  //
+  PreviewDone: function () {
+    this.mjRunning = this.mjPending = false;
+    this.SwapBuffers();
+  }
+};
+//
+//  Cache a callback to the CreatePreview action
+//
+Preview.callback = MathJax.Callback(["CreatePreview",Preview]);
+Preview.callback.autoReset = true;  // make sure it can run more than once
+Preview.Update();
+</script>
+<style>
+body, html{
+  height:100%;
+  padding: 0px;
+  margin: 0px;
+}
+table
+{
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  height: 100vh;
+  overflow: hidden;
+}
+textarea
+{
+ border: none;
+ margin: 0px;
+ padding-left: 20px;
+ padding-right: 20px;
+ padding-top: 20px;
+  height: 99.5vh;
+  color: #FFF;
+  background-color: #222;
+  font-size: 1.5em;
+  font-family: "Courier", monospace;
+  width: 100%;
+  -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+  -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+  box-sizing: border-box;
+}
+tr,td
+{
+  vertical-align: top;
+  height: 100vh;
+  overflow: auto;
+  width: 50%;
+  background-color: #FFF;
+  padding: 0px;
+  margin: 0px;
+}
+td#Input
+{
+  background-color: #222;
+}
+td#Output{
+  position: relative;
+}
+#MathBuffer
+{
+  font-size: 1.5em;
+  margin-top: 20px;
+  height: 100vh;
+  padding-left: 20px;
+  padding-left: 20px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+#MathPreview
+{
+  font-size: 1.5em;
+  margin-top: 20px;
+  height: 100vh;
+  padding-left: 20px;
+  padding-left: 20px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+</style>
+</head>
+<body>
+
+<table cellspacing="0" cellpadding="0">
+<tr>
+<td id=Input>
+<textarea 
+placeholder="Try Euler's identity $e^{i \pi} + 1 = 0$ ..."
+id="MathInput" onkeyup="Preview.Update()">
+</textarea>
+</td>
+<td id=Output>
+<div id="MathPreview"></div>
+<div id="MathBuffer"></div>
+</td>
+</tr>
+</table>
+
+<script>
+Preview.Init();
+</script>
+
+</body>
+</html>

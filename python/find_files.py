@@ -16,7 +16,7 @@ def find_files( top_dir, query ):
 
 
     for root, dirs, files in os.walk(top_dir, topdown=False):
-        # print(root,dirs,files)
+        print(root,dirs,files)
 
         files = dirs + files  # join the two lists together
 

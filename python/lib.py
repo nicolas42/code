@@ -198,6 +198,9 @@ def print_on_one_line_demo():
 
 
 
+import os 
+
+# /Volumes/Seagate Backup Plus Drive/
 
 def pwd(): 
     return os.getcwd()
@@ -205,11 +208,15 @@ def pwd():
 def ls():
     return os.listdir()
 
+def cd(a):
+    return os.chdir(a)
+
 def read(filename):
     f = open(filename, "rb")
     d=f.read()
     f.close()
     return d
+
 
 # os.getenv("PATH")
 

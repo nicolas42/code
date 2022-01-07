@@ -1,0 +1,170 @@
+<style>* { box-sizing: border-box; margin: 0; padding: 0; } </style>
+<canvas></canvas> 
+
+<script>
+
+
+function evolve(canvas, alive_color, dead_color) {
+
+// The alpha channel is used to keep track of the number of neighbours
+
+var image = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height);
+
+var neighbours;
+var shouldLive; // 1 = live, 0 = die
+var stride = 4;
+
+// Set all neighbour values to zero
+for (var y = 1; y < canvas.height - 1; y = y + 1) {
+    for (var x = 1; x < canvas.width - 1; x = x + 1) {
+        var pos = y * canvas.width * 4 + x * 4;
+
+        image.data[pos + 3] = 0; 	// pos + 3 refers to the alpha channel of the pixel
+    }
+}
+
+function is_alive(imageData){
+    return image.data[pos + 0] === alive_color[0] && image.data[pos + 1] === alive_color[1] && image.data[pos + 2] === alive_color[2];
+}    
+
+// Update Neighbors of surrounding cells
+// Add one to the neighbours of all of the surrounding cells
+// (3x3 square around the current cell) if the current cell is alive
+for (y = 1; y < canvas.height - 1; y = y + 1) {
+    for (x = 1; x < canvas.width - 1; x = x + 1) {
+        pos = y * canvas.width * 4 + x * 4;
+
+        if (is_alive(image.data)) { // currCell.is_alive
+
+            image.data[pos + 3 - (canvas.width - 1) * stride] += 1;
+            image.data[pos + 3 - (canvas.width) * stride] += 1;
+            image.data[pos + 3 - (canvas.width + 1) * stride] += 1;
+            image.data[pos + 3 - 1 * stride] += 1;
+            // position of the current cell
+            image.data[pos + 3 + 1 * stride] += 1;
+            image.data[pos + 3 + (canvas.width - 1) * stride] += 1;
+            image.data[pos + 3 + (canvas.width) * stride] += 1;
+            image.data[pos + 3 + (canvas.width + 1) * stride] += 1;
+        }
+    }
+}
+
+// Update who's alive and who's dead
+for (y = 1; y < canvas.height - 1; y = y + 1) {
+    for (x = 1; x < canvas.width - 1; x = x + 1) {
+        pos = y * canvas.width * 4 + x * 4;
+        neighbours = image.data[pos + 3];
+        shouldLive = 0; // determines whether cell lives or dies
+
+        if (is_alive(image.data)) { // currCell.is_alive
+            if (neighbours < 2) {
+                shouldLive = 0; // false
+            } else if ((neighbours === 2) || (neighbours === 3)) {
+                shouldLive = 1; // true
+            } else if (neighbours > 3) {
+                shouldLive = 0; // false
+            }
+        } else {
+            if (neighbours === 3) {
+                shouldLive = 1; // true
+            }
+        }
+        if (shouldLive === 1) {
+            image.data[pos + 0] = alive_color[0];
+            image.data[pos + 1] = alive_color[1];
+            image.data[pos + 2] = alive_color[2];
+            image.data[pos + 3] = alive_color[3];
+        } else {
+            image.data[pos + 0] = dead_color[0];
+            image.data[pos + 1] = dead_color[1];
+            image.data[pos + 2] = dead_color[2];
+            image.data[pos + 3] = dead_color[3];
+        }
+    }
+}
+
+canvas.getContext("2d").putImageData(image, 0, 0);
+}
+
+
+function draw_random_points(canvas, alive_color, dead_color){
+
+// Draw initial random points to fill 10% of the usable space
+var ctx = canvas.getContext("2d");
+var rgbaDeadColor = 'rgba(' + dead_color[0] + ',' + dead_color[1] + ',' + dead_color[2] + ',' + dead_color[3] + ')';
+var rgbaAliveColor = 'rgba(' + alive_color[0] + ',' + alive_color[1] + ',' + alive_color[2] + ',' + alive_color[3] + ')';
+// console.log(rgbaAliveColor, rgbaDeadColor); // debug
+ctx.fillStyle = rgbaDeadColor // needs this format apparently
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+for (var i = 0; i < 0.1 * canvas.width * canvas.height; i += 1) {
+    var x = Math.round(Math.random() * (canvas.width - 1));
+    var y = Math.round(Math.random() * (canvas.height - 1));
+    ctx.fillStyle = rgbaAliveColor;
+    ctx.fillRect(x, y, 1, 1);
+}
+}
+
+
+
+
+var conway_timer_id = 0;
+function conway_main()
+{
+var canvas = document.querySelector("canvas");
+var height = window.innerHeight / 10;
+var width = window.innerWidth / 10;
+var alive_color = [0,0,255,255];
+var dead_color = [255,255,255,255];
+var delay = 200;
+
+canvas.width = width;
+canvas.height = height;
+
+
+function pause(){ clearInterval(conway_timer_id); }
+function play(){ conway_timer_id = setInterval( function(){ evolve(canvas, alive_color, dead_color) }, 200 ); }
+
+draw_random_points(canvas, alive_color, dead_color);
+play(); // do the evolution
+
+
+// This resizes the canvas :)))
+canvas.style.height = window.innerHeight;
+canvas.style.width = window.innerWidth;
+}
+
+// conway_main();
+
+</script>
+
+<script>
+
+var conway_timer_id = 0;
+function conway_main()
+{
+    var canvas = document.querySelector("canvas");
+    var height = 800;
+    var width = 800;
+    var alive_color = [0,0,255,255];
+    var dead_color = [255,255,255,255];
+    var delay = 200;
+
+    canvas.width = width;
+    canvas.height = height;
+
+
+    function pause(){ clearInterval(conway_timer_id); }
+    function play(){ conway_timer_id = setInterval( function(){ evolve(canvas, alive_color, dead_color) }, 200 ); }
+
+    draw_random_points(canvas, alive_color, dead_color);
+    play(); // do the evolution
+
+
+    // This resizes the canvas :)))
+    canvas.style.height = window.innerHeight;
+    canvas.style.width = window.innerWidth;
+}
+
+conway_main();
+
+</script>
