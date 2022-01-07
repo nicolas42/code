@@ -2,7 +2,6 @@
  
 Not really everything.  Should probably read "an accumulation of a lot of code" but that's not as catchy.
 
-Static web stuff is at nicolas42.github.io
 Proprietary computer vision stuff is in another repo.  
 Thesis reinforcement learning stuff is in another repo.
 
@@ -16,13 +15,12 @@ pl_mpeg is an mpeg_1 video player that uses SDL and opengl.  Could be useful for
 Its readme details how to generate an mpeg1 video file using VLC.  It's surprisingly watchable.  
 File sizes seem to be 2-3 times bigger than usual.
 
-There's some machine learning demos.  A bit of openai stuff.
 
-There's some python code which is neat.
-
-a pareto distribution generator meant to model a simple economic model.
-a visual kmeans demo
-a markov chain language generator
+There's some python code with some jupyter notebooks, machine learning demos, and some openai server stuff.
+There's 
+* a pareto distribution generator meant to model a simple economic model.
+* a graphical kmeans demo
+* a markov chain language generator
 
 
 
