@@ -1,6 +1,7 @@
 # directories
 test
 data
+ignore
 node_modules
 
 *.txt
