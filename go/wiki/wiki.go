@@ -2,11 +2,13 @@ package main
 
 import (
 	"errors"
-	"html/template"
+	// "html/template"
+	"text/template"
 	"io/ioutil"
 	"net/http"
 	"regexp"
 	"fmt"
+	"strings"
 )
 
 type Page struct {
@@ -50,13 +52,20 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
-	p, err := loadPage(title)
-	if err != nil {
-		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
-		return
-	}
-	renderTemplate(w, "view", p)
+	// p, err := loadPage(title)
+	// if err != nil {
+	// 	http.Redirect(w, r, "/edit/"+title, http.StatusFound)
+	// 	return
+	// }
+	// renderTemplate(w, "view", p)
+
+	tokens := strings.Split(r.URL.Path,"/")
+	filename := fmt.Sprintf("data/%s.txt", tokens[len(tokens)-1])
+	str,_ := ioutil.ReadFile(filename)
+	fmt.Fprintf(w, "%s", str)
 }
+
+
 
 func editHandler(w http.ResponseWriter, r *http.Request, title string) {
 	p, err := loadPage(title)
@@ -68,8 +77,7 @@ func editHandler(w http.ResponseWriter, r *http.Request, title string) {
 
 func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
 	r.ParseForm()
-	fmt.Println(*r)
-	
+	// fmt.Println(*r)
 	body := r.FormValue("body")
 	p := &Page{Title: title, Body: []byte(body)}
 	err := p.save()
