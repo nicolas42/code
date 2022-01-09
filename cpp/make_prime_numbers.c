@@ -105,6 +105,13 @@ double get_time_elapsed(void)
 	return clock()/(double)CLOCKS_PER_SEC;
 }
 
+
+
+
+
+
+
+
 int is_optimus_prime( u64 candidate, struct list primes )
 {
     for (u64 i=0; i<primes.length; i++){

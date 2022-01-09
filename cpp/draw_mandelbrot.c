@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 #include "draw_mandelbrot.h"
 
 float hue2rgb(float p, float q, float t) {

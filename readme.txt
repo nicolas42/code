@@ -1,3 +1,32 @@
+
+Awesome
+-------------------------------
+
+https://www.lemoda.net/  lots of C and other code
+How 3D video games do graphics - Jonathan Blow https://youtu.be/bGe-d09Nc_M?t=3600
+Mr P Solver https://www.youtube.com/c/MrPSolver/videos
+Tired Amateur https://www.youtube.com/channel/UCeT6NdimLKHXlkQgrbcg6XQ
+handmade hero
+imgui
+stb
+darknet
+uwimg
+nanogui-sdl
+wyoos
+mkernel
+ganga.js
+three.js
+exfat
+fasm - good community
+https://github.com/phoboslab/pl_mpeg
+http://dwm.suckless.org/
+fabrice bellard - made FFmpeg, QEMU, and the Tiny C Compiler
+https://github.com/kokke/tiny-AES-c
+https://github.com/guzlewski/netcat
+http://beej.us/guide/bgnet/html/
+jdh - made bootable tetris https://www.youtube.com/channel/UCUzQJ3JBuQ9w-po4TXRJHiA
+
+not stb libraries. 3rd party single file libraries in C/C++
 https://github.com/nothings/single_file_libs
 
 
@@ -120,40 +149,6 @@ Alert from macos terminal
 osascript -e 'tell app "System Events" to display dialog "Hello World"'
 
 source: https://stackoverflow.com/questions/5588064/how-do-i-make-a-mac-terminal-pop-up-alert-applescript
-
-
-
-Awesome
--------------------------------
-
-How 3D video games do graphics - Jonathan Blow https://youtu.be/bGe-d09Nc_M?t=3600
-
-Mr P Solver https://www.youtube.com/c/MrPSolver/videos
-Tired Amateur https://www.youtube.com/channel/UCeT6NdimLKHXlkQgrbcg6XQ
-handmade hero
-imgui
-stb
-darknet
-uwimg
-nanogui-sdl
-wyoos
-mkernel
-ganga.js
-three.js
-exfat
-fasm - good community
-https://github.com/phoboslab/pl_mpeg
-http://dwm.suckless.org/
-fabrice bellard - made FFmpeg, QEMU, and the Tiny C Compiler
-https://github.com/kokke/tiny-AES-c
-https://github.com/guzlewski/netcat
-http://beej.us/guide/bgnet/html/
-
-
-
-jdh - made bootable tetris https://www.youtube.com/channel/UCUzQJ3JBuQ9w-po4TXRJHiA
-
-
 
 
 

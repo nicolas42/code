@@ -2,19 +2,21 @@
 g++ show_mandelbrot.cpp -ISDL2 -framework SDL2 && ./a.out
 
 from https://stackoverflow.com/questions/33304351/sdl2-fast-pixel-manipulation
+
+Endianness
+the integer rgba is stored in memory as abgr in x86 systems.
+stb image functions operate on the data as a series of bytes whereas SDL functions operate on the data as a series of integers.
+
 */
 
 #include <iostream>
 #include <iomanip>
 #include <vector>
 #include <cstring>
-
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "SDL.h"
-
-
+#include "types.h"
 
 
 float hue2rgb(float p, float q, float t) {
@@ -36,75 +38,61 @@ float hue2rgb(float p, float q, float t) {
     return p;
 }
 
-void hsl2rgb(float h, float s, float l, int rgb[3]) {
+u32 hsl2rgba(float h, float s, float l) {
 
-    // if (h!=0.0) printf("%f %f %f\n", h,s,l);
-
-    float r;
-    float g;
-    float b;
-
+    float r,g,b;
     float q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    float p = 2. * l - q;
-    // printf("%f %f %f\n", p,q,h);
-
-    if (s == 0.) {
-        r = 1.;
-        g = 1.;
-        b = 1.; // achromatic
+    float p = 2.0 * l - q;
+    if (s == 0.0) {
+        r = 1.0;
+        g = 1.0;
+        b = 1.0; // achromatic
     } else {
-
-        r = hue2rgb(p, q, h + 1. / 3.);
+        r = hue2rgb(p, q, h + 1.0 / 3.0);
         g = hue2rgb(p, q, h);
-        b = hue2rgb(p, q, h - 1. / 3.);
+        b = hue2rgb(p, q, h - 1.0 / 3.0);
     }
 
-    // printf("%f %f %f\n", r,g,b);
-    rgb[0] = (int)(r * 255.);
-    rgb[1] = (int)(g * 255.);
-    rgb[2] = (int)(b * 255.);
-
+    // scale channels by 255.0 and combine them into a 32 bit integer
+    u32 rgba = (u32)(  
+        ((u8)(r*255.0))<<24 | ((u8)(g*255.0))<<16 | ((u8)(b*255.0))<<8 | (u8)255  
+    );
+    return rgba;
 }
     
-struct image {
+typedef struct {
     // width, height, number of channels, image data
-    int w;
-    int h;
-    int c;
-    char *data;
-};
+    u32 w,h,c,*data;
+} Image;
 
-
-struct image make_image(double w, double h, double c)
+Image make_image(float w, float h, float c)
 {
-    struct image im;
+    Image im;
     im.w = w;
     im.h = h;
     im.c = c;
-    im.data = (char*)malloc(im.w * im.h * im.c );
+    im.data = (u32*)malloc(im.w * im.h * sizeof(u32));
     return im;
 }
 
-
-void draw_mandelbrot(struct image im, double x, double y, double zoom, double max_iterations )
+void draw_mandelbrot_rgba(Image im, float x, float y, float zoom, float max_iterations )
 {
-    const unsigned char black[4] = {0, 0, 0, 255};
+    float i,j,h,w,cx,cy,zx,zy,zxtemp,hue;
+    u32 in_set,num_iterations,pos,rgba,black;
 
-    for (double j = 0; j < im.h; j += 1) {
-        for (double i = 0; i < im.w; i += 1) {
-
-            double h = 4. / zoom;
-            double w = 4. / zoom;
-
+    for (j = 0; j < im.h; j += 1) {
+        for (i = 0; i < im.w; i += 1) {
+            h = 4.0 / zoom;
+            w = 4.0 / zoom;
             // z = z^2 + c
-            double cx = (x - w / 2) + i * (w / im.w);
-            double cy = (y - h / 2) + j * (w / im.w);
-            double zx = 0;
-            double zy = 0;
-            double in_set = 1;
-            int num_iterations = 1;
+            cx = (x - w / 2) + i * (w / im.w);
+            cy = (y - h / 2) + j * (w / im.w);
+            zx = 0;
+            zy = 0;
+            in_set = 1;
+            num_iterations = 1;
             while ( num_iterations <= max_iterations ) {
-                double zxtemp = zx * zx - zy * zy + cx;
+                zxtemp = zx * zx - zy * zy + cx;
                 zy = 2 * zx * zy + cy;
                 zx = zxtemp;
                 if (zx * zx + zy * zy > 4) {
@@ -113,66 +101,80 @@ void draw_mandelbrot(struct image im, double x, double y, double zoom, double ma
                 }
                 num_iterations += 1;
             }
-
-            int pos = (j * im.w * im.c) + (i * im.c);
+            pos = (j * im.w) + (i);
             if (in_set) {
-                im.data[pos + 0] = black[0];
-                im.data[pos + 1] = black[1];
-                im.data[pos + 2] = black[2];
-                im.data[pos + 3] = black[3];
+                im.data[pos] = 255; // black
             } else {
-
-                // hue is determined by the number of iterations taken
-                // double rgb = hsl_to_rgb((num_iterations % 255) / 255, 1, 0.5);
-                int color[3];
-                hsl2rgb((num_iterations % 255) / 255., 1., 0.5, color);
-                // printf("%d %d %d\n", color[0], color[1], color[2] );
-
-                // bgra
-                im.data[pos + 0] = color[2];
-                im.data[pos + 1] = color[1];
-                im.data[pos + 2] = color[0];
-                im.data[pos + 3] = (char)255;
-
+                hue = (num_iterations % 255) / 255.0;
+                im.data[pos] = hsl2rgba(hue, 1.0, 0.5);
             }
-
-
         }
     }
 }
 
 
-
-// #define STB_IMAGE_IMPLEMENTATION
-// #include "stb_image.h"
-// #define STB_IMAGE_WRITE_IMPLEMENTATION
-// #include "stb_image_write.h"
-
-// #include "types.h"
-
-// void draw_mandelbrot_main(){
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
 
 
-//     struct image im;
-//     im.w = 800;
-//     im.h = 800;
-//     im.c = 4;
-//     im.data = (char*)malloc(im.w * im.h * im.c );
+int main( int argc, char* args[] )
+{
+    // window width, height, channels
+    const int w  = 800;
+    const int h = 800;
+    const int c = 4;
 
-//     double x,y,zoom,max_iterations;
-//     x = -0.6999687500000003; 
-//     y = -0.2901249999999999; 
-//     zoom = 1024; 
-//     max_iterations = 855;
+    Image im;
+    SDL_Surface *s;
 
-//     printf("Drawing a mandelbrot image %dx%d...\n", im.w, im.h);
-//     draw_mandelbrot(im, x,y,zoom,max_iterations);
+    int i;
 
-//     int success = stbi_write_png("mandelbrot_image.png", im.w,im.h,im.c,im.data,im.w*im.c);
-//     stbi_write_png("mandelbrot_image.png", im.w,im.h,im.c,im.data,im.w*im.c);
+    // initialize
+    SDL_Init( SDL_INIT_VIDEO );
+    SDL_Window *window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_SHOWN );
+    SDL_Surface *window_surface = SDL_GetWindowSurface( window );
 
-// }
 
+    // make image
+    im = make_image(w,h,c);
+    draw_mandelbrot_rgba(im, -0.6999687500000003, -0.2901249999999999, 1000, 1000);
+    // image to surface
+    u32 pitch, depth, rmask, gmask, bmask, amask;
+    pitch = 4*im.w; // The "pitch" is the length of a row in bytes, it appears.
+    depth = 32;
+    rmask = 0xff000000;
+    gmask = 0x00ff0000;
+    bmask = 0x0000ff00;
+    amask = 0x000000ff;
+    s = SDL_CreateRGBSurfaceFrom((void*)im.data, im.w, im.h, depth, pitch, rmask, gmask, bmask, amask);
+
+    // blit it
+    SDL_BlitSurface( s, NULL, window_surface, NULL );
+    SDL_UpdateWindowSurface(window);
+
+    // print surface pixel format
+    SDL_PixelFormat* pixelFormat = s->format;
+    Uint32 pixelFormatEnum = pixelFormat->format;
+    const char* surfacePixelFormatName = SDL_GetPixelFormatName(pixelFormatEnum);
+    SDL_Log("The surface's pixelformat is %s", surfacePixelFormatName);
+
+    // swap pixels and write
+    for(i=0;i<s->w*s->h;++i) ((u32*)s->pixels)[i] = SDL_Swap32(((u32*)s->pixels)[i]);
+    int success = stbi_write_png("mandy.png", s->w, s->h, 4, s->pixels, s->w * 4);
+    if (success) { SDL_Log("You wrote the png!"); }
+
+    // event loop
+    SDL_Event event;
+    int running = 1;
+    while ( running ) {
+        SDL_WaitEvent(&event); // wait instead of poll to save compute
+        if ( event.type == SDL_QUIT ) running = 0;
+    }
+
+    SDL_DestroyWindow( window );
+    SDL_Quit();
+    return 0;
+}
 
 
 
@@ -184,12 +186,12 @@ void draw_mandelbrot(struct image im, double x, double y, double zoom, double ma
 //     SDL_Window* window_surface = SDL_CreateWindow("title", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN );
 //     SDL_Renderer* window_renderer = SDL_CreateRenderer( window_surface, -1, SDL_RENDERER_ACCELERATED );
 
-//     struct image image;
+//     Image image;
 //     SDL_Texture* texture;
 
 
 //     image = make_image(WINDOW_WIDTH, WINDOW_HEIGHT, 4); // width, height, number of channels
-//     draw_mandelbrot(image, -0.6999687500000003, -0.2901249999999999, 1000, 1000); // x,y,zoom,max_iterations
+//     draw_mandelbrot_rgba(image, -0.6999687500000003, -0.2901249999999999, 1000, 1000); // x,y,zoom,max_iterations
 
 //     texture = SDL_CreateTexture( window_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, image.w, image.h );
 //     SDL_SetRenderDrawColor( window_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE );
@@ -217,36 +219,27 @@ void draw_mandelbrot(struct image im, double x, double y, double zoom, double ma
 
 
 
-int main( int argc, char* args[] )
+void reverse_pixel_order(Image im)
 {
-    const int w  = 800;
-    const int h = 800;
-    const int c = 4; // # channels
+    // rbga <=> gbra, doesn't move alpha
+    float i,j;
+    int pos;
+    char r,g,b;
 
-    SDL_Init( SDL_INIT_VIDEO );
-    SDL_Window *window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_SHOWN );
-    SDL_Surface *window_surface = SDL_GetWindowSurface( window );
+    for(j=0;j<im.h;++j){
+        for(i=0;i<im.h;++i){
 
-    // SDL_Surface *image_surface = SDL_CreateRGBSurface(0,w,h,32,0xff000000,0x00ff0000,0x0000ff00,0x000000ff);
-    struct image image; image.w=w; image.h=h; image.c=c;
-    image.data = (char*)(window_surface->pixels);
-    
-    SDL_LockSurface(window_surface);
-    draw_mandelbrot(image, -0.6999687500000003, -0.2901249999999999, 1000, 1000);
-    // SDL_BlitSurface( window_surface, NULL, window_surface, NULL );
-    SDL_UnlockSurface(window_surface);
-    SDL_UpdateWindowSurface(window);
+            pos = (j * im.w * im.c) + (i * im.c);
 
-    SDL_Event event;
-    int running = 1;
-    while ( running ) {
-        SDL_WaitEvent(&event);
-        if ( event.type == SDL_QUIT ) running = 0;
+            r = im.data[pos+0];
+            g = im.data[pos+1];
+            b = im.data[pos+2];
 
+            im.data[pos + 0] = b;
+            im.data[pos + 1] = g;
+            im.data[pos + 2] = r;
+            im.data[pos + 3] = (char)255;
+
+        }
     }
-
-
-    SDL_DestroyWindow( window );
-    SDL_Quit();
-    return 0;
 }

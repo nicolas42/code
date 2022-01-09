@@ -1,10 +1,23 @@
 /*
+
+A simple little macro for quick typesafe expanding arrays
+
+Put this in the global scope.
+DEFINE_ARRAY(u64)
+
+Then do something like this
+u64_array a = u64_array_make();
+a = u64_array_add(a, 23424234234);
+printf("%c ", a.data[0]);
+
+
+Tips for macros
+------------------
 Use -E to see the outputs of macros
 gcc -E define_array_macro.c
 
-## joins strings in a macro
-str1 ## str2 becomes str1str2
-
+## joins strings
+so str1 ## str2 becomes str1str2
 
 */
 
@@ -35,7 +48,7 @@ TYPENAME ## _array TYPENAME ## _array_make()                                    
 {                                                                                               \
     TYPENAME ## _array arr;                                                                     \
     arr.length = 0;                                                                             \
-    arr.allocated = 10;                                                                         \
+    arr.allocated = 16;                                                                         \
     arr.data = (TYPENAME*)malloc( arr.allocated * sizeof(TYPENAME) );                           \
     return arr;                                                                                 \
 }                                                                                               \
@@ -55,8 +68,8 @@ TYPENAME ## _array TYPENAME ## _array_add(TYPENAME ## _array arr, TYPENAME item)
 
 DEFINE_ARRAY(f64)
 DEFINE_ARRAY(char)
-typedef struct { int x; int y; } another_type;
-DEFINE_ARRAY(another_type)
+typedef struct { int x; int y; } arbitrary_type;
+DEFINE_ARRAY(arbitrary_type)
 typedef void* voidptr;
 DEFINE_ARRAY(voidptr)
 
@@ -79,12 +92,12 @@ int main()
     printf("\n");
 
 
-    another_type_array arr3 = another_type_array_make();
+    arbitrary_type_array arr3 = arbitrary_type_array_make();
     for(i=0;i<100;++i) { 
-        another_type a;
+        arbitrary_type a;
         a.x = i;
         a.y = 2*i;
-        arr3 = another_type_array_add(arr3, a);
+        arr3 = arbitrary_type_array_add(arr3, a);
     }
     for(i=0;i<100;++i) printf("[%d %d] ", arr3.data[i].x, arr3.data[i].y);
     printf("\n");
