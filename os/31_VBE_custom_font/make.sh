@@ -10,7 +10,8 @@ dd if=/dev/zero of=OS.bin bs=512 count=10000;
 dd if=temp.bin of=OS.bin conv=notrunc; # do not truncate the output file
 
 # run
-qemu-system-i386 -drive format=raw,file=OS.bin,if=ide,index=0,media=disk
+/Users/nick/everything/bin/qemu-2.9.1/i386-softmmu/qemu-system-i386 -drive format=raw,file=OS.bin,if=ide,index=0,media=disk
+# qemu-system-i386 -drive format=raw,file=OS.bin,if=ide,index=0,media=disk
 
 # cleanup
 rm $files

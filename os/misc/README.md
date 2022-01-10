@@ -1,6 +1,14 @@
-https://www.youtube.com/watch?v=5FnrtmJXsdM&list=PLT7NbkyNWaqajsw8Xh7SP9KJwjfpP8TNX&index=1
+// x86 is little endian.  regular numbers are big endian. MSF comes first
 
-filename="${1%.*}"
-fasm a.asm
-qemu-system-i386 -drive format=raw,file=a.bin,if=ide,index=0,media=disk
+0xAA55 big endian
 
+look in first 512 bytes finds magic numbers at the end
+if it's there it tries to boot from the first 512 bytes
+
+// #bytes bs
+dd if=/dev/zero of=bootsect.bin bs=512 count=1
+
+
+xxd make hex dump or reverse
+
+hexl-mode
