@@ -1,4 +1,4 @@
-for file in *.asm; do ~/bin/fasm $file; done
+for file in *.asm; do fasm $file; done
 
 # 1 sector is 512 bytes
 # Lets make all the c binaries 20 sectors long why not.
