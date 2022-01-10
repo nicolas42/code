@@ -9,6 +9,7 @@ node_modules
 !readme.txt
 *.iso
 *.tmp
+*.bin
 
 # compillation objects
 *.o
