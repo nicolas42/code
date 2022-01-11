@@ -169,6 +169,7 @@ double get_scaler_to_fit( SDL_Surface* a, SDL_Surface* b )
 
 void show( SDL_Window *window, std::vector<std::string> filenames, int filenames_index ) 
 {
+    if (filenames.size() == 0) return;
     SDL_Surface *window_surface = SDL_GetWindowSurface( window );
     SDL_Surface* image_surface;
     SDL_Surface *optimised_image_surface;
@@ -197,19 +198,13 @@ void show( SDL_Window *window, std::vector<std::string> filenames, int filenames
     
 }
 
-int main( int argc, char* argv[] )
+
+std::vector<std::string> get_image_filenames (char *dir)
 {
-
-    // terminal
-	const char *dir = ".";
-	if (argc==2){
-		dir = argv[1];
-	} else {
-        printf("show_images <dir>\n");
-	}
-
     // get image filenames
     std::vector<std::string> filenames;
+    if (!strcmp(dir,"")) return filenames;
+
 	const char *desired_extensions[] = {"jpg", "png", "bmp", "jpeg"};
 	std::vector<std::string> all_filenames;
 	list_dir(dir, &all_filenames);
@@ -225,8 +220,12 @@ int main( int argc, char* argv[] )
 		}
 	}
 	for (auto i:filenames) std::cout << i << std::endl;
-	int filenames_index = 0;
-	const int filenames_length = filenames.size();
+    return filenames;
+    
+}
+
+int main( int argc, char* argv[] )
+{
 
 
     int window_width = 800;
@@ -240,10 +239,26 @@ int main( int argc, char* argv[] )
 	SDL_Event event;
 	SDL_Init( SDL_INIT_VIDEO );
 	IMG_Init( IMG_INIT_PNG & IMG_INIT_JPG );
-	window = SDL_CreateWindow( "Press any key :)", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_width, window_height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE ); 
+	window = SDL_CreateWindow( "Drag a directory onto the window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_width, window_height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE ); 
 	window_surface = SDL_GetWindowSurface( window );
+    SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
 
 
+
+    // terminal
+	char *dir = (char*)"";
+    // if (argc == 1) printf("show_images <dir>\n");
+	// if (argc==2){
+	// 	dir = argv[1];
+	// }
+    
+
+    std::vector<std::string> filenames;
+    int filenames_index;
+    char* dropped_filedir;                  // Pointer for directory of dropped file
+
+    filenames = get_image_filenames(dir);
+	filenames_index = 0;
 	show( window, filenames, filenames_index );
 
     while (!time_to_quit)
@@ -251,6 +266,23 @@ int main( int argc, char* argv[] )
         SDL_WaitEvent(&event);
 
 		switch (event.type){
+
+        case (SDL_DROPFILE): {      // In case if dropped file
+            dropped_filedir = event.drop.file;
+            // // Shows directory of dropped file
+            // SDL_ShowSimpleMessageBox(
+            //     SDL_MESSAGEBOX_INFORMATION,
+            //     "File dropped on window",
+            //     dropped_filedir,
+            //     window
+            // );
+            filenames = get_image_filenames(dropped_filedir);
+            filenames_index = 0;
+            show( window, filenames, filenames_index );
+
+            SDL_free(dropped_filedir);    // Free dropped_filedir memory
+            break;
+        }
 
 		case SDL_QUIT:
 			time_to_quit = true;
@@ -265,13 +297,13 @@ int main( int argc, char* argv[] )
 
 			if ( event.key.keysym.sym == SDLK_RIGHT ) {
 				filenames_index += 1;
-				if ( filenames_index >= filenames_length ) filenames_index = 0;
+				if ( filenames_index >= filenames.size() ) filenames_index = 0;
 				show( window, filenames, filenames_index );
             }
 
             if ( event.key.keysym.sym == SDLK_LEFT ) {
 				filenames_index += -1;
-				if ( filenames_index < 0 ) filenames_index = filenames_length-1;
+				if ( filenames_index < 0 ) filenames_index = filenames.size()-1;
 				show( window, filenames, filenames_index );
             }
             
@@ -287,15 +319,15 @@ int main( int argc, char* argv[] )
 
 		case SDL_MOUSEBUTTONDOWN:
 			filenames_index += -1;
-			if ( filenames_index < 0 ) filenames_index = filenames_length-1;
+			if ( filenames_index < 0 ) filenames_index = filenames.size()-1;
 			show( window, filenames, filenames_index );
 			break;
 		}
 
     }
 
-	SDL_FreeSurface( window_surface );
-	SDL_DestroyWindow( window );
+	// SDL_FreeSurface( window_surface );
+	// SDL_DestroyWindow( window );
 	SDL_Quit();
 
 	return 0;

@@ -1,3 +1,12 @@
+Making a macos .app application
+-------------------------------
+Create a folder named "YourApplication.app". 
+Put your script file directly in this folder.  Its name must be the same name as the application folder 
+but without extension. In the case described here the script file must be named "YourApplication".
+https://apple.stackexchange.com/questions/224394/how-to-make-a-mac-os-x-app-with-a-shell-script
+
+My script didn't run when it attempted to access terminal input like argc or argv.
+
 
 Awesome
 -------------------------------
