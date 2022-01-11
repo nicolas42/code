@@ -39,13 +39,13 @@ node_modules
 *.mpg
 
 # audio
-*.m4a
-*.mp3
-*.aac
+#*.m4a
+#*.mp3
+#*.aac
 
 # image
-*.png
-*.jpg
-*.gif
-*.ppm
-*.pgm
+#*.png
+#*.jpg
+#*.gif
+#*.ppm
+#*.pgm
