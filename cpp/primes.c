@@ -2,37 +2,26 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-#include <stdint.h>
-typedef uint8_t     u8;
-typedef int8_t      s8;
-typedef uint16_t    u16;
-typedef int16_t     s16;
-typedef uint32_t    u32;
-typedef int32_t     s32;
-typedef uint64_t    u64;
-typedef int64_t     s64;
-typedef float       f32;
-typedef double      f64;
 #include <signal.h>
+#include "types.h"
 
 
-
-struct list {
+typedef struct list {
   void** data;
   int length;
   int allocated;
-};
+} List;
 
-struct list make_list()
+List make_list()
 {
-    struct list l;
+    List l;
     l.length = 0;
     l.allocated = 10;
     l.data = (void**)malloc( l.allocated * sizeof(void*) );
     return l;
 }
 
-struct list append_list(struct list l, void* str)
+List append_list(List l, void* str)
 {
     l.data[l.length] = str;
     l.length += 1;
@@ -43,22 +32,7 @@ struct list append_list(struct list l, void* str)
     return l;
 }
 
-
-void free_list(struct list l)
-{
-    free(l.data);
-}
-
-struct list allocate_list(int n)
-{
-    struct list l;
-    l.length = 0;
-    l.allocated = n;
-    l.data = (void**)malloc( l.allocated * sizeof(void*) );
-    return l;
-}
-
-struct list split_string(char *str, char delim)
+List split_string(char *str, char delim)
 {
     // convert spaces to null bytes
     size_t string_length = strlen(str);
@@ -66,7 +40,7 @@ struct list split_string(char *str, char delim)
     for (i=0;i<string_length;i++) if (str[i]==delim) str[i] = '\0';
 
     // note down stuff after null bytes
-    struct list l = make_list();
+    List l = make_list();
     if ( str[0] != '\0' ) l = append_list(l, str);
     for (i=1; i<string_length; i++ ) {
         if ( str[i-1] == '\0' && str[i] != '\0' ) l = append_list(l, str+i);
@@ -100,7 +74,7 @@ int file_exists(const char * filename){
     return 0;
 }
 
-double get_time_elapsed(void)
+double time_elapsed(void)
 {
 	return clock()/(double)CLOCKS_PER_SEC;
 }
@@ -112,7 +86,7 @@ double get_time_elapsed(void)
 
 
 
-int is_optimus_prime( u64 candidate, struct list primes )
+int prime_sieve( u64 candidate, List primes )
 {
     for (u64 i=0; i<primes.length; i++){
         if ( candidate % (u64)primes.data[i] == 0) return 0;
@@ -120,116 +94,93 @@ int is_optimus_prime( u64 candidate, struct list primes )
     return 1;
 }
 
+
+List simple_make_prime_numbers()
+{
+    List primes = make_list();
+    primes = append_list( primes, (void*)2 );
+    u64 i;
+
+	for (i=3;i<100*1000;i+=2){
+		if ( prime_sieve(i, primes) ) {
+            primes = append_list( primes, (void*)i );
+        }
+    }
+    for(i=0;i<primes.length;++i) printf("%llu ", (u64)primes.data[i]);
+
+    return primes;
+}
+
 void signal_handler(int signal)
 {
-  if (signal == SIGINT){
-    // fclose(file);
-    printf("\nreceived SIGINT\n");
-    exit(0);
-  }
+    if (signal == SIGINT){
+        // fclose(file);
+        printf("\nreceived SIGINT\n");
+        exit(0);
+    }
 }
 
 
+      
 // sieve some primes and write them to the file
 // read primes from file if it already exists
-struct list make_prime_numbers(char *filename)
+List make_prime_numbers(char *filename)
 {
-
     // register signal handler
     if ( signal(SIGINT, signal_handler) == SIG_ERR ) { printf("\nERROR registering signal handler\n"); }
 
-
-    // char *filename = "primes.dat";
-    struct list primes = make_list();
+    List p = make_list(); // primes
     FILE *file;
+    int i;
 
+    // if file exists then read the numbers from it,
+    // otherwise create a new file and add 2 and 3 to start off.
+    // 2 and 3 are needed since the program starts from the last
+    // prime in the list and jumps in twos to the next candidate number.
     if ( file_exists(filename)) {
-
-        char *str = read_file(filename);
-        
-        struct list l = split_string(str, ' ');
-
-        for (int i=0;i<l.length;i++) {
+        char *str;
+        List list;
+        str = read_file(filename);
+        list = split_string(str, ' ');
+        for (i=0;i<list.length;i++) {
             u64 tmp;
-            sscanf((char*)l.data[i], "%lu", &tmp);
-            primes = append_list( primes, (void*)tmp );
+            sscanf((char*)list.data[i], "%llu", &tmp);
+            p = append_list( p, (void*)tmp );
         }
-
-        for (int i=0;i<l.length;i++) { printf("%lu ", (u64)(primes.data[i])); }
-
+        for (i=0;i<list.length;i++) { printf("%llu ", (u64)(p.data[i])); }
+        printf("\n");
     } else {
-
-        // we only check odd numbers
-        primes = append_list( primes, (void*)2 );
-        primes = append_list( primes, (void*)3 );
+        p = append_list( p, (void*)2 );
+        p = append_list( p, (void*)3 );
         file = fopen(filename, "a");
-        fprintf(file, "%lu %lu ", (u64)(2), (u64)(3));
+        fprintf(file, "%llu %llu ", (u64)(2), (u64)(3));
         fclose(file);
     }
 
+    double t0 = time_elapsed();
 
-
-    u64 num_to_check = 1000000;
-    u64 upper_limit = (u64)primes.data[primes.length-1] + num_to_check;
-    double t1 = get_time_elapsed();
-
+    u64 limit = (u64)p.data[p.length-1] + 1000*1000;
     file = fopen(filename, "a");
 
-	for ( u64 o = (u64)(primes.data[primes.length-1]); o < upper_limit; o += 2 ) {
-		
-		if ( is_optimus_prime(o, primes) ) {
-    
-            primes = append_list( primes, (void*)o );
-			// printf("%lu ", o);
-            fprintf(file, "%lu ", o);
-
+	for (u64 j = (u64)(p.data[p.length-1]); j < limit; j += 2 ) {
+		if ( prime_sieve(j, p) ) {
+            p = append_list( p, (void*)j );
+            fprintf(file, "%llu ", j);
 		}
-
-        if ( get_time_elapsed()-t1 >= 1 ){
-            
-			t1 = get_time_elapsed();
-		    printf("...%lu", (u64)(primes.data[primes.length-1]));
+        // every second print the last prime that was found.
+        if ( time_elapsed()-t0 >= 1 ){
+			t0 = time_elapsed();
+		    printf("\r...%llu", (u64)(p.data[p.length-1]));
             fflush(stdout);
-            
         }
-
 	}
-
-    
-    return primes;
+    return p;
 }
 
-
-struct list simple_make_prime_numbers()
-{
-    struct list primes = make_list();
-    primes = append_list( primes, (void*)2 );
-    primes = append_list( primes, (void*)3 );
-
-    u64 upper_limit = 1000000;
-    double t1 = get_time_elapsed();
-	for ( u64 p = (u64)(primes.data[primes.length-1]); p < upper_limit; p += 2 ) {
-		
-		if ( is_optimus_prime(p, primes) ) {
-    
-            primes = append_list( primes, (void*)p );
-			// printf("%lu ", p);
-		}
-
-        if (get_time_elapsed()-t1 >= 1){
-			t1 = get_time_elapsed();
-		    printf("...%lu", (u64)(primes.data[primes.length-1]));
-            fflush(stdout);
-            
-        }
-
-	}
-    return primes;
-}
 
 
 int main()
 {
-    simple_make_prime_numbers();
-    // make_prime_numbers("primes.dat");
+  //    simple_make_prime_numbers();
+    make_prime_numbers("primes.txt");
 }

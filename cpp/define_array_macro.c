@@ -21,17 +21,7 @@ so str1 ## str2 becomes str1str2
 
 */
 
-#include <stdint.h>
-typedef uint8_t     u8;
-typedef int8_t      s8;
-typedef uint16_t    u16;
-typedef int16_t     s16;
-typedef uint32_t    u32;
-typedef int32_t     s32;
-typedef uint64_t    u64;
-typedef int64_t     s64;
-typedef float       f32;
-typedef double      f64;
+#include "types.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -66,10 +56,14 @@ TYPENAME ## _array TYPENAME ## _array_add(TYPENAME ## _array arr, TYPENAME item)
 
 
 
+
 DEFINE_ARRAY(f64)
+
 DEFINE_ARRAY(char)
+
 typedef struct { int x; int y; } arbitrary_type;
 DEFINE_ARRAY(arbitrary_type)
+
 typedef void* voidptr;
 DEFINE_ARRAY(voidptr)
 
