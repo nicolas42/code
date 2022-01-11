@@ -6,22 +6,22 @@
 #include "types.h"
 
 
-typedef struct list {
+struct list {
   void** data;
   int length;
   int allocated;
-} List;
+};
 
-List make_list()
+struct list make_list()
 {
-    List l;
+    struct list l;
     l.length = 0;
     l.allocated = 10;
     l.data = (void**)malloc( l.allocated * sizeof(void*) );
     return l;
 }
 
-List append_list(List l, void* str)
+struct list append_list(struct list l, void* str)
 {
     l.data[l.length] = str;
     l.length += 1;
@@ -32,7 +32,7 @@ List append_list(List l, void* str)
     return l;
 }
 
-List split_string(char *str, char delim)
+struct list split_string(char *str, char delim)
 {
     // convert spaces to null bytes
     size_t string_length = strlen(str);
@@ -40,7 +40,7 @@ List split_string(char *str, char delim)
     for (i=0;i<string_length;i++) if (str[i]==delim) str[i] = '\0';
 
     // note down stuff after null bytes
-    List l = make_list();
+    struct list l = make_list();
     if ( str[0] != '\0' ) l = append_list(l, str);
     for (i=1; i<string_length; i++ ) {
         if ( str[i-1] == '\0' && str[i] != '\0' ) l = append_list(l, str+i);
@@ -86,7 +86,9 @@ double time_elapsed(void)
 
 
 
-int prime_sieve( u64 candidate, List primes )
+
+
+int prime_sieve( u64 candidate, struct list primes )
 {
     for (u64 i=0; i<primes.length; i++){
         if ( candidate % (u64)primes.data[i] == 0) return 0;
@@ -95,9 +97,9 @@ int prime_sieve( u64 candidate, List primes )
 }
 
 
-List simple_make_prime_numbers()
+struct list simple_make_prime_numbers()
 {
-    List primes = make_list();
+    struct list primes = make_list();
     primes = append_list( primes, (void*)2 );
     u64 i;
 
@@ -124,12 +126,12 @@ void signal_handler(int signal)
       
 // sieve some primes and write them to the file
 // read primes from file if it already exists
-List make_prime_numbers(char *filename)
+struct list make_prime_numbers(char *filename)
 {
     // register signal handler
     if ( signal(SIGINT, signal_handler) == SIG_ERR ) { printf("\nERROR registering signal handler\n"); }
 
-    List p = make_list(); // primes
+    struct list p = make_list(); // primes
     FILE *file;
     int i;
 
@@ -139,7 +141,7 @@ List make_prime_numbers(char *filename)
     // prime in the list and jumps in twos to the next candidate number.
     if ( file_exists(filename)) {
         char *str;
-        List list;
+        struct list list;
         str = read_file(filename);
         list = split_string(str, ' ');
         for (i=0;i<list.length;i++) {
@@ -179,8 +181,65 @@ List make_prime_numbers(char *filename)
 
 
 
+
+
+
+/*
+A simple little macro for quick typesafe expanding arrays
+
+Put this in the global scope.
+DEFINE_ARRAY(u64)
+
+Then do something like this
+u64_array a = u64_array_make();
+a = u64_array_add(a, 23424234234);
+printf("%c ", a.data[0]);
+
+
+Tips for macros
+------------------
+Use -E to see the outputs of macros
+gcc -E define_array_macro.c
+
+## joins strings
+so str1 ## str2 becomes str1str2
+*/
+
+
+
+#define DEFINE_ARRAY(TYPENAME)                                                                  \
+                                                                                                \
+typedef struct {                                                                                \
+  TYPENAME* data;                                                                               \
+  int length;                                                                                   \
+  int allocated;                                                                                \
+} TYPENAME ## _array;                                                                           \
+                                                                                                \
+TYPENAME ## _array TYPENAME ## _array_make()                                                    \
+{                                                                                               \
+    TYPENAME ## _array arr;                                                                     \
+    arr.length = 0;                                                                             \
+    arr.allocated = 16;                                                                         \
+    arr.data = (TYPENAME*)malloc( arr.allocated * sizeof(TYPENAME) );                           \
+    return arr;                                                                                 \
+}                                                                                               \
+                                                                                                \
+TYPENAME ## _array TYPENAME ## _array_add(TYPENAME ## _array arr, TYPENAME item)                \
+{                                                                                               \
+    arr.data[arr.length] = item;                                                                \
+    arr.length += 1;                                                                            \
+    if ( arr.length == arr.allocated ) {                                                        \
+      arr.allocated *= 2;                                                                       \
+      arr.data = (TYPENAME*)realloc( arr.data, arr.allocated * sizeof(TYPENAME) );              \
+    }                                                                                           \
+    return arr;                                                                                 \
+}                                                                                               \
+
+
+
 int main()
 {
   //    simple_make_prime_numbers();
     make_prime_numbers("primes.txt");
+    return 0;
 }

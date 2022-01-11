@@ -1,4 +1,4 @@
-#include "misc.h"
+// #include "misc.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -45,11 +45,16 @@ char* caesar_cipher(char* text, int shift)
 
 int caesar_cipher_main()
 {
+    printf(
+        "\n\ncaesar_cipher_main\n"
+        "--------------------------\n"
+    );
+
     char text[] = "The quick brown fox jumps over the lazy dog.";
     int shift = 13;
 
-    printf("%s => ", text );
-    printf("%s\n",caesar_cipher(text, shift));
+    printf("\"%s\"\n", text );
+    printf("\"%s\"\n",caesar_cipher(text, shift));
     return 0;
 }
 
@@ -475,7 +480,7 @@ int read_file_main()
 
     char *data = NULL; 
 	int length = -1;
-	char *filename = __FILE__; // the filename of this file
+	char *filename = (char*)__FILE__; // the filename of this file
 
 	printf("reading %s\n", filename);
 
@@ -520,7 +525,7 @@ void sprint_float3(char* str, float arg)
 
   // arg = 678.0123;
 
-    if (arg<0) { sign="-"; } else { sign=""; }
+    if (arg<0) { sign=(char*)"-"; } else { sign=(char*)""; }
 //   sign = (arg < 0) ? "-" : "";
   val = (arg < 0) ? -arg : arg;
 
@@ -703,4 +708,20 @@ int demo_cpp_vectors()
 
 
     return 0;
+}
+
+
+
+int main()
+{
+    caesar_cipher_main();
+    demo_strtok();
+    demo_variadic_sum();
+    eulers_method_main();
+    newtons_method_main();
+    demo_print_stuff_on_one_line();
+    read_file_main();
+    sprint_float3_main();
+    thread_race_main();
+    demo_cpp_vectors();
 }

@@ -1,2 +1,3 @@
 all:
-	sh make.sh
+	g++ misc.cpp  && ./a.out
+	gcc primes.c && ./a.out
