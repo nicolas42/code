@@ -23,9 +23,9 @@ linux:
 
 #include "SDL.h"
 #include "SDL_image.h"
-// #include "list_dir.h"
+// #include "find_files.h"
 
-void list_dir (const char * dir_name, std::vector<std::string> *output)
+void find_files (const char * dir_name, std::vector<std::string> *output)
 {
     /* this function is from lemoda.net */
 
@@ -107,8 +107,8 @@ void list_dir (const char * dir_name, std::vector<std::string> *output)
                     fprintf (stderr, "Path length has got too long.\n");
                     exit (EXIT_FAILURE);
                 }
-                /* Recursively call "list_dir" with the new path. */
-                list_dir (path,output);
+                /* Recursively call "find_files" with the new path. */
+                find_files (path,output);
             }
 	}
     }
@@ -128,7 +128,7 @@ void list_dir (const char * dir_name, std::vector<std::string> *output)
 //     const char *dir = "/Users/nick/Downloads";
 
 	// std::vector<std::string> files;
-	// list_dir("/Users/nick/Downloads", &files);
+	// find_files("/Users/nick/Downloads", &files);
 	// for (auto f : files) {
 	// 	const char *extension = f.substr(f.find_last_of(".") + 1).c_str();
 	// 	if (strcmp(extension, "jpg")==0) std::cout << f << std::endl;
@@ -170,6 +170,8 @@ double get_scaler_to_fit( SDL_Surface* a, SDL_Surface* b )
 void show( SDL_Window *window, std::vector<std::string> filenames, int filenames_index ) 
 {
     if (filenames.size() == 0) return;
+    std::cout << filenames[filenames_index] << std::endl;
+
     SDL_Surface *window_surface = SDL_GetWindowSurface( window );
     SDL_Surface* image_surface;
     SDL_Surface *optimised_image_surface;
@@ -179,6 +181,11 @@ void show( SDL_Window *window, std::vector<std::string> filenames, int filenames
 
     // optimise image
     image_surface = IMG_Load( filenames[filenames_index].c_str() );
+    if(!image_surface) {
+        printf("IMG_Load: %s\n", IMG_GetError());
+        return;
+    }
+
     optimised_image_surface = SDL_ConvertSurface( image_surface, window_surface->format, 0 );
     SDL_FreeSurface(image_surface);
 
@@ -198,16 +205,33 @@ void show( SDL_Window *window, std::vector<std::string> filenames, int filenames
     
 }
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
-std::vector<std::string> get_image_filenames (char *dir)
+int is_dir(const char *path)
+{
+    struct stat path_stat;
+    stat(path, &path_stat);
+    return S_ISDIR(path_stat.st_mode);
+    // https://pubs.opengroup.org/onlinepubs/7908799/xsh/sysstat.h.html
+}
+
+std::vector<std::string> get_image_filenames (char *f)
 {
     // get image filenames
     std::vector<std::string> filenames;
-    if (!strcmp(dir,"")) return filenames;
+    if (!strcmp(f,"")) return filenames;
 
 	const char *desired_extensions[] = {"jpg", "png", "bmp", "jpeg"};
 	std::vector<std::string> all_filenames;
-	list_dir(dir, &all_filenames);
+
+    if ( is_dir(f) ) { 
+        find_files(f, &all_filenames); 
+    } else {
+        // assume it's an image file
+        filenames.push_back(f);
+    }
 
 	for (auto f : all_filenames) {
 		const char *extension = f.substr(f.find_last_of(".") + 1).c_str();
@@ -255,7 +279,7 @@ int main( int argc, char* argv[] )
 
     std::vector<std::string> filenames;
     int filenames_index;
-    char* dropped_filedir;                  // Pointer for directory of dropped file
+    char* dropped_filename;                  // Pointer for directory of dropped file
 
     filenames = get_image_filenames(dir);
 	filenames_index = 0;
@@ -268,19 +292,19 @@ int main( int argc, char* argv[] )
 		switch (event.type){
 
         case (SDL_DROPFILE): {      // In case if dropped file
-            dropped_filedir = event.drop.file;
-            // // Shows directory of dropped file
+            dropped_filename = event.drop.file;
+            // Shows directory of dropped file
             // SDL_ShowSimpleMessageBox(
             //     SDL_MESSAGEBOX_INFORMATION,
             //     "File dropped on window",
-            //     dropped_filedir,
+            //     dropped_filename,
             //     window
             // );
-            filenames = get_image_filenames(dropped_filedir);
+            filenames = get_image_filenames(dropped_filename);
             filenames_index = 0;
             show( window, filenames, filenames_index );
 
-            SDL_free(dropped_filedir);    // Free dropped_filedir memory
+            SDL_free(dropped_filename);    // Free dropped_filename memory
             break;
         }
 

@@ -200,8 +200,6 @@ def print_on_one_line_demo():
 
 import os 
 
-# /Volumes/Seagate Backup Plus Drive/
-
 def pwd(): 
     return os.getcwd()
 
