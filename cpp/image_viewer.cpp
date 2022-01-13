@@ -1,11 +1,9 @@
 /*
-Install SDL and SDL_image
-
 macos:
-	g++ -ISDL2 -framework SDL2 -framework SDL2_image -std=c++11 show_images.cpp
+g++ -ISDL2 -framework SDL2 -framework SDL2_image -std=c++11 image_viewer.cpp
 
 linux:
-	g++ -ISDL2 -lSDL2 -lSDL2_image -std=c++11 show_images.cpp
+	g++ -ISDL2 -lSDL2 -lSDL2_image -std=c++11 image_viewer.cpp
 */
 
 
@@ -137,40 +135,16 @@ void find_files (const char * dir_name, std::vector<std::string> *output)
 	// }
 // }
 
-
-
-double get_scaler_to_fit( SDL_Surface* a, SDL_Surface* b )
+double min(double a, double b)
 {
-    // find the scaler required to fit the a inside the b
-    // multiply the dimensions of a by the scaler get get the desired size
-
-
-    // An aspect ratio is a width divided by a height e.g. 800/600 = 1.33
-    // if an aspect ratio is higher than another then it is more of a "panorama" type a than the other one.
-    //
-    // if an a's aspect ratio is higher than the windows then we set the width of the a to the width of the b
-    // then we scale the images height accordingly.  If the 
-    
-    double image_aspect_ratio = ((double)a->w) / ((double)a->h);
-    double window_aspect_ratio = ((double)b->w) / ((double)b->h);
-    double scaler = 1;
-
-    if ( image_aspect_ratio > window_aspect_ratio ) {
-        // fit width
-        scaler = ((double)b->w) / ((double)a->w);
-    } else {
-        // fit height
-        scaler = ((double)b->h) / ((double)a->h);
-    }
-
-    // printf("%f %f %f \n", image_aspect_ratio, window_aspect_ratio, scaler);
-    return scaler;
+    if (a<b) return a;
+    return b;
 }
 
 void show( SDL_Window *window, std::vector<std::string> filenames, int filenames_index ) 
 {
     if (filenames.size() == 0) return;
-    std::cout << filenames[filenames_index] << std::endl;
+    std::cout << "show: " << filenames[filenames_index] << std::endl;
 
     SDL_Surface *window_surface = SDL_GetWindowSurface( window );
     SDL_Surface* image_surface;
@@ -191,7 +165,12 @@ void show( SDL_Window *window, std::vector<std::string> filenames, int filenames
 
     // draw optimised
     SDL_FillRect(window_surface, NULL, SDL_MapRGB(window_surface->format, 0, 0, 0));
-    double scaler = get_scaler_to_fit( image_surface, window_surface );
+
+    // resize to fit inside window
+    double width_scaler = ((double)window_surface->w) / ((double)image_surface->w);
+    double height_scaler = ((double)window_surface->h) / ((double)image_surface->h);
+    double scaler = min(width_scaler, height_scaler);
+    
     SDL_Rect image_size;
     image_size.w = (int)(scaler * image_surface->w);
     image_size.h = (int)(scaler * image_surface->h);
@@ -250,8 +229,6 @@ std::vector<std::string> get_image_filenames (char *f)
 
 int main( int argc, char* argv[] )
 {
-
-
     int window_width = 800;
     int window_height = 800;
 	bool time_to_quit = false;
@@ -266,7 +243,6 @@ int main( int argc, char* argv[] )
 	window = SDL_CreateWindow( "Drag a directory onto the window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_width, window_height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE ); 
 	window_surface = SDL_GetWindowSurface( window );
     SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
-
 
 
     // terminal
