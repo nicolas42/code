@@ -1,6 +1,4 @@
-/*
-g++ render_text.cpp -ISDL2 -framework SDL2 -framework SDL2_image -framework SDL2_ttf
-*/
+// g++ render_text.cpp -ISDL2 -framework SDL2 -framework SDL2_image -framework SDL2_ttf
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,26 +7,6 @@ g++ render_text.cpp -ISDL2 -framework SDL2 -framework SDL2_image -framework SDL2
 #include "SDL.h"
 #include "SDL_ttf.h"
 
-void render_text(SDL_Renderer *renderer, int x, int y, char *text,
-        TTF_Font *font, SDL_Texture **texture, SDL_Rect *rect) {
-    int text_width;
-    int text_height;
-    SDL_Surface *surface;
-    SDL_Color textColor = {20,20,20,0};
-    SDL_Color backgroundColor = {255,255,255,0};
-
-    // surface = TTF_RenderText_Solid(font, text, textColor);
-    surface=TTF_RenderText_Shaded(font, text, textColor, backgroundColor);
-
-    *texture = SDL_CreateTextureFromSurface(renderer, surface);
-    text_width = surface->w;
-    text_height = surface->h;
-    SDL_FreeSurface(surface);
-    rect->x = x;
-    rect->y = y;
-    rect->w = text_width;
-    rect->h = text_height;
-}
 
 int main(int argc, char **argv) {
 
@@ -43,47 +21,40 @@ int main(int argc, char **argv) {
     char* font_path = (char*)"data/Sans.ttf";
     int font_size = 24;
     TTF_Font *font = TTF_OpenFont(font_path, font_size);
-    if (font == NULL) {
-        fprintf(stderr, "error: font not found\n");
-        exit(EXIT_FAILURE);
+    if (!font) { 
+        printf("ERROR %s %d %s\n", __FILE__, __LINE__, SDL_GetError());
+        exit(1);
     }
 
 
-
-
-    SDL_Rect *rect = (SDL_Rect*)malloc(sizeof(SDL_Rect));
-    SDL_Surface *surface;
+    SDL_Rect rect;
+    SDL_Surface *text_image;
     SDL_Texture *texture;
 
-    // paint it white
-    SDL_SetRenderDrawColor(renderer, 255,255,255,0);
+    SDL_SetRenderDrawColor(renderer, 255,255,255,255);
     SDL_RenderClear(renderer);
 
     int length = 4;
-    char lines[4][100] = { "Hello", "world", "omg", "let's see if something else is good like this for a long line omgomgomg" };
-
-
+    char text[4][100] = { "Hello", "world", "omg", "let's see if something else is good like this for a long line omgomgomg" };
     int i;
     for(i=0;i<length;++i) {
         int x = 0;
         int y = 0;
-        if(i!=0) { y = rect->y + rect->h; }
+        if(i!=0) { y = rect.y+rect.h; }
 
         SDL_Color text_color = {20,20,20,0};
         SDL_Color background_color = {255,255,255,0};
-        surface = TTF_RenderText_Shaded(font, (char*)lines[i], text_color, background_color);
-        // TTF_RenderText_Shaded renders smooth text whereas TTF_RenderText_Solid doesn't :(
-        texture = SDL_CreateTextureFromSurface(renderer, surface);
-        rect->x = x;
-        rect->y = y;
-        rect->w = surface->w;
-        rect->h = surface->h;
-        SDL_RenderCopy(renderer, texture, NULL, rect);
+        text_image = TTF_RenderText_Shaded(font, (char*)text[i], text_color, background_color); // TTF_RenderText_Solid doesn't smooth edges
+        texture = SDL_CreateTextureFromSurface(renderer, text_image);
+        rect.x = x;
+        rect.y = y;
+        rect.w = text_image->w;
+        rect.h = text_image->h;
+        SDL_RenderCopy(renderer, texture, NULL, &rect);
 
-        SDL_FreeSurface(surface);
+        SDL_FreeSurface(text_image);
         SDL_DestroyTexture(texture);
     }
-    
     SDL_RenderPresent(renderer);
 
     SDL_Event event;
@@ -104,3 +75,25 @@ int main(int argc, char **argv) {
 
     return EXIT_SUCCESS;
 }
+
+
+
+// void render_text(SDL_Renderer *renderer, int x, int y, char *text,
+//         TTF_Font *font, SDL_Texture **texture, SDL_Rect *rect) {
+//     int text_width;
+//     int text_height;
+//     SDL_Surface *surface;
+//     SDL_Color textColor = {20,20,20,0};
+//     SDL_Color backgroundColor = {255,255,255,0};
+
+//     surface=TTF_RenderText_Shaded(font, text, textColor, backgroundColor);
+
+//     *texture = SDL_CreateTextureFromSurface(renderer, surface);
+//     text_width = surface->w;
+//     text_height = surface->h;
+//     SDL_FreeSurface(surface);
+//     rect->x = x;
+//     rect->y = y;
+//     rect->w = text_width;
+//     rect->h = text_height;
+// }
