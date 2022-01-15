@@ -1,3 +1,5 @@
+Imgui is a small c++ GUI library
+
 Making a macos .app application
 -------------------------------
 Create a folder named "YourApplication.app". 
