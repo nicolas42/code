@@ -7,24 +7,8 @@
 #include "SDL.h"
 #include "SDL_ttf.h"
 
-
-int main(int argc, char **argv) {
-
-    SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO);
-    int window_width = 400;
-    int window_height = 400;
-    SDL_Renderer *renderer;
-    SDL_Window *window;
-    SDL_CreateWindowAndRenderer(window_width, window_height, 0, &window, &renderer);
-
-    TTF_Init();
-    char* font_path = (char*)"data/Sans.ttf";
-    int font_size = 24;
-    TTF_Font *font = TTF_OpenFont(font_path, font_size);
-    if (!font) { 
-        printf("ERROR %s %d %s\n", __FILE__, __LINE__, SDL_GetError());
-        exit(1);
-    }
+void render_some_text(SDL_Renderer *renderer, TTF_Font *font)
+{
 
 
     SDL_Rect rect;
@@ -56,6 +40,78 @@ int main(int argc, char **argv) {
         SDL_DestroyTexture(texture);
     }
     SDL_RenderPresent(renderer);
+}
+
+int main(int argc, char **argv) {
+
+    SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO);
+    int window_width = 400;
+    int window_height = 400;
+    SDL_Renderer *renderer;
+    SDL_Window *window;
+    SDL_CreateWindowAndRenderer(window_width, window_height, 0, &window, &renderer);
+
+    TTF_Init();
+    char* font_path = (char*)"data/Sans.ttf";
+    int font_size = 24;
+    TTF_Font *font = TTF_OpenFont(font_path, font_size);
+    if (!font) { 
+        printf("ERROR %s %d %s\n", __FILE__, __LINE__, SDL_GetError());
+        exit(1);
+    }
+
+
+    // render_some_text(renderer, font);
+
+
+
+
+
+    char* lorem_ipsum = (char*)malloc(1000);
+    lorem_ipsum = (char*)"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
+    char *text = lorem_ipsum;
+    int i,err,x,y;
+    int extent;
+    int measure_width = 400;
+    char line[1000];
+    SDL_Color text_color = {20,20,20,0};
+    SDL_Color background_color = {255,255,255,0};
+
+    SDL_SetRenderDrawColor(renderer, 255,255,255,255);
+    SDL_RenderClear(renderer);
+
+    x = 0;
+    y = 0;
+    for(i=0;i<10;++i){
+        int count = 0;
+        err = TTF_MeasureText(font, text, measure_width, &extent, &count);
+        printf("count: %d\n", count);
+
+        memset(line, 0, sizeof line);
+        memcpy(line, text, count);
+        line[count] = '\0';
+        printf("%s\n", line);
+
+        SDL_Surface *text_surface = TTF_RenderText_Shaded(font, line, text_color, background_color); 
+        SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+        SDL_Rect rect;
+        rect.x = x;
+        rect.y = y;
+        rect.w = text_surface->w;
+        rect.h = text_surface->h;
+        SDL_RenderCopy(renderer, texture, NULL, &rect);
+
+        text += count;
+        y += text_surface->h;
+
+        SDL_FreeSurface(text_surface);
+        SDL_DestroyTexture(texture);
+
+    }
+
+    SDL_RenderPresent(renderer);
+
 
     SDL_Event event;
     int quit = 0;
