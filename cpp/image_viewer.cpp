@@ -23,6 +23,19 @@ linux:
 #include "SDL_image.h"
 // #include "find_files.h"
 
+#define PRINT_ERROR(ERR) printf("ERROR %s %d %s\n", __FILE__, __LINE__, ERR)
+
+
+SDL_Rect make_rect(int x, int y, int w, int h)
+{
+    SDL_Rect dest;
+    dest.x = x;
+    dest.y = y;
+    dest.w = w;
+    dest.h = h;
+    return dest;
+}
+
 void find_files (const char * dir_name, std::vector<std::string> *output)
 {
     /* this function is from lemoda.net */
@@ -135,54 +148,6 @@ void find_files (const char * dir_name, std::vector<std::string> *output)
 	// }
 // }
 
-double min(double a, double b)
-{
-    if (a<b) return a;
-    return b;
-}
-
-void show( SDL_Window *window, std::vector<std::string> filenames, int filenames_index ) 
-{
-    if (filenames.size() == 0) return;
-    std::cout << "show: " << filenames[filenames_index] << std::endl;
-
-    SDL_Surface *window_surface = SDL_GetWindowSurface( window );
-    SDL_Surface* image_surface;
-    SDL_Surface *optimised_image_surface;
-
-    // set title to filename
-    SDL_SetWindowTitle(window, filenames[filenames_index].c_str());
-
-    // optimise image
-    image_surface = IMG_Load( filenames[filenames_index].c_str() );
-    if(!image_surface) {
-        printf("IMG_Load: %s\n", IMG_GetError());
-        return;
-    }
-
-    optimised_image_surface = SDL_ConvertSurface( image_surface, window_surface->format, 0 );
-    SDL_FreeSurface(image_surface);
-
-    // draw optimised
-    SDL_FillRect(window_surface, NULL, SDL_MapRGB(window_surface->format, 0, 0, 0));
-
-    // resize to fit inside window
-    double width_scaler = ((double)window_surface->w) / ((double)image_surface->w);
-    double height_scaler = ((double)window_surface->h) / ((double)image_surface->h);
-    double scaler = min(width_scaler, height_scaler);
-    
-    SDL_Rect image_size;
-    image_size.w = (int)(scaler * image_surface->w);
-    image_size.h = (int)(scaler * image_surface->h);
-    image_size.y = (window_surface->h - image_size.h)/2;
-    image_size.x = (window_surface->w - image_size.w)/2;
-
-    SDL_BlitScaled( optimised_image_surface, NULL, window_surface, &image_size );
-    SDL_FreeSurface(optimised_image_surface);
-
-    SDL_UpdateWindowSurface( window );
-    
-}
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -227,6 +192,211 @@ std::vector<std::string> get_image_filenames (char *f)
     
 }
 
+
+
+void print_event(SDL_Event event)
+{
+    if ( event.type == SDL_AUDIODEVICEADDED ) printf("SDL_AUDIODEVICEADDED\n");
+    if ( event.type == SDL_AUDIODEVICEREMOVED ) printf("SDL_AUDIODEVICEREMOVED\n");
+    if ( event.type == SDL_CONTROLLERAXISMOTION ) printf("SDL_CONTROLLERAXISMOTION\n");
+    if ( event.type == SDL_CONTROLLERBUTTONDOWN ) printf("SDL_CONTROLLERBUTTONDOWN\n");
+    if ( event.type == SDL_CONTROLLERBUTTONUP ) printf("SDL_CONTROLLERBUTTONUP\n");
+    if ( event.type == SDL_CONTROLLERDEVICEADDED ) printf("SDL_CONTROLLERDEVICEADDED\n");
+    if ( event.type == SDL_CONTROLLERDEVICEREMOVED ) printf("SDL_CONTROLLERDEVICEREMOVED\n");
+    if ( event.type == SDL_CONTROLLERDEVICEREMAPPED ) printf("SDL_CONTROLLERDEVICEREMAPPED\n");
+    if ( event.type == SDL_DOLLARGESTURE ) printf("SDL_DOLLARGESTURE\n");
+    if ( event.type == SDL_DOLLARRECORD ) printf("SDL_DOLLARRECORD\n");
+    if ( event.type == SDL_DROPFILE ) printf("SDL_DROPFILE\n");
+    if ( event.type == SDL_DROPTEXT ) printf("SDL_DROPTEXT\n");
+    if ( event.type == SDL_DROPBEGIN ) printf("SDL_DROPBEGIN\n");
+    if ( event.type == SDL_DROPCOMPLETE ) printf("SDL_DROPCOMPLETE\n");
+    if ( event.type == SDL_FINGERMOTION ) printf("SDL_FINGERMOTION\n");
+    if ( event.type == SDL_FINGERDOWN ) printf("SDL_FINGERDOWN\n");
+    if ( event.type == SDL_FINGERUP ) printf("SDL_FINGERUP\n");
+    if ( event.type == SDL_KEYDOWN ) printf("SDL_KEYDOWN\n");
+    if ( event.type == SDL_KEYUP ) printf("SDL_KEYUP\n");
+    if ( event.type == SDL_JOYAXISMOTION ) printf("SDL_JOYAXISMOTION\n");
+    if ( event.type == SDL_JOYBALLMOTION ) printf("SDL_JOYBALLMOTION\n");
+    if ( event.type == SDL_JOYHATMOTION ) printf("SDL_JOYHATMOTION\n");
+    if ( event.type == SDL_JOYBUTTONDOWN ) printf("SDL_JOYBUTTONDOWN\n");
+    if ( event.type == SDL_JOYBUTTONUP ) printf("SDL_JOYBUTTONUP\n");
+    if ( event.type == SDL_JOYDEVICEADDED ) printf("SDL_JOYDEVICEADDED\n");
+    if ( event.type == SDL_JOYDEVICEREMOVED ) printf("SDL_JOYDEVICEREMOVED\n");
+    if ( event.type == SDL_MOUSEMOTION ) printf("SDL_MOUSEMOTION ");
+    if ( event.type == SDL_MOUSEBUTTONDOWN ) printf("SDL_MOUSEBUTTONDOWN\n");
+    if ( event.type == SDL_MOUSEBUTTONUP ) printf("SDL_MOUSEBUTTONUP\n");
+    if ( event.type == SDL_MOUSEWHEEL ) printf("SDL_MOUSEWHEEL\n");
+    if ( event.type == SDL_MULTIGESTURE ) printf("SDL_MULTIGESTURE\n");
+    if ( event.type == SDL_QUIT ) printf("SDL_QUIT\n");
+    if ( event.type == SDL_SYSWMEVENT ) printf("SDL_SYSWMEVENT\n");
+    if ( event.type == SDL_TEXTEDITING ) printf("SDL_TEXTEDITING\n");
+    if ( event.type == SDL_TEXTINPUT ) printf("SDL_TEXTINPUT\n");
+    if ( event.type == SDL_USEREVENT ) printf("SDL_USEREVENT\n");
+    if ( event.type == SDL_WINDOWEVENT ) printf("SDL_WINDOWEVENT\n");
+
+    if ( event.type == SDL_KEYDOWN || event.type == SDL_KEYUP ) printf("%s\n", SDL_GetKeyName(event.key.keysym.sym));
+
+    fflush(stdout);
+}
+
+void print_window_event(const SDL_Event * event)
+{
+    if (event->type == SDL_WINDOWEVENT) {
+        switch (event->window.event) {
+        case SDL_WINDOWEVENT_SHOWN:
+            SDL_Log("Window %d shown", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_HIDDEN:
+            SDL_Log("Window %d hidden", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_EXPOSED:
+            SDL_Log("Window %d exposed", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_MOVED:
+            SDL_Log("Window %d moved to %d,%d",
+                    event->window.windowID, event->window.data1,
+                    event->window.data2);
+            break;
+        case SDL_WINDOWEVENT_RESIZED:
+            SDL_Log("Window %d resized to %dx%d",
+                    event->window.windowID, event->window.data1,
+                    event->window.data2);
+            break;
+        case SDL_WINDOWEVENT_SIZE_CHANGED:
+            SDL_Log("Window %d size changed to %dx%d",
+                    event->window.windowID, event->window.data1,
+                    event->window.data2);
+            break;
+        case SDL_WINDOWEVENT_MINIMIZED:
+            SDL_Log("Window %d minimized", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_MAXIMIZED:
+            SDL_Log("Window %d maximized", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_RESTORED:
+            SDL_Log("Window %d restored", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_ENTER:
+            SDL_Log("Mouse entered window %d",
+                    event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_LEAVE:
+            SDL_Log("Mouse left window %d", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_FOCUS_GAINED:
+            SDL_Log("Window %d gained keyboard focus",
+                    event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_FOCUS_LOST:
+            SDL_Log("Window %d lost keyboard focus",
+                    event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_CLOSE:
+            SDL_Log("Window %d closed", event->window.windowID);
+            break;
+#if SDL_VERSION_ATLEAST(2, 0, 5)
+        case SDL_WINDOWEVENT_TAKE_FOCUS:
+            SDL_Log("Window %d is offered a focus", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_HIT_TEST:
+            SDL_Log("Window %d has a special hit test", event->window.windowID);
+            break;
+#endif
+        default:
+            SDL_Log("Window %d got unknown event %d",
+                    event->window.windowID, event->window.event);
+            break;
+        }
+    }
+}
+
+
+
+double min(double a, double b)
+{
+    if (a<b) return a;
+    return b;
+}
+
+void show_using_surfaces( SDL_Window *window, std::vector<std::string> filenames, int filenames_index ) 
+{
+    if (filenames.size() == 0) return;
+    std::cout << "show: " << filenames[filenames_index] << std::endl;
+
+    SDL_Surface *window_surface = SDL_GetWindowSurface( window );
+    SDL_Surface* image_surface;
+    SDL_Surface *optimised_image_surface;
+
+    // set title to filename
+    SDL_SetWindowTitle(window, filenames[filenames_index].c_str());
+
+    // optimise image
+    image_surface = IMG_Load( filenames[filenames_index].c_str() );
+    if(!image_surface) {
+        printf("IMG_Load: %s\n", IMG_GetError());
+        return;
+    }
+
+    optimised_image_surface = SDL_ConvertSurface( image_surface, window_surface->format, 0 );
+    SDL_FreeSurface(image_surface);
+
+    // draw optimised
+    SDL_FillRect(window_surface, NULL, SDL_MapRGB(window_surface->format, 0, 0, 0));
+
+    // resize to fit inside window
+    double width_scaler = ((double)window_surface->w) / ((double)image_surface->w);
+    double height_scaler = ((double)window_surface->h) / ((double)image_surface->h);
+    double scaler = min(width_scaler, height_scaler);
+    
+    SDL_Rect image_size;
+    image_size.w = (int)(scaler * image_surface->w);
+    image_size.h = (int)(scaler * image_surface->h);
+    image_size.y = (window_surface->h - image_size.h)/2;
+    image_size.x = (window_surface->w - image_size.w)/2;
+
+    SDL_BlitScaled( optimised_image_surface, NULL, window_surface, &image_size );
+    SDL_FreeSurface(optimised_image_surface);
+    SDL_UpdateWindowSurface( window );
+    
+}
+
+void show_using_renderer( SDL_Window *window, std::vector<std::string> filenames, int filenames_index ) 
+{
+    if (filenames.size() == 0) return;
+    std::cout << "show: " << filenames[filenames_index] << std::endl;
+    SDL_SetWindowTitle(window, filenames[filenames_index].c_str());
+
+    SDL_Renderer *renderer = SDL_GetRenderer(window);
+
+    SDL_Surface* image = IMG_Load( filenames[filenames_index].c_str() );
+    if(!image) { PRINT_ERROR(SDL_GetError()); return; }
+	SDL_Texture *texture = SDL_CreateTextureFromSurface( renderer, image );
+    if (!texture) PRINT_ERROR(SDL_GetError());
+
+    int w,h;
+    SDL_GetWindowSize(window, &w, &h);
+
+    // resize to fit inside window
+    double width_scaler = ((double)w) / ((double)image->w);
+    double height_scaler = ((double)h) / ((double)image->h);
+    double scaler = min(width_scaler, height_scaler);
+    
+    SDL_Rect image_size;
+    image_size.w = (int)(scaler * image->w);
+    image_size.h = (int)(scaler * image->h);
+    image_size.y = (h - image_size.h)/2;
+    image_size.x = (w - image_size.w)/2;
+
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderFillRect(renderer, NULL);
+
+    SDL_RenderCopy( renderer, texture, NULL, &image_size );
+    SDL_RenderPresent( renderer );
+    
+}
+
+
 int main( int argc, char* argv[] )
 {
     int window_width = 800;
@@ -236,17 +406,28 @@ int main( int argc, char* argv[] )
 
 
 	SDL_Window* window;
-	SDL_Surface* window_surface;
 	SDL_Event event;
 	SDL_Init( SDL_INIT_VIDEO );
 	IMG_Init( IMG_INIT_PNG & IMG_INIT_JPG );
 	window = SDL_CreateWindow( "Drag a directory onto the window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_width, window_height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE ); 
-	window_surface = SDL_GetWindowSurface( window );
+
+    const int use_renderer = 1;
+
+    void (*show)( SDL_Window *window, std::vector<std::string> filenames, int filenames_index );
+    if (use_renderer) {
+        // An SDL_Renderer and a window_surface can not live in the same universe.  They are like antimatter.
+        SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+        show = show_using_renderer;
+    } else {
+        show = show_using_surfaces;
+    }
+    // 
+
     SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
 
 
     // terminal
-	char *dir = (char*)"";
+	char *dir = (char*)"/Users/nick/Downloads";
     // if (argc == 1) printf("show_images <dir>\n");
 	// if (argc==2){
 	// 	dir = argv[1];
@@ -261,69 +442,76 @@ int main( int argc, char* argv[] )
 	filenames_index = 0;
 	show( window, filenames, filenames_index );
 
+    int pending = 0;
     while (!time_to_quit)
     {
-        SDL_WaitEvent(&event);
+        // SDL_WaitEvent(&event);
+        while(SDL_PollEvent(&event)) {
+            // print_event(event);
 
-		switch (event.type){
+            switch (event.type){
 
-        case (SDL_DROPFILE): {      // In case if dropped file
-            dropped_filename = event.drop.file;
-            // Shows directory of dropped file
-            // SDL_ShowSimpleMessageBox(
-            //     SDL_MESSAGEBOX_INFORMATION,
-            //     "File dropped on window",
-            //     dropped_filename,
-            //     window
-            // );
-            filenames = get_image_filenames(dropped_filename);
-            filenames_index = 0;
-            show( window, filenames, filenames_index );
+            case (SDL_DROPFILE): {
+                dropped_filename = event.drop.file;
+                filenames = get_image_filenames(dropped_filename);
+                filenames_index = 0;
+                show( window, filenames, filenames_index );
 
-            SDL_free(dropped_filename);    // Free dropped_filename memory
-            break;
+                SDL_free(dropped_filename);    // Free dropped_filename memory
+                break;
+            }
+
+            case SDL_QUIT:
+                time_to_quit = true;
+                break;
+
+            case SDL_WINDOWEVENT:
+                // printf("window event %d\n", (int)(event.window.event) );
+                if ( 
+                    event.window.event == SDL_WINDOWEVENT_RESIZED || 
+                    event.window.event == SDL_WINDOWEVENT_MINIMIZED || 
+                    event.window.event == SDL_WINDOWEVENT_MAXIMIZED || 
+                    event.window.event == SDL_WINDOWEVENT_RESTORED
+                ){
+                    print_window_event(&event);
+                    printf("omg show\n");
+                    show( window, filenames, filenames_index ); 
+                }
+
+                // show( window, filenames, filenames_index );
+                break;
+
+            case SDL_KEYDOWN:
+
+                if ( event.key.keysym.sym == SDLK_RIGHT ) {
+                    filenames_index += 1;
+                    if ( filenames_index >= filenames.size() ) filenames_index = 0;
+                    show( window, filenames, filenames_index );
+                }
+
+                if ( event.key.keysym.sym == SDLK_LEFT ) {
+                    filenames_index += -1;
+                    if ( filenames_index < 0 ) filenames_index = filenames.size()-1;
+                    show( window, filenames, filenames_index );
+                }
+                
+                if ( event.key.keysym.sym == SDLK_f ) {
+                    if (is_fullscreen) {
+                        SDL_SetWindowFullscreen(window, 0);
+                    } else {
+                        SDL_SetWindowFullscreen( window, SDL_WINDOW_FULLSCREEN_DESKTOP );
+                    }
+                    is_fullscreen = !is_fullscreen;
+                }
+                break;
+
+            case SDL_MOUSEBUTTONDOWN:
+                filenames_index += -1;
+                if ( filenames_index < 0 ) filenames_index = filenames.size()-1;
+                show( window, filenames, filenames_index );
+                break;
+            }
         }
-
-		case SDL_QUIT:
-			time_to_quit = true;
-			break;
-
-        case SDL_WINDOWEVENT:
-            // printf("window event %d\n", (int)(event.window.event) );
-            show( window, filenames, filenames_index );
-            break;
-
-		case SDL_KEYDOWN:
-
-			if ( event.key.keysym.sym == SDLK_RIGHT ) {
-				filenames_index += 1;
-				if ( filenames_index >= filenames.size() ) filenames_index = 0;
-				show( window, filenames, filenames_index );
-            }
-
-            if ( event.key.keysym.sym == SDLK_LEFT ) {
-				filenames_index += -1;
-				if ( filenames_index < 0 ) filenames_index = filenames.size()-1;
-				show( window, filenames, filenames_index );
-            }
-            
-            if ( event.key.keysym.sym == SDLK_f ) {
-				if (is_fullscreen) {
-					SDL_SetWindowFullscreen(window, 0);
-				} else {
-					SDL_SetWindowFullscreen( window, SDL_WINDOW_FULLSCREEN_DESKTOP );
-				}
-				is_fullscreen = !is_fullscreen;
-			}
-			break;
-
-		case SDL_MOUSEBUTTONDOWN:
-			filenames_index += -1;
-			if ( filenames_index < 0 ) filenames_index = filenames.size()-1;
-			show( window, filenames, filenames_index );
-			break;
-		}
-
     }
 
 	// SDL_FreeSurface( window_surface );

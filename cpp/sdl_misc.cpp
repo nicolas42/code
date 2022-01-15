@@ -1,16 +1,27 @@
-// clang++ sdl_misc.cpp -framework SDL2 -framework SDL2_image -ISDL2 -g -fsanitize=address && ./a.out
+// g++ sdl_misc.cpp -framework SDL2 -framework SDL2_image -ISDL2 -g -fsanitize=address && ./a.out
 
+// notes
+// -----------
 // c-style casts have higher precedence than arithmetic and logic operations
 // https://en.cppreference.com/w/cpp/language/operator_precedence
-
 // https://wiki.libsdl.org/SDL_Event
+// print error with line number macro
+// https://stackoverflow.com/questions/8884481/exact-line-number-for-c-error
 
+
+// SDL_BlitScaled() requires the surface to be converted to native format first
+// by calling SDL_ConvertSurface()
+
+
+// SDL_GetWindowSurface can't be combined with the rendering API
+// You may not combine this with 3D or the rendering API on this window.
+// https://wiki.libsdl.org/SDL_GetWindowSurface
 
 #include <stdio.h>
 #include "SDL.h"
 #include "SDL_image.h"
 
-#define PRINT_ERROR(err) printf("ERROR %s %d %s\n", __FILE__, __LINE__, err);
+#define PRINT_ERROR(ERR) printf("ERROR %s %d %s\n", __FILE__, __LINE__, ERR)
 
 void print_event(SDL_Event event)
 {
@@ -40,7 +51,7 @@ void print_event(SDL_Event event)
     if ( event.type == SDL_JOYBUTTONUP ) printf("SDL_JOYBUTTONUP\n");
     if ( event.type == SDL_JOYDEVICEADDED ) printf("SDL_JOYDEVICEADDED\n");
     if ( event.type == SDL_JOYDEVICEREMOVED ) printf("SDL_JOYDEVICEREMOVED\n");
-    if ( event.type == SDL_MOUSEMOTION ) printf("SDL_MOUSEMOTION\n");
+    if ( event.type == SDL_MOUSEMOTION ) printf("SDL_MOUSEMOTION ");
     if ( event.type == SDL_MOUSEBUTTONDOWN ) printf("SDL_MOUSEBUTTONDOWN\n");
     if ( event.type == SDL_MOUSEBUTTONUP ) printf("SDL_MOUSEBUTTONUP\n");
     if ( event.type == SDL_MOUSEWHEEL ) printf("SDL_MOUSEWHEEL\n");
@@ -53,165 +64,119 @@ void print_event(SDL_Event event)
     if ( event.type == SDL_WINDOWEVENT ) printf("SDL_WINDOWEVENT\n");
 
     if ( event.type == SDL_KEYDOWN || event.type == SDL_KEYUP ) printf("%s\n", SDL_GetKeyName(event.key.keysym.sym));
+
+    fflush(stdout);
 }
 
 SDL_Rect make_rect(int x, int y, int w, int h)
 {
-    SDL_Rect rect;
-    rect.x = x;
-    rect.y = y;
-    rect.w = w;
-    rect.h = h;
-    return rect;
+    SDL_Rect dest;
+    dest.x = x;
+    dest.y = y;
+    dest.w = w;
+    dest.h = h;
+    return dest;
 }
 
-int main( int argc, char* args[] )
+int main1( int argc, char** argv )
 {
     SDL_Init( SDL_INIT_VIDEO );
     IMG_Init( IMG_INIT_PNG );
 
     const int window_width = 800;
     const int window_height = 600;
-    SDL_Window *w = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_width, window_height, SDL_WINDOW_SHOWN );
+    SDL_Window *window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_width, window_height, SDL_WINDOW_SHOWN );
 
-
-
-    SDL_Surface *window, *lenna, *lenna_native, *nyan_cat;
+    SDL_Surface *surface, *lenna, *lenna_native, *nyan_cat;
     int err;
-    SDL_Rect dest;
+    SDL_Rect destination;
+    float scaler;
 
-    window = SDL_GetWindowSurface( w );
-    SDL_FillRect( window, NULL, SDL_MapRGB( window->format, 0x55,0x55,0xAA ) );
-
+    surface = SDL_GetWindowSurface( window );
+    SDL_FillRect( surface, NULL, SDL_MapRGB( surface->format, 0x55,0x55,0xAA ) );
 
     lenna = SDL_LoadBMP( "data/lenna.bmp" );
-    SDL_BlitSurface( lenna, NULL, window, NULL );
+    SDL_BlitSurface( lenna, NULL, surface, NULL );
 
-    // blig scaled requires images to be in native format so use convertsurface
-    float scaler = 300.0 / (float)lenna->h;
-    dest.x = lenna->w;
-    dest.y = 0;
-    dest.w = (int) ( scaler*lenna->w );
-    dest.h = (int)( scaler*lenna->h );
-    lenna_native = SDL_ConvertSurface( lenna, window->format, 0 ); 
-    err = SDL_BlitScaled( lenna_native, NULL, window, &dest );
+    // blit scaled
+    scaler = 300.0 / (float)lenna->h;
+    destination = make_rect(lenna->w, 0, scaler*lenna->w, scaler*lenna->h);
+    lenna_native = SDL_ConvertSurface( lenna, surface->format, 0 ); // requires native format
+    err = SDL_BlitScaled( lenna_native, NULL, surface, &destination );
     if (err) PRINT_ERROR(SDL_GetError());
 
-    // apparently the image library already converts to native, I guess
+    // load png
     nyan_cat = IMG_Load( "data/nyan_cat.png" ); 
     scaler = 300.0 / (float)nyan_cat->h;
-    dest.x = 0;
-    dest.y = 300;
-    dest.w = (int) ( scaler*nyan_cat->w );
-    dest.h = (int)( scaler*nyan_cat->h );
-    err = SDL_BlitScaled( nyan_cat, NULL, window, &dest );
+    destination = make_rect(0,300, scaler*nyan_cat->w, scaler*nyan_cat->h);
+    err = SDL_BlitScaled( nyan_cat, NULL, surface, &destination );
     if (err) PRINT_ERROR(SDL_GetError());
 
 
-    // // actually show stuff
-    // SDL_UpdateWindowSurface( w );
-
-
-    SDL_Renderer *renderer = SDL_CreateRenderer( w, -1, SDL_RENDERER_ACCELERATED );
-    // SDL_SetRenderDrawColor( renderer, 255,255,255,255);
-
-    // SDL_Surface* nyan_cat = IMG_Load( "data/nyan_cat.png" ); 
-	SDL_Texture *texture = SDL_CreateTextureFromSurface( renderer, nyan_cat );
-    if (!texture) PRINT_ERROR(SDL_GetError());
-
-    SDL_RenderClear( renderer );
-    scaler = 300.0 / (float)nyan_cat->h;
-    dest.x = 0;
-    dest.y = 300;
-    dest.w = (int) ( scaler*nyan_cat->w );
-    dest.h = (int)( scaler*nyan_cat->h );
-
-    SDL_RenderCopy( renderer, texture, NULL, &dest );
-    SDL_RenderPresent( renderer );
-
-
-
+    SDL_UpdateWindowSurface( window );
 
 
     SDL_Event event; 
-    int running = 1;
-    while ( running ) {
+    int quit = 0;
+    while ( !quit ) {
         SDL_WaitEvent(&event);
-        if ( event.type == SDL_QUIT ) running = 0;
+        if ( event.type == SDL_QUIT ) quit = 1;
         print_event(event);
     }
 
 
-    // SDL_FreeSurface(window);
-    // SDL_FreeSurface(lenna);
-    // SDL_FreeSurface(lenna_native);
-
-    SDL_DestroyWindow( w );
+    SDL_FreeSurface(lenna);
+    SDL_FreeSurface(lenna_native);
+    SDL_FreeSurface(nyan_cat);
+    SDL_DestroyWindow( window ); // frees surface
     SDL_Quit();
     return 0;
 }
 
 
-// Textures are hardware rendered images
 
-// There's a bug where if I call SDL_GetWindowSurface on the window then
-// it screws up CreateTextureFromSurface
-
-
-int main1( int argc, char* args[] )
+// use renderer
+int main( int argc, char* args[] )
 {
     const int WINDOW_WIDTH  = 800;
-    const int WINDOW_HEIGHT = 800;
+    const int WINDOW_HEIGHT = 600;
     
     SDL_Init( SDL_INIT_VIDEO );
     IMG_Init( IMG_INIT_PNG );
 
     SDL_Window *window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN );
-    // SDL_Surface *surface = SDL_GetWindowSurface( window );
-    SDL_Renderer *window_renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED );
-    SDL_SetRenderDrawColor( window_renderer, 0xFF, 0xFF, 0xFF, 0xFF );
+    
+    SDL_Renderer *renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED );
+    // SDL_SetRenderDrawColor( renderer, 255,255,255,255);
+    // SDL_RenderClear( renderer );
 
-    SDL_Surface* tmp = IMG_Load( "data/nyan_cat.png" ); 
-	SDL_Texture *image = SDL_CreateTextureFromSurface( window_renderer, tmp );
-    if (image == NULL) printf("shit shit fucking guard dogs!\n");
-    SDL_FreeSurface(tmp);
+    SDL_Surface* nyan_cat = IMG_Load( "data/nyan_cat.png" ); 
+	SDL_Texture *texture = SDL_CreateTextureFromSurface( renderer, nyan_cat );
+    if (!texture) PRINT_ERROR(SDL_GetError());
 
+    float scaler = 300.0 / (float)nyan_cat->h;
+    SDL_Rect destination = make_rect(0,300, scaler*nyan_cat->w, scaler*nyan_cat->h);
+
+    SDL_RenderCopy( renderer, texture, NULL, &destination );
+    SDL_RenderPresent( renderer );
 
     SDL_Event event;
-    int running = 1;
-    while ( running ) {
+    int quit = 0;
+    while ( !quit ) {
         SDL_WaitEvent(&event);
-        if ( event.type == SDL_QUIT ) running = 0;
+        if ( event.type == SDL_QUIT ) quit = 1;
 
-        SDL_RenderClear( window_renderer );
-        SDL_RenderCopy( window_renderer, image, NULL, NULL );
-        SDL_RenderPresent( window_renderer );
     }
 
 
+    SDL_FreeSurface(nyan_cat);
     SDL_DestroyWindow( window );
-    SDL_DestroyTexture( image );
-    SDL_DestroyRenderer( window_renderer );
+    SDL_DestroyTexture( texture );
+    SDL_DestroyRenderer( renderer );
+
     IMG_Quit();
     SDL_Quit();
     return 0;
 }
 
 
-
-
-// // make
-// // g++ lazyfoo_examples.cpp -framework SDL2 -framework SDL2_image -ISDL2 && ./a.out
-// // 
-// // SDL2_image is just needed for reading png files
-
-// int main( int argc, char* args[] )
-// {
-//     // open_a_window(argc, args);
-//     load_a_bmp_and_blit_it_to_the_screen( argc, args);
-//     // respond_to_left_and_right_keyboard_events( argc, args);
-//     // scale_an_image_and_optimise_it_for_faster_blitting( argc, args);
-//     // lets_load_a_png( argc, args);
-//     // use_textures_to_render_an_image( argc, args);
-
-// }
