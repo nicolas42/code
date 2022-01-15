@@ -1,7 +1,8 @@
-look who just increased their productivity
-git commit -a -m lol
+guess who just increased their productivity
+git commit -am lol
 
 Imgui is a small c++ GUI library
+
 
 Making a macos .app application
 -------------------------------
