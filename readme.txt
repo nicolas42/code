@@ -1,10 +1,16 @@
+To Do  #todo
+--------------
+implement payment processing system using stripe
+https://github.com/stripe-samples/accept-a-payment/tree/main/prebuilt-checkout-page
+
+
 Cryptography  #crypto
 -------------------
 
 RSA (Rivest–Shamir–Adleman) is a public-key cryptosystem that is widely used for secure data transmission. 
 
 Diffie Helman: 
-RSA DH is not a symmetric algorithm – it is an asymmetric algorithm used to establish a shared secret for a symmetric key algorithm.
+RSA DH is an asymmetric algorithm used to establish a shared secret for a symmetric key algorithm.
 
 
 Network Socket Programming Model #sockets
@@ -333,7 +339,7 @@ sudo apt install libopengl-dev libglew-dev
 
 
 ------------------------------------------------------------------------------
-IDEAS FOR PROJECTS
+#IDEAS FOR PROJECTS
 ------------------------------------------------------------------------------
 
 
