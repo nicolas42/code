@@ -1,3 +1,6 @@
+HTML element ids automatically become global variables in javascript. 
+https://stackoverflow.com/questions/3434278/do-dom-tree-elements-with-ids-become-global-variables
+
 To Do  #todo
 --------------
 implement payment processing system using stripe
@@ -76,6 +79,8 @@ My script didn't run when it attempted to access terminal input like argc or arg
 
 #Awesome
 -------------------------------
+
+http://underscorejs.org/  seems like a good javascript library
 
 https://www.lemoda.net/  lots of C and other code
 How 3D video games do graphics - Jonathan Blow https://youtu.be/bGe-d09Nc_M?t=3600
