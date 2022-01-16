@@ -562,10 +562,15 @@ int sprint_float3_main()
 
 
 
-// Demo
-// gcc thread_race.c && ./a.out
+// Operating on the same data using different threads
+//
+// The intended behaviour of this program is to add 1 to a global variable 
+// until it's 1000.  When several threads are used to achieve this there is
+// unintended behaviour.  If two threads read the global at the same time
+// then the final value of the global will be less than 1000.
 
-// #define num_threads 1000
+// If this code is made mutually exclusive, i.e. it can only be run by 
+// one thread at any given time, then this is fixed.
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -578,7 +583,7 @@ static int thread_race_global = 0;
 void* add1_to_global(void* arg)
 {
 	// pthread_mutex_lock(&mutex);
-	thread_race_global += 1;
+	thread_race_global += 1; // read and then write back it+1 to the same location
 	// pthread_mutex_unlock(&mutex);
 	pthread_exit(0);
 

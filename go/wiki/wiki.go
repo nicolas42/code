@@ -60,7 +60,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 	// renderTemplate(w, "view", p)
 
 	tokens := strings.Split(r.URL.Path,"/")
-	filename := fmt.Sprintf("data/%s.txt", tokens[len(tokens)-1])
+	filename := fmt.Sprintf("data/%s.html", tokens[len(tokens)-1])
 	str,_ := ioutil.ReadFile(filename)
 	fmt.Fprintf(w, "%s", str)
 }
@@ -89,12 +89,12 @@ func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
 }
 
 func (p *Page) save() error {
-	filename := "data/" + p.Title + ".txt"
+	filename := "data/" + p.Title + ".html"
 	return ioutil.WriteFile(filename, p.Body, 0600)
 }
 
 func loadPage(title string) (*Page, error) {
-	filename := "data/" + title + ".txt"
+	filename := "data/" + title + ".html"
 	body, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err

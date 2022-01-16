@@ -1,0 +1,71 @@
+<html>
+<head>
+<style>
+
+* { font-size: 18px; color: #333; font-family: "Lucida Console", Monaco, monospace; }
+body { margin: 0 auto; max-width: 800px;}
+/* textarea { width: 100%; height: 30%; } */
+</style>
+</head>
+<body>
+
+<textarea autofocus></textarea>
+<!-- <textarea ></textarea> -->
+
+<script>
+let textareas = document.querySelectorAll('textarea');
+function doit(event)
+{
+    console.log(eval(this.value));
+
+    // massaged_text = this.value.replace(/\^/g, "**")
+    // textareas[1].innerHTML = eval(massaged_text);
+    return event;
+}
+
+textareas[0].addEventListener("keyup", doit);
+// Import math
+Object.getOwnPropertyNames(Math).forEach(function (a) { eval(a + "=" + "Math." + a + "\t") });
+
+</script>
+
+
+a=textareas[0].value
+b=a.indexOf('\n')
+textareas[0].selectionStart = 7;
+
+
+
+
+<!-- 
+
+<div id="calc2">
+<textarea autofocus></textarea>
+<textarea ></textarea>
+</div>
+
+<script>
+let textareas = document.querySelectorAll('textarea');
+function do_lines(event)
+{
+    // input_text = this.value.replace(/\^/g, "**")
+
+
+    let lines = this.value.split('\n');
+    var output = [];    
+    for (let i=0; i < lines.length; i += 1){
+        output.push( eval(lines[i]) );
+    }
+    textareas[1].innerHTML = output.join('\n');
+    return event;
+}
+
+textareas[0].addEventListener("keyup", do_lines);
+// Import math
+Object.getOwnPropertyNames(Math).forEach(function (a) { eval(a + "=" + "Math." + a + "\t") });
+
+</script> -->
+
+
+</body>
+</html>

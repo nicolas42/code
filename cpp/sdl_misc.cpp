@@ -1,7 +1,14 @@
 // g++ sdl_misc.cpp -framework SDL2 -framework SDL2_image -ISDL2 -g -fsanitize=address && ./a.out
 
-// notes
+// Notes
 // -----------
+// SDL_BlitScaled() needs SDL_ConvertSurface() to be used on the surface first.
+// It requires the surface to be converted to native format.
+
+// SDL_GetWindowSurface() can't be combined with the rendering API
+// "You may not combine this with 3D or the rendering API on this window."
+// https://wiki.libsdl.org/SDL_GetWindowSurface
+
 // c-style casts have higher precedence than arithmetic and logic operations
 // https://en.cppreference.com/w/cpp/language/operator_precedence
 // https://wiki.libsdl.org/SDL_Event
@@ -9,13 +16,6 @@
 // https://stackoverflow.com/questions/8884481/exact-line-number-for-c-error
 
 
-// SDL_BlitScaled() requires the surface to be converted to native format first
-// by calling SDL_ConvertSurface()
-
-
-// SDL_GetWindowSurface can't be combined with the rendering API
-// You may not combine this with 3D or the rendering API on this window.
-// https://wiki.libsdl.org/SDL_GetWindowSurface
 
 #include <stdio.h>
 #include "SDL.h"

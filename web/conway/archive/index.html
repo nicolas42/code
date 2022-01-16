@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="reset.css">
+</head>
+<body>
+	<button onclick="playpause()">Play/Pause</button><br>
+	<!--<canvas></canvas> -->
+	<img>
+
+</body>
+<script>
+
+// function gameOfLife(arg){
+	
+	var canvasid, width, height, deadColor, aliveColor, canvas, ctx, imgData, data, deadRGBA, aliveRGBA, arg, delay, paused, timerID;
+	
+	function initialize(){
+		// Defaults
+		canvasid	 	= "canvas"
+		// aspect = window.innerWidth / window.innerHeight;
+		width 			= 200; //window.innerWidth;
+		height 			= 200; //window.innerHeight;
+		deadColor 		= [255, 255, 255, 255];
+		aliveColor 		= [0, 0, 255, 255];
+		delay = 20;
+		paused = false;
+		
+		// Get Parameters From Function Argument if it exists
+		if(arg !== undefined){
+			if(arg.width !== undefined) {width = arg.width;}
+			if(arg.height !== undefined) {height = arg.height;}
+			if(arg.querySelector !== undefined) {querySelector = arg.querySelector;}
+			if(arg.aliveColor !== undefined) {aliveColor = arg.aliveColor;}
+			if(arg.deadColor !== undefined) {deadColor = arg.deadColor;}
+		}
+
+		// Get the canvas from the document and set its width and height
+		canvas 			= document.createElement(canvasid); // querySelector(querySelector);	
+		canvas.width		= width;
+		canvas.height		= height;
+		// Get the 2D drawing context from the canvas and the associated image data
+		ctx 			= canvas.getContext("2d");
+		imgData 		= ctx.getImageData(0, 0, width, height);
+		data 			= imgData.data;
+
+		// necessary for fillStyle
+		deadRGBA		= 'rgba('+deadColor[0]+','+deadColor[1]+','+deadColor[2]+','+deadColor[3]+')';
+		aliveRGBA		= 'rgba('+aliveColor[0]+','+aliveColor[1]+','+aliveColor[2]+','+aliveColor[3]+')';
+		
+	}
+	function drawRandomPoints(){
+
+		ctx.fillStyle = deadRGBA
+		ctx.fillRect(0, 0, width, height);	
+		// Add random initial points which fill 10% of the usable space
+		for (i = 0; i < 0.1 * width * height; i += 1) {
+			var x = Math.round( Math.random() * (width - 1) );
+			var y = Math.round( Math.random() * (height - 1) );
+			ctx.fillStyle = aliveRGBA;
+			ctx.fillRect(x,y,1,1);
+		}
+		drawImage();
+	}
+	function drawClickedPosition(e) {
+		var rect = e.currentTarget.getBoundingClientRect();
+		var x = e.clientX - rect.left;
+		var y = e.clientY - rect.top;  
+		if (e.which === 1){ // left click
+			ctx.fillStyle = aliveRGBA;
+			ctx.fillRect(x,y,1,1); // fill in the pixel at (x,y)
+		}
+		drawImage();
+	}
+	function evolve() {
+
+		var ctx = canvas.getContext("2d");
+		var imgData = ctx.getImageData(0, 0, width, height);
+		var data = imgData.data;
+
+	  var neighbours;
+	  var shouldLive; // 1 = live, 0 = die
+	  var stride = 4;
+	  
+	  function isAlive(pos){
+		  return data[pos + 0] === liveColor[0] && data[pos + 1] === liveColor[1] && data[pos + 2] === liveColor[2]
+	  }
+	  
+	  // Set all neighbour values to zero
+	  for (y = 1; y < height - 1; y = y + 1) {
+	    for (x = 1; x < width - 1; x = x + 1) {
+	      pos = y * width * 4 + x * 4;
+
+	      data[pos + 3] = 0; 	// pos + 3 refers to the alpha channel of the pixel
+	    }
+	  }
+
+	  // Update Neighbors of surrounding cells
+	  // Add one to the neighbours of all of the surrounding cells
+	  // (3x3 square around the current cell) if the current cell is alive
+	  for (y = 1; y < height - 1; y = y + 1) {
+	    for (x = 1; x < width - 1; x = x + 1) {
+	      pos = y * width * 4 + x * 4;
+
+	      if (data[pos + 0] === aliveColor[0]) { // currCell.isAlive
+
+	        data[pos+3 	- (width-1) 	* stride] += 1;
+	        data[pos+3 	- (width) 		* stride] += 1;
+	        data[pos+3 	- (width+1) 	* stride] += 1;
+	        data[pos+3 	- 1				* stride] += 1;
+	        // position of the current cell
+	        data[pos+3 	+ 1				* stride] += 1;
+	        data[pos+3 	+ (width-1)		* stride] += 1;
+	        data[pos+3 	+ (width)  		* stride] += 1;
+	        data[pos+3 	+ (width+1)		* stride] += 1;
+	      }
+	    }
+	  }
+
+	  // Update who's alive and who's dead
+	  for (y = 1; y < height - 1; y = y + 1) {
+	    for (x = 1; x < width - 1; x = x + 1) {
+	      pos = y * width * 4 + x * 4;
+	      neighbours = data[pos + 3];
+	      shouldLive = 0; // determines whether cell lives or dies
+
+	      if (data[pos + 0] === aliveColor[0]) { // currCell.isAlive
+	        if (neighbours < 2) {
+	          shouldLive = 0; // false
+	        } else if ((neighbours === 2) || (neighbours === 3)) {
+	          shouldLive = 1; // true
+	        } else if (neighbours > 3) {
+	          shouldLive = 0; // false
+	        }
+	      } else {
+	        if (neighbours === 3) {
+	          shouldLive = 1; // true
+	        }
+	      }
+	      if (shouldLive === 1) {
+	        data[pos + 0] = aliveColor[0];
+	        data[pos + 1] = aliveColor[1];
+	        data[pos + 2] = aliveColor[2];
+	        data[pos + 3] = aliveColor[3];
+	      } else {
+	        data[pos + 0] = deadColor[0];
+	        data[pos + 1] = deadColor[1];
+	        data[pos + 2] = deadColor[2];
+	        data[pos + 3] = deadColor[3];
+	      }
+	    }
+	  }
+
+	  ctx.putImageData(imgData, 0, 0);	  
+	  drawImage();
+	}
+	function drawImage(){
+		// Put in an image for resizing.  
+	  	var img = document.querySelector('img');
+	  	img.width = window.innerWidth;
+	  	img.height = window.innerHeight;
+	  	img.src = canvas.toDataURL();
+		
+	}
+	function printGlobals(){
+		console.log(Object.keys( window ));
+	
+	}
+
+	initialize();
+	drawRandomPoints();
+
+	timerID = setInterval(evolve, delay); 
+	function pause(){
+		clearInterval(timerID); //pause();
+		paused = true;
+	}
+	function play(){
+		timerID = setInterval(evolve, delay); //play(arg);
+		paused = false;
+	}
+	function playpause(){
+		if (paused){
+			timerID = setInterval(evolve, delay); //play(arg);
+			paused = false;
+		} else {
+			clearInterval(timerID); //pause();
+			paused = true;
+		}
+	}
+	
+	canvas.addEventListener("mousedown",	pause,					false);
+	canvas.addEventListener("mouseup",		play,					false);
+	canvas.addEventListener("mousemove",	drawClickedPosition,	false);
+
+
+	
+//}
+//gameOfLife({querySelector: "canvas", width: window.innerWidth, height: window.innerHeight})
+
+
+// === Notes
+// gosper glider gun (x,y,x,y...)
+// var coords = [2, 6, 2, 7, 3, 6, 3, 7, 12, 6, 12, 7, 12, 8, 13, 5, 13, 9, 14, 4, 14, 10, 15, 4, 15, 10, 16, 7, 17, 5, 17, 9, 18, 6, 18, 7, 18, 8, 19, 7, 22, 4, 22, 5, 22, 6, 23, 4, 23, 5, 23, 6, 24, 3, 24, 7, 26, 2, 26, 3, 26, 7, 26, 8, 36, 4, 36, 5, 37, 4, 37, 5];
+
+// var $ = document.querySelector.bind(document); 
+// why bind is used here - https://stackoverflow.com/questions/32423584/document-createelement-illegal-invocation
+
+</script>
+</html>

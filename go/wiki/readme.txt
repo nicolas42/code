@@ -1,19 +1,14 @@
-originally from https://github.com/benawad/gowiki
+Edit and saves html pages on a server.  
 
-modified it so that it saves and serves arbitrary html,css,javascript, which is supposed to be insecure but it's cool.
+To view or edit the pages try something like this
 
-Is it more insecure?
+localhost:8080/view/<page>
+localhost:8080/edit/<page>
 
-I don't know what html+javascript could do from a server.  I think in order to use it in an attack you'd need a different mechanism
-that would actually run the file.
+It uses HTML form post requests to save files on the server.
+It's a small modification of https://github.com/benawad/gowiki
 
-I actually don't understand why it would be insecure.  The code is all executed client-side.  And in the other version whewre they 
-were only saving text files there's no reason why they couldn't also save some code and then run it through some other mechanism.
+Apparently saving naked HTML is more insecure than saving text files though I struggle to think why.  Both could be made into 
+executable files on the server and run through some other mechanism.  And javascript only runs client side.  I suppose node could 
+used to run naked javascript on the server.  Oh yeah.  So there's that.  Stupid node.  
 
-I guess it could be used to make a malicious website, if such a thing exists these days.  A phishing website could be made possibly.
-
-But then again this kind of website can be made anywhere really.  Hmmm....  There doesn't seem to be any particular security risks.  
-
-Perhaps I just don't know that much about security.
-
-Just remember to put salt on all your sha3 hashed passwords.

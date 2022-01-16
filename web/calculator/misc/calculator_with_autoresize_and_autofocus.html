@@ -1,0 +1,24 @@
+<!-- https://eloquentjavascript.net/15_event.html -->
+<textarea autofocus></textarea>
+<p></p>
+
+<script>
+
+    window.addEventListener("keyup", event => {
+
+        let textarea, p, result, input;
+
+        textarea = document.querySelector('textarea');
+        p = document.querySelector('p');
+
+        input = textarea.value.replace(/\^/g, "**")
+        result = eval(input);
+        p.innerHTML = "= "+result.toString();
+
+    });
+
+</script>
+<script src='autosize.js'></script>
+<script>
+    autosize(document.querySelector('textarea'));
+</script>

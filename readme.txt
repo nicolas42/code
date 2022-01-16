@@ -1,7 +1,61 @@
-guess who just increased their productivity
-git commit -am lol
+Cryptography  #crypto
+-------------------
 
-Imgui is a small c++ GUI library
+RSA (Rivest–Shamir–Adleman) is a public-key cryptosystem that is widely used for secure data transmission. 
+
+Diffie Helman: 
+RSA DH is not a symmetric algorithm – it is an asymmetric algorithm used to establish a shared secret for a symmetric key algorithm.
+
+
+Network Socket Programming Model #sockets
+---------------------------------
+
+SERVER          CLIENT
+socket()        socket()
+bind()          
+listen()        
+accept()   <-   connect()
+recv()     <-   send()
+send()     ->   recv()
+close()    <-   close()
+
+Can both parties be made symmetrical?
+Could they both start as clients and then 
+if they can't connect to the other then start as a server 
+and wait for an incoming connection.
+
+
+
+Netcat (nc)  #netcat
+---------------------
+Net cat is a handy utility for tcp and udp stuff.
+The examples below were tested on macos 10.12
+-l listen -v verbose -u udp
+
+To Do: Make a version of netcat that doesn't care whether it's a client or a server.
+The program should start of as a client then if it fails to connect then it becomes a server
+and waits for someone else to connect.
+
+1. Chat program
+
+nc -l 127.0.0.1 8888
+nc 127.0.0.1 8888
+
+
+2. port scanner
+
+nc -v <your public IP address> 1-1000
+
+
+3. HTTP
+
+nc google.com 80
+GET / HTTP/1.1
+
+nc www.rssweather.com 80
+GET /wx/in/kanpur/wx.php HTTP/1.0
+Host: www.rssweather.com
+
 
 
 Making a macos .app application
@@ -14,7 +68,7 @@ https://apple.stackexchange.com/questions/224394/how-to-make-a-mac-os-x-app-with
 My script didn't run when it attempted to access terminal input like argc or argv.
 
 
-Awesome
+#Awesome
 -------------------------------
 
 https://www.lemoda.net/  lots of C and other code
@@ -22,7 +76,7 @@ How 3D video games do graphics - Jonathan Blow https://youtu.be/bGe-d09Nc_M?t=36
 Mr P Solver https://www.youtube.com/c/MrPSolver/videos
 Tired Amateur https://www.youtube.com/channel/UCeT6NdimLKHXlkQgrbcg6XQ
 handmade hero
-imgui
+imgui   Imgui is a small c++ GUI library
 stb
 darknet
 uwimg
@@ -45,12 +99,12 @@ not stb libraries. 3rd party single file libraries in C/C++
 https://github.com/nothings/single_file_libs
 
 
-SQL Lite
+#SQLite 
 ----------------
 omg sqlite https://sqlite.org/ is encapsulated in a single c file.  I love them so much.
 
 
-Lorem Ipsum 
+#Lorem Ipsum 
 ----------------------
 
 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
@@ -59,19 +113,21 @@ https://www.lipsum.com/
 
 
 
-Git tricks
+#Git tricks
 -------------------
 
 remove all files from staging area 
-git reset
 
-clone a repo 
-git clone git@github.com:username/repo
+    git reset
+
+clone a repo with ssh 
+
+    git clone git@github.com:username/repo
 
 
 
-Regular Expressions
-----------------------
+Regular Expressions #regex
+----------------------------
 abc…	Letters
 123…	Digits
 \d	Any Digit
@@ -112,7 +168,7 @@ The digits (\d*) will take precedence over the lazy wildcard characters (.*?).
 
 
 
-HTML Forms 
+#HTML Forms 
 ------------------
 https://www.w3schools.com/tags/att_form_method.asp
 
@@ -123,36 +179,6 @@ A server can be made that responds to this information appropriately.
 POST requests have no limitations on data length https://www.w3schools.com/tags/ref_httpmethods.asp.
 
 
-
-Net Cat (nc)
----------------------
-Net cat is a handy utility for tcp and udp stuff.
-The examples below were tested on macos 10.12
--l listen -v verbose -u udp
-
-To Do: Make a version of netcat that doesn't care whether it's a client or a server.
-The program should start of as a client then if it fails to connect then it becomes a server
-and waits for someone else to connect.
-
-1. Chat program
-
-nc -l 127.0.0.1 8888
-nc 127.0.0.1 8888
-
-
-2. port scanner
-
-nc -v <your public IP address> 1-1000
-
-
-3. HTTP
-
-nc google.com 80
-GET / HTTP/1.1
-
-nc www.rssweather.com 80
-GET /wx/in/kanpur/wx.php HTTP/1.0
-Host: www.rssweather.com
 
 
 
@@ -186,19 +212,21 @@ Javascript Calculator
 This will import the javascript math object into the global namespace
 
 
-Screen
+#Screen
 --------------------------------------
-Make a new screen with screen. detatch using ctrl+a d. list the screens with screen -ls. reattach with screen -r <id>. exit using exit.
+Make a new screen with the command "screen". detatch using ctrl+a d. exit using exit.
+list the screens (with their ids) with "screen -ls". reattach with "screen -r <id>". 
+a partial id can be used in place of the full id.
 
 screen
 screen -ls
 screen -r <screen id>
 
-Nohup
+
+#Nohup
 --------------------------------------
 Run background processes in linux with nohup <command> & 
 Kill the background process by deleting nohup.out 
-
 
 
 Python datetime filenames
@@ -207,7 +235,7 @@ Python datetime filenames
 datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 
-Github SSH Keys
+Make an SSH key  #ssh
 --------------------------------------------
 
 To make an SSH Key for github do the following commands.  You can use git bash in windows.
@@ -229,8 +257,8 @@ git clone git@github.com:username/repo
 
 
 
-Compiling Stuff on Windows Using Visual Studio on the command line
--------------------------------------------------------
+Compiling Stuff on Windows Using Visual Studio on the command line   #visualstudio 
+----------------------------------------------------------------------------------------
 
 Visual studio needs a special script to be run before it can be called from a terminal.
 It's called vcvarsall.bat and it moves around every time they release a new version of visual studio.
@@ -249,13 +277,14 @@ Here's a more complicated example of usage from the imgui repository
 mkdir Debug
 cl /nologo /Zi /MD /I .. /I ..\.. /I "%WindowsSdkDir%Include\um" /I "%WindowsSdkDir%Include\shared" /I "%DXSDK_DIR%Include" /D UNICODE /D _UNICODE *.cpp ..\imgui_impl_win32.cpp ..\imgui_impl_dx10.cpp ..\..\imgui*.cpp /FeDebug/example_win32_directx10.exe /FoDebug/ /link /LIBPATH:"%DXSDK_DIR%/Lib/x86" d3d10.lib d3dcompiler.lib
 
+
 How to set PATH variable in windows
 -------------------------------------------------------
 SET PATH=%PATH%;c:\nick\sdl_cross_platform\lib_win64
 
 
 
-Building and Linking C/C++ Repositories
+Building and Linking C/C++ Repositories   #pkg-config #linking
 -----------------------------------------------------
 
 Typical unix build
@@ -290,8 +319,8 @@ it needs to link together the program. Dunno.
 
 
 
-Some Linux Packages that I'm using at the moment (Debian)
---------------------------------------------------
+Some Linux Packages that I'm using at the moment (Debian)   #linux
+---------------------------------------------------------------------------------
 
 sudo apt install nasm qemu-system-x86 xorriso pkg-config emacs
 

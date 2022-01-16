@@ -54,8 +54,5 @@ def demo2():
 
 
 if __name__ == "__main__":
-
     run_from_terminal_args(sys.argv)
-
-
 
