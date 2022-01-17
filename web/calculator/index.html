@@ -1,98 +1,75 @@
-<style>
-    * {
-        box-sizing: border-box;
-        padding: 0;
-        margin: 0;
-    }
+<DIV id="calculator" style="width: 400px; height: 400px; ">
+    <p class="title">Calculator</p>
+    <textarea></textarea>
+    <p class="output"></p>
+</DIV>
 
-    * {
-        font-size: 20px;
-        line-height: 2;
-        font-family: Helvetica, Arial, sans-serif;
-        letter-spacing: 0.01rem;
-        font-weight: 300;
-        color: #333;
 
-        background-color: #ffff;
-    }
+<STYLE>
 
-    body {
-        margin: 0 auto;
-        max-width: 800px;
-    }
+body { margin: auto; width: 800px; height: 100%; }
 
-    /*
-    div { background-color: #fff; padding: 10px;}
-*/
+/* calculator stuff */
+/* #calculator { width: 400px; height: 400px; } */
+#calculator > * { font-weight: 100; font-family: sans-serif; font: 16px sans-serif; }
+#calculator { display: flex; flex-direction: column; } 
+#calculator > textarea { flex-grow: 1; /* default 0 */ }
 
-    video {
-        width: 100%;
-        margin-bottom: 10px;
-    }
+* { box-sizing: border-box; padding: 5px; border: 1px solid #eeeeee; margin: 5px;  }
+</STYLE>    
 
-    textarea {
-        width: 100%;
-        padding-left: 10px;
-    }
-
-    h1 {
-        font-size: 40px;
-        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-        background-color: #ddd
-    }
-</style>
-<h1>Calculamalator</h1>
-<div>
-    <textarea autofocus></textarea>
-    <p></p>
-    <pre>
-
-Available functions 
-abs, acos, acosh, asin, asinh, atan, atanh, atan2, ceil, cbrt, expm1, clz32, cos, cosh, exp,
-floor, fround, hypot, imul, log, log1p, log2, log10, max, min, pow, random, round, sign, sin, sinh, sqrt, tan,
-tanh, trunc, E, LN10, LN2, LOG10E, LOG2E, PI, SQRT1_2, SQRT2
-</pre>
-
-    <pre style="font-family: monospace; line-height: 1; padding: 50px;">
-// Example
-"comment"
-23423
-x=2
-y = x^2 + 3 + 4 - 5
-2*234
-a={x:2,y:3,z:0}
-a.z = sqrt(a.x * a.y)
-a.z.toString().slice(0,5)
-JSON.stringify(a,null,4)
-</pre>
-    <pre>
-This is basically just a javascript interpreter with an imported math library.  
-It uses eval() so don't expect great error reporting
-
-Copyright 2020 nick sanchez productions
-</pre>
-</div>
-
-<script>
-
-        /* import Math */ (function () { Object.getOwnPropertyNames(Math).forEach(function (a) { eval(a + "=" + "Math." + a + "\t") }); })();
-
-    window.addEventListener("keyup", event => {
-
-        let textarea, p, result, input;
-
-        textarea = document.querySelector('textarea');
-        p = document.querySelector('p');
-
-        input = textarea.value.replace(/\^/g, "**")
-        result = eval(input);
-        p.innerHTML = "= " + result.toString();
-
+<SCRIPT>
+    // import Math library    
+    Object.getOwnPropertyNames(Math).forEach(function (fn) { 
+        let execution_string = "window." + fn + "=" + "Math." + fn + ";"
+        console.log(execution_string);
+        Function(execution_string)();
     });
 
-</script>
-<script src='autosize.js'></script>
-<script>
-    // Put this at the end of the document (after the textarea) to autosize the element found by the query selector
-    autosize(document.querySelector('textarea'));
-</script>
+    let textarea = calculator.querySelector("textarea");
+    let output = calculator.querySelector(".output");
+    let title = calculator.querySelector(".title");
+
+    textarea.value = `a=1;b=4;c=-21; x= ( -b + sqrt(b^2-4*a*c) ) / (2*a); y=a*x^2+b*x+c; `
+
+    textarea.onkeyup = function(e) {
+        let input = textarea.value.replace(/\^/g, "**")
+        let result = eval(input);
+        output.innerHTML = "= " + JSON.stringify(result); // result.toString();
+    }
+
+    document.body.onload = function(){ textarea.focus() }
+
+</SCRIPT>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+// calculator.style.width = "400px";
+// calculator.style.height = "400px";
+
+// [ calculator, title, textarea, output ].forEach(function(el){
+//     // el.style.boxSizing = "border-box";
+//     el.style.fontWeight = "100";
+//     el.style.fontFamily = "sans-serif";
+//     el.style.width = "100%";
+//     el.style.fontSize = "16px";
+//     el.style.fontFamily = "sans-serif";
+//     el.style.borderSize = "1px";
+//     el.style.borderColor = "#eeeeee";
+// });
+
+// textarea.style.height = "45%";
+// output.style.height = "45%";
+
+ -->

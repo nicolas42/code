@@ -1,3 +1,14 @@
+// Example
+// -----------------
+// <script src='autosize.js'></script>
+// <script>
+//     // Put this at the end of the document (after the textarea) to autosize the element found by the query selector
+//     autosize(document.querySelector('textarea'));
+// </script>
+
+
+
+
 const map = (typeof Map === "function") ? new Map() : (function () {
 	const keys = [];
 	const values = [];
@@ -254,3 +265,4 @@ if (typeof window === 'undefined' || typeof window.getComputedStyle !== 'functio
 }
 
 // export default autosize;
+

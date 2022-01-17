@@ -1,14 +1,40 @@
-HTML element ids automatically become global variables in javascript. 
-https://stackoverflow.com/questions/3434278/do-dom-tree-elements-with-ids-become-global-variables
 
-To Do  #todo
---------------
+To Do List  #todo
+-------------------
 implement payment processing system using stripe
 https://github.com/stripe-samples/accept-a-payment/tree/main/prebuilt-checkout-page
 
 
+
+
+Flexbox actually lays out elements reasonably. #web
+------------------------------------------------------
+The flex-grow attribute can be used on child elements
+to make them take up the remaining space in a box.
+
+parent { display: flex; flex-direction: column; } 
+parent > child { flex-grow: 1; /* default 0 */ }
+
+For all my playing with box-sizing: border-box and the like, I haven't found 
+a way to layout html elements in a sane way using CSS.  The only thing that appears 
+to work properly is flexbox.  
+
+
+
+CSS link tag  #web
+----------------------
+I always forget this
+<LINK rel="stylesheet" href="../css/reset.css">
+
+
+
+HTML element ids automatically become global variables in javascript. !!!!!!!!!!
+https://stackoverflow.com/questions/3434278/do-dom-tree-elements-with-ids-become-global-variables
+
+
+
 Cryptography  #crypto
--------------------
+-----------------------
 
 RSA (Rivest–Shamir–Adleman) is a public-key cryptosystem that is widely used for secure data transmission. 
 
@@ -16,8 +42,8 @@ Diffie Helman:
 RSA DH is an asymmetric algorithm used to establish a shared secret for a symmetric key algorithm.
 
 
-Network Socket Programming Model #sockets
----------------------------------
+Network Socket Programming #sockets
+--------------------------------------------
 
 SERVER          CLIENT
 socket()        socket()
@@ -35,7 +61,7 @@ and wait for an incoming connection.
 
 
 
-Netcat (nc)  #netcat
+Netcat (nc)  #shell
 ---------------------
 Net cat is a handy utility for tcp and udp stuff.
 The examples below were tested on macos 10.12
@@ -80,12 +106,18 @@ My script didn't run when it attempted to access terminal input like argc or arg
 #Awesome
 -------------------------------
 
+https://github.com/mirror/busybox/
+
 http://underscorejs.org/  seems like a good javascript library
 
-https://www.lemoda.net/  lots of C and other code
+* https://www.lemoda.net/  lots of C and other code
+
 How 3D video games do graphics - Jonathan Blow https://youtu.be/bGe-d09Nc_M?t=3600
+
 Mr P Solver https://www.youtube.com/c/MrPSolver/videos
+
 Tired Amateur https://www.youtube.com/channel/UCeT6NdimLKHXlkQgrbcg6XQ
+
 handmade hero
 imgui   Imgui is a small c++ GUI library
 stb
@@ -98,16 +130,23 @@ ganga.js
 three.js
 exfat
 fasm - good community
-https://github.com/phoboslab/pl_mpeg
-http://dwm.suckless.org/
+
+pl_mpeg mpeg1 player in SDL and opengl https://github.com/phoboslab/pl_mpeg
+
+suckless http://dwm.suckless.org/
+
 fabrice bellard - made FFmpeg, QEMU, and the Tiny C Compiler
-https://github.com/kokke/tiny-AES-c
-https://github.com/guzlewski/netcat
-http://beej.us/guide/bgnet/html/
+
+aes https://github.com/kokke/tiny-AES-c
+
+netcat https://github.com/guzlewski/netcat
+
+beej's guide to network sockets http://beej.us/guide/bgnet/html/
+
 jdh - made bootable tetris https://www.youtube.com/channel/UCUzQJ3JBuQ9w-po4TXRJHiA
 
-not stb libraries. 3rd party single file libraries in C/C++
-https://github.com/nothings/single_file_libs
+single file libraries in C/C++  https://github.com/nothings/single_file_libs
+
 
 
 #SQLite 
@@ -179,7 +218,7 @@ The digits (\d*) will take precedence over the lazy wildcard characters (.*?).
 
 
 
-#HTML Forms 
+HTML Forms  #web
 ------------------
 https://www.w3schools.com/tags/att_form_method.asp
 
@@ -223,7 +262,7 @@ Javascript Calculator
 This will import the javascript math object into the global namespace
 
 
-#Screen
+Screen  #bash
 --------------------------------------
 Make a new screen with the command "screen". detatch using ctrl+a d. exit using exit.
 list the screens (with their ids) with "screen -ls". reattach with "screen -r <id>". 
@@ -234,7 +273,7 @@ screen -ls
 screen -r <screen id>
 
 
-#Nohup
+Nohup   #bash
 --------------------------------------
 Run background processes in linux with nohup <command> & 
 Kill the background process by deleting nohup.out 
@@ -246,7 +285,7 @@ Python datetime filenames
 datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 
-Make an SSH key  #ssh
+Make an SSH key
 --------------------------------------------
 
 To make an SSH Key for github do the following commands.  You can use git bash in windows.

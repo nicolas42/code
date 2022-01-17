@@ -425,19 +425,20 @@ int main( int argc, char* argv[] )
 
     SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
 
+    std::vector<std::string> filenames;
+    int filenames_index;
+    char* dropped_filename;
+
 
     // terminal
-	char *dir = (char*)"/Users/nick/Downloads";
+   	char *dir = (char*)"";
+	// char *dir = (char*)"/Users/nick/Downloads";
+
     // if (argc == 1) printf("show_images <dir>\n");
 	// if (argc==2){
 	// 	dir = argv[1];
 	// }
     
-
-    std::vector<std::string> filenames;
-    int filenames_index;
-    char* dropped_filename;                  // Pointer for directory of dropped file
-
     filenames = get_image_filenames(dir);
 	filenames_index = 0;
 	show( window, filenames, filenames_index );
@@ -445,71 +446,67 @@ int main( int argc, char* argv[] )
     int pending = 0;
     while (!time_to_quit)
     {
-        // SDL_WaitEvent(&event);
-        while(SDL_PollEvent(&event)) {
+        SDL_WaitEvent(&event);
+        // while(SDL_PollEvent(&event)) { // poll event uses 100% cpu
             // print_event(event);
 
-            switch (event.type){
 
-            case (SDL_DROPFILE): {
-                dropped_filename = event.drop.file;
-                filenames = get_image_filenames(dropped_filename);
-                filenames_index = 0;
-                show( window, filenames, filenames_index );
+        if (event.type == SDL_DROPFILE) {
+            dropped_filename = event.drop.file;
+            filenames = get_image_filenames(dropped_filename);
+            filenames_index = 0;
+            show( window, filenames, filenames_index );
 
-                SDL_free(dropped_filename);    // Free dropped_filename memory
-                break;
+            SDL_free(dropped_filename);    // Free dropped_filename memory
+        }
+
+        if (event.type == SDL_QUIT) {
+            time_to_quit = true;
+        }
+
+        if (event.type == SDL_WINDOWEVENT) {
+            // printf("window event %d\n", (int)(event.window.event) );
+            if ( 
+                event.window.event == SDL_WINDOWEVENT_RESIZED || 
+                event.window.event == SDL_WINDOWEVENT_MINIMIZED || 
+                event.window.event == SDL_WINDOWEVENT_MAXIMIZED || 
+                event.window.event == SDL_WINDOWEVENT_RESTORED
+            ){
+                print_window_event(&event);
+                printf("omg show\n");
+                show( window, filenames, filenames_index ); 
             }
 
-            case SDL_QUIT:
-                time_to_quit = true;
-                break;
+            // show( window, filenames, filenames_index );
+        }
 
-            case SDL_WINDOWEVENT:
-                // printf("window event %d\n", (int)(event.window.event) );
-                if ( 
-                    event.window.event == SDL_WINDOWEVENT_RESIZED || 
-                    event.window.event == SDL_WINDOWEVENT_MINIMIZED || 
-                    event.window.event == SDL_WINDOWEVENT_MAXIMIZED || 
-                    event.window.event == SDL_WINDOWEVENT_RESTORED
-                ){
-                    print_window_event(&event);
-                    printf("omg show\n");
-                    show( window, filenames, filenames_index ); 
-                }
+        if (event.type == SDL_MOUSEBUTTONDOWN) {
+            filenames_index += 1;
+            if ( filenames_index >= filenames.size() ) filenames_index = 0;
+            show( window, filenames, filenames_index );
+        }
 
-                // show( window, filenames, filenames_index );
-                break;
+        if (event.type == SDL_KEYDOWN) {
 
-            case SDL_KEYDOWN:
+            if ( event.key.keysym.sym == SDLK_RIGHT ) {
+                filenames_index += 1;
+                if ( filenames_index >= filenames.size() ) filenames_index = 0;
+                show( window, filenames, filenames_index );
+            }
 
-                if ( event.key.keysym.sym == SDLK_RIGHT ) {
-                    filenames_index += 1;
-                    if ( filenames_index >= filenames.size() ) filenames_index = 0;
-                    show( window, filenames, filenames_index );
-                }
-
-                if ( event.key.keysym.sym == SDLK_LEFT ) {
-                    filenames_index += -1;
-                    if ( filenames_index < 0 ) filenames_index = filenames.size()-1;
-                    show( window, filenames, filenames_index );
-                }
-                
-                if ( event.key.keysym.sym == SDLK_f ) {
-                    if (is_fullscreen) {
-                        SDL_SetWindowFullscreen(window, 0);
-                    } else {
-                        SDL_SetWindowFullscreen( window, SDL_WINDOW_FULLSCREEN_DESKTOP );
-                    }
-                    is_fullscreen = !is_fullscreen;
-                }
-                break;
-
-            case SDL_MOUSEBUTTONDOWN:
+            if ( event.key.keysym.sym == SDLK_LEFT ) {
                 filenames_index += -1;
                 if ( filenames_index < 0 ) filenames_index = filenames.size()-1;
                 show( window, filenames, filenames_index );
-                break;
+            }
+            
+            if ( event.key.keysym.sym == SDLK_f ) {
+                if (is_fullscreen) {
+                    SDL_SetWindowFullscreen(window, 0);
+                } else {
+                    SDL_SetWindowFullscreen( window, SDL_WINDOW_FULLSCREEN_DESKTOP );
+                }
+                is_fullscreen = !is_fullscreen;
             }
         }
     }
