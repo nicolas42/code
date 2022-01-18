@@ -1,3 +1,8 @@
+The SDL renderer has a VSYNC option which I should try
+gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+
+
+
 Header-only libraries 
 ------------------------------
 

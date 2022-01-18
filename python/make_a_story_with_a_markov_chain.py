@@ -26,7 +26,7 @@ def read_thru(url):
     return data
 
 
-def markov_chain_language_generator(data):
+def make_a_story_with_a_markov_chain(data):
     output = []
     data = data.split() # split at whitespace
 
@@ -62,7 +62,7 @@ def demo():
     # url = 'https://www.gutenberg.org/files/2701/2701-0.txt'
     url = 'https://nschmidt-public.s3.ap-southeast-2.amazonaws.com/2701-0.txt' # mirror
     data = read_thru(url)
-    markov_chain_language_generator(data)
+    make_a_story_with_a_markov_chain(data)
 
 if __name__ == "__main__":
     demo()
