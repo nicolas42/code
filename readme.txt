@@ -1,4 +1,12 @@
 
+time a process
+time python3 s3-upload.py
+
+make a python file executable
+pyinstaller --onefile --hidden-import=configparser s3-upload.py
+
+
+
 To Do List  #todo
 -------------------
 implement payment processing system using stripe

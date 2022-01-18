@@ -224,6 +224,93 @@ def to_string(bytes_data):
 
 
 
+def find_prime_factors(n):
+    i = 2
+    factors = []
+    while i * i <= n:
+        if n % i:
+            i += 1
+        else:
+            n //= i
+            factors.append(i)
+    if n > 1:
+        factors.append(n)
+    return factors
+
+def find_prime_factors_demo():
+    for n in [ 2009, 720720, 999983 ]:
+        s=str(n)+" = 1"
+        for p in find_prime_factors(n):
+            s=s+" * "+str(p)
+        print(s)
+
+
+
+
+import math
+
+
+def find_roots_with_newtons_method(f, fdash, x0):
+    while True:
+        y0 = f(x0)
+        m = fdash(x0)
+        x_intercept = -y0 / m + x0
+        if (abs(x_intercept - x0) < 1e-10):
+            return x_intercept
+        else:
+            x0 = x_intercept
+    
+
+
+def find_roots(f, fdash, xs):
+    roots = set()
+    for x in xs:
+        try:
+            r = find_roots_with_newtons_method(f, fdash, x)
+            r = round(r, 7)
+            roots.add(r)
+        except Exception as e:
+            print(e)
+    roots = list(roots)
+    roots.sort()
+    return roots
+
+
+def find_roots_demo():
+    def f(x): return (2+x-x**2)
+    def fdash(x): return 1-2*x
+    r = find_roots(f, fdash, range(-100, 100))
+    print(r)
+
+
+import random
+import math
+
+def estimate_pi_with_monte_carlo():
+
+    random.seed()
+
+    inside_circle = 0
+    inside_square = 0
+
+    for inside_square in range(1000000):
+        x = random.random()
+        y = random.random()
+        # if math.sqrt(x**2 + y**2) <= 1:
+        if x*x + y*y <= 1:
+            inside_circle += 1
+
+    # # inside_circle should be proportional to the area of a circle
+    # # inside_square should be proportional to the area of a square
+    # pi r^2
+    # 4r^2
+
+    pi_estimation = inside_circle / inside_square * 4
+
+    print(pi_estimation)
+
+    
+
 if __name__ == "__main__":
     demo_get_sign_of_multivector()
     # demo_matplotlib()

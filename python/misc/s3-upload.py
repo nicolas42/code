@@ -1,4 +1,7 @@
-# https://boto3.amazonaws.com/v1/documentation/api/latest/guide/s3-uploading-files.html
+# boto3 https://boto3.amazonaws.com/v1/documentation/api/latest/guide/s3-uploading-files.html
+# pyinstaller https://pyinstaller.readthedocs.io/en/stable/usage.html
+# configparser error https://stackoverflow.com/questions/49616095/pyinstaller-cannot-see-configparser
+
 
 # files are copied to bucket/prefix/filepath
 input_path = '/users/nick/Downloads/misc'
