@@ -4,6 +4,25 @@ To Do List  #todo
 implement payment processing system using stripe
 https://github.com/stripe-samples/accept-a-payment/tree/main/prebuilt-checkout-page
 
+look at busybox implementations
+networking, files, encryption, string operations
+try to use their c code
+
+
+GCC parameters 
+--------------------------
+
+-Wfatal-errors   stop after the first fatal error
+-fsanitize=address -g 
+-Wall -Wpedantic 
+-fPIC  position independent code 
+
+
+ar rcs lib.a *.o    combine object files.
+usage: gcc main.c lib.a 
+
+Show/hide hidden files in macos #macos
+In Finder, open up your Macintosh HD folder. Press Command+Shift+Dot. Your hidden files will become visible. Repeat step 2 to hide them again
 
 
 
