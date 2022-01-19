@@ -1,3 +1,24 @@
+make.sh for all the sdl files
+-----------------------------------
+
+make(){
+    g++ -ISDL2 -framework SDL2 -framework SDL2_image -framework SDL2_ttf -std=c++11 $1 -o $1.out && ./$1.out
+}
+
+for f in $(ls *.cpp); do 
+    echo "-------------------------------"
+    echo $f; 
+    echo "-------------------------------"
+    make $f
+done 
+
+
+rm *.out
+
+
+
+
+
 The SDL renderer has a VSYNC option which I should try
 gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
 

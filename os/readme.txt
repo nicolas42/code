@@ -1,28 +1,61 @@
+Read disk sectors into memory 
+-------------------------------------
+Load past the first 512 bytes in our file.
+
+Cylinder head sector addressing 
+
+bios interrupt 13  ah2, ah3 
+ah2 read into memory 
+ah3 write 
+
+Interrupts https://stanislavs.org/helppc/int_table.html
+
+
+Spinning Disk 
+https://en.wikipedia.org/wiki/Cylinder-head-sector
+
+A (original) floppy disk has two sides, each with 40 cylinders or tracks, 
+and each track has 9 sectors (start from 1) like pie slices, which each have 512 bytes.
+
+2*40*9*512 = 360KB
+
+platter (disk)
+several thousand tracks 
+hard drive heads 
+
+cylinder (several tracks)
+
+https://www.youtube.com/watch?v=gd5vKobmZ3Q
+
+;  reading sectors with a CHS address  
+; https://wiki.osdev.org/Disk_access_using_the_BIOS_(INT_13h)
+
+
+
 Pixel OS
----------
+--------------
 
 Aim: Boot directly to an arbitrary high resolution graphical program, written in c, with dynamic memory allocation.
 
-Links
-* tired amateur https://www.youtube.com/watch?v=5FnrtmJXsdM&list=PLT7NbkyNWaqajsw8Xh7SP9KJwjfpP8TNX&index=1
-* https://wiki.osdev.org
-* https://flatassembler.net
-* https://github.com/arjun024/mkernel
+
+tired amateur 
+https://www.youtube.com/watch?v=5FnrtmJXsdM&list=PLT7NbkyNWaqajsw8Xh7SP9KJwjfpP8TNX&index=1
+https://git.sr.ht/~queso_fuego/amateur_os_video_sources/tree/master
+
+https://wiki.osdev.org
+https://flatassembler.net
+https://github.com/arjun024/mkernel
+
 
 
 Mac OS 10.12 
 -----------------
 I'm using mac os 10.12 because I hate myself.  
-An old version of qemu has to be compiled.  I chose 2.9.1 because it was around about a year 
-after the release of the operating system.  The code that uses nasm and gcc needs to use 
-linux versions of gcc and ld, which can be installed using macports (brew doesn't work on old macos).
 
-sudo port install i386-elf-gcc
+QEMU
 
-gcc => i386-elf-gcc
-ld => i386-elf-ld
-
-Qemu 2.9.1 has to be compiled.
+An old version of qemu has to be compiled.  I chose 2.9.1 because it was released a year 
+after this operating system.  
 
 It's available here
 https://github.com/qemu/qemu/tree/359c41abe32638adad503e386969fa428cecff52
@@ -35,8 +68,7 @@ A raw hard drive image binary can be booted with this kind of command.
 qemu-system-i386 -drive format=raw,file=OS.bin,if=ide,index=0,media=disk
 
 
-
-Optional: Modify qemu so it doesn't ask for confirmation on exit by changing the verifyQuit function to this.
+I modified qemu so it doesn't ask for confirmation on exit by changing the verifyQuit function to this.
 
 - (BOOL)verifyQuit
 {
@@ -44,7 +76,22 @@ Optional: Modify qemu so it doesn't ask for confirmation on exit by changing the
 }
 
 
+GCC and NASM 
 
+The code that uses nasm and gcc needs to use the linux versions of gcc and ld, 
+which can be installed using macports (brew doesn't work on old macos).
+
+sudo port install i386-elf-gcc
+
+So just replace gcc and ld with their elf equivalents and the code should work.
+
+gcc => i386-elf-gcc
+ld => i386-elf-ld
+
+
+---------------------------------------------------------
+Old Notes on Assembly and Booting 
+---------------------------------------------------------
 
 Booting
 -------------------
@@ -67,12 +114,19 @@ $$ = base address of current addressing space
 
 The boot sector is loaded into memory segment 0 at address 0x7c00.  
 
+
+
+
+org directive 
+-------------------------
+Reaching a org directive, FASM will assembly addresses from that place on taking the new origin as base. It will not physically put padding.
+
 org 0x7c00
 
 This directive tells the assembler that addresses should be calculated as if the 
-beginning of the file is at memory address 0x7c00. 
-It sets the base address or "origin".
-
+beginning of the file has been loaded into memory address 0x7c00. 
+cause that is where it's usually loaded for some reason.
+So addresses need to keep that in mind.
 
 
 
@@ -102,12 +156,12 @@ is zero then we terminate the proceedure.
 
 a_string: db 'hello',0       ; 0/null to null terminate 
 
-mov ah, 0x0e                ; int 10 / ah 0x0e for BIO teletype output 
 mov bx, a_string            ; move the test_string address into b 
 ; jmp print_string
 
 print_string:
-mov al, [bx]                ; get character at bx
+mov ah, 0x0e                ; int 10 / ah 0x0e for BIO teletype output 
+mov al, [bx]                ; get character AT bx
 cmp al, 0                   ; sets zero flag
 je here                     ; jump if equal. (al == 0)
 int 0x10                    ; print character
@@ -124,10 +178,17 @@ je here                     ; jump if equal. (al == 0)
 
 
 
+a_string: db 'Hello World!',0
 
+mov bx, a_string
 
-
-
-
-
+mov ah, 0x0e
+mov al, [bx]
+int 0x10
+mov al, [bx+1]
+int 0x10
+mov al, [bx+2]
+int 0x10
+mov al, [bx+3]
+int 0x10
 

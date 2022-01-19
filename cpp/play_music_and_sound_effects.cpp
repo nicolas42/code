@@ -1,6 +1,8 @@
-// g++ play_music_and_sound_effects.cpp -framework SDL2 -framework SDL2_mixer -framework SDL2_image -framework SDL2_ttf -Wfatal-errors -fsanitize=address && ./a.out
+/*
+g++ play_music_and_sound_effects.cpp -framework SDL2 -framework SDL2_mixer -framework SDL2_image -framework SDL2_ttf -Wfatal-errors -fsanitize=address && ./a.out
 
-// based on code by the lazyfoo
+based on code by the lazyfoo
+*/
 
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
@@ -8,6 +10,7 @@
 #include "SDL2/SDL_ttf.h"
 #include <stdio.h>
 #include <string>
+
 #define BASIC_IMPLEMENTATION
 #include "basic.h"
 

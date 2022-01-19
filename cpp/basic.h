@@ -1,6 +1,9 @@
 #ifndef BASIC_HEADER_GUARD
 #define BASIC_HEADER_GUARD
 
+// Header only library
+// ---------------------------
+
 // Include this file like this
 // #define BASIC_IMPLEMENTATION
 // #include "basic.h"
@@ -36,8 +39,8 @@ typedef uint32_t    u32;
 typedef int32_t     s32;
 typedef uint64_t    u64;
 typedef int64_t     s64;
-// typedef float       f32;
-// typedef double      f64;
+typedef float       f32;
+typedef double      f64;
 
 
 
@@ -117,73 +120,27 @@ TYPENAME ## _array TYPENAME ## _array_make()                                    
                                                                                                 \
 TYPENAME ## _array TYPENAME ## _array_add(TYPENAME ## _array arr, TYPENAME item)                \
 {                                                                                               \
-    arr.data[arr.length] = item;                                                                \
-    arr.length += 1;                                                                            \
     if ( arr.length == arr.allocated ) {                                                        \
       arr.allocated *= 2;                                                                       \
       arr.data = (TYPENAME*)realloc( arr.data, arr.allocated * sizeof(TYPENAME) );              \
     }                                                                                           \
+    arr.data[arr.length] = item;                                                                \
+    arr.length += 1;                                                                            \
     return arr;                                                                                 \
 }                                                                                               \
 
 
 
-// DEFINE_ARRAY(TYPENAME) Demo
-
-// DEFINE_ARRAY(f64)
-// DEFINE_ARRAY(char)
-// typedef struct { int x; int y; } arbitrary_type;
-// DEFINE_ARRAY(arbitrary_type)
-// typedef void* voidptr;
-// DEFINE_ARRAY(voidptr)
-
-// int main_define_array()
-// {
-//     // int a;
-//     // a = sqr(64);
-//     // printf("%d\n", a);
-
-//     f64_array arr = f64_array_make();
-//     int i;
-//     for(i=0;i<100;++i) arr = f64_array_add(arr, i);
-//     for(i=0;i<100;++i) printf("%f ", arr.data[i]);
-//     printf("\n");
-
-//     char_array arr2 = char_array_make();
-//     char c;
-//     for(c=0;c<100;++c) arr2 = char_array_add(arr2, c+65);
-//     for(i=0;i<100;++i) printf("%c ", (int)arr2.data[i]);
-//     printf("\n");
-
-
-//     arbitrary_type_array arr3 = arbitrary_type_array_make();
-//     for(i=0;i<100;++i) { 
-//         arbitrary_type a;
-//         a.x = i;
-//         a.y = 2*i;
-//         arr3 = arbitrary_type_array_add(arr3, a);
-//     }
-//     for(i=0;i<100;++i) printf("[%d %d] ", arr3.data[i].x, arr3.data[i].y);
-//     printf("\n");
-
-
-//     voidptr_array arr4 = voidptr_array_make();
-//     for(s64 i=0;i<100;++i) arr4 = voidptr_array_add(arr4, (voidptr)i);
-//     for(i=0;i<100;++i) printf("%d ", (int)arr4.data[i]);
-//     printf("\n");
-
-//     return 0;
-// }
-
-
-
-
-
 
 #endif // BASIC_HEADER_GUARD
+
 #ifdef BASIC_IMPLEMENTATION
 #ifndef BASIC_IMPLEMENTATION_GUARD
 #define BASIC_IMPLEMENTATION_GUARD
+
+
+
+
 
 
 struct list make_list()
@@ -272,8 +229,64 @@ int file_exists(const char * filename)
 
 double time_elapsed(void)
 {
-	return clock()/(double)CLOCKS_PER_SEC;
+	return ( (double)clock() ) / ( (double)CLOCKS_PER_SEC );
 }
+
+
+
+
+
+
+
+
+// // DEFINE_ARRAY(TYPENAME) Demo
+
+// DEFINE_ARRAY(f64)
+// DEFINE_ARRAY(char)
+// typedef struct { int x; int y; } arbitrary_type;
+// DEFINE_ARRAY(arbitrary_type)
+// typedef void* voidptr;
+// DEFINE_ARRAY(voidptr)
+
+// int main()
+// {
+//     // int a;
+//     // a = sqr(64);
+//     // printf("%d\n", a);
+
+//     f64_array arr = f64_array_make();
+//     int i;
+//     for(i=0;i<100;++i) arr = f64_array_add(arr, i);
+//     for(i=0;i<100;++i) printf("%f ", arr.data[i]);
+//     printf("\n");
+
+//     char_array arr2 = char_array_make();
+//     char c;
+//     for(c=0;c<100;++c) arr2 = char_array_add(arr2, c+65);
+//     for(i=0;i<100;++i) printf("%c ", (int)arr2.data[i]);
+//     printf("\n");
+
+
+//     arbitrary_type_array arr3 = arbitrary_type_array_make();
+//     for(i=0;i<100;++i) { 
+//         arbitrary_type a;
+//         a.x = i;
+//         a.y = 2*i;
+//         arr3 = arbitrary_type_array_add(arr3, a);
+//     }
+//     for(i=0;i<100;++i) printf("[%d %d] ", arr3.data[i].x, arr3.data[i].y);
+//     printf("\n");
+
+
+//     voidptr_array arr4 = voidptr_array_make();
+//     for(s64 i=0;i<100;++i) arr4 = voidptr_array_add(arr4, (voidptr)i);
+//     for(i=0;i<100;++i) printf("%d ", (int)arr4.data[i]);
+//     printf("\n");
+
+//     return 0;
+// }
+
+
 
 
 
@@ -288,6 +301,10 @@ int basic_main(int argc, char **argv)
 
     return 0;
 }
+
+
+
+
 
 #endif // BASIC_IMPLEMENTATION_GUARD 
 #endif // #ifdef BASIC_IMPLEMENTATION

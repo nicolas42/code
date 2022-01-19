@@ -3,6 +3,17 @@
     call main
     jmp end_program
 
+print_string:
+    mov ah, 0x0e
+    mov al, [bx]
+    cmp al, 0
+    je print_string_return
+    int 0x10
+    add bx,1
+    jmp print_string 
+print_string_return:
+    ret
+
 
 main:
 
@@ -17,18 +28,15 @@ main:
     mov bl, 0x01
     int 0x10
 
-    ;; print some stuff
+
     mov bx, str1
+    call print_string
+
+    mov bx, newline
     call print_string
 
     mov bx, str2
     call print_string
-
-    mov bx, str3
-    call print_string
-
-    mov dx, 0x12AB
-    call print_hex
 
     ret
 
@@ -36,15 +44,9 @@ main:
 end_program:
     jmp $
 
+str1:          db 'Hello World!', 0
+newline:       db 0xA, 0xD, 0
+str2:          db 'You say goodbye but I say hello.  Hello, hello.', 0
 
-include "print_string.asm"
-include 'print_hex.asm'
-
-
-str1:          db 'Hello World!', 0xa, 0xd, 0
-str2:          db 'You say goodbye but I say hello.  Hello, hello.', 0xa, 0xd, 0
-str3:          db "omg it's some hex => ",0
-
-    ;; boot magic
     times 510-($-$$) db 0
     dw 0xaa55

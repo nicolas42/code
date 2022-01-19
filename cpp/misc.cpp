@@ -720,6 +720,13 @@ int print_this_file()
 
 
 
+
+// C89 allows two types of compilers: hosted and freestanding. The basic difference is that a 
+// hosted compiler provides all of the C89 library, while a freestanding compiler need only 
+// provide <float.h>, <limits.h>, <stdarg.h>, and <stddef.h>. If you limit yourself to these headers, 
+// your code will be portable to any C89 compiler.
+
+
 #include <stdio.h>
 #include <float.h>
 
@@ -742,6 +749,146 @@ void float_header_demo ()
 }
 
 
+#include<limits.h>
+#include<stdio.h>
+
+int limits_header_demo()
+{
+
+    printf("\n\n");
+    printf("limits.h demo\n");
+    printf("-----------------------\n");
+
+
+   printf("The number of bits in a byte %d\n", CHAR_BIT);
+
+   printf("The minimum value of SIGNED CHAR = %d\n", SCHAR_MIN);
+   printf("The maximum value of SIGNED CHAR = %d\n", SCHAR_MAX);
+   printf("The maximum value of UNSIGNED CHAR = %d\n", UCHAR_MAX);
+
+   printf("The minimum value of SHORT INT = %d\n", SHRT_MIN);
+   printf("The maximum value of SHORT INT = %d\n", SHRT_MAX); 
+
+   printf("The minimum value of INT = %d\n", INT_MIN);
+   printf("The maximum value of INT = %d\n", INT_MAX);
+
+   printf("The minimum value of CHAR = %d\n", CHAR_MIN);
+   printf("The maximum value of CHAR = %d\n", CHAR_MAX);
+
+   printf("The minimum value of LONG = %ld\n", LONG_MIN);
+   printf("The maximum value of LONG = %ld\n", LONG_MAX);
+  
+   return(0);
+}
+
+
+#include<stdarg.h>
+#include<stdio.h>
+
+
+int sum(int num_args, ...)
+{
+   int val = 0;
+   va_list ap;
+   int i;
+
+   va_start(ap, num_args);
+   for(i = 0; i < num_args; i++) {
+      val += va_arg(ap, int);
+   }
+   va_end(ap);
+ 
+   return val;
+}
+
+
+void stdarg_header_demo()
+{
+
+    printf("\n\n");
+    printf("stdarg.h demo\n");
+    printf("-----------------------\n");
+
+   printf("Sum of 10, 20 and 30 = %d\n",  sum(3, 10, 20, 30) );
+   printf("Sum of 4, 20, 25 and 30 = %d\n",  sum(4, 4, 20, 25, 30) );
+
+}
+
+
+
+#include <stddef.h>
+#include <stdio.h>
+
+// Offsetof 
+// -----------------------------------
+// offsetof returns the address of a field relative to the start address of a struct.
+// offsetof(struct, name)
+
+void stddef_header_demo ()
+{
+
+    struct address {
+        char name[50];
+        char street[50];
+        int phone;
+    };
+    
+
+    printf("name offset = %lu byte in address structure.\n", offsetof(struct address, name));
+
+    printf("street offset = %lu byte in address structure.\n", offsetof(struct address, street));
+
+    printf("phone offset = %lu byte in address structure.\n", offsetof(struct address, phone));
+
+} 
+
+
+
+#include <stdio.h>
+
+void demo_2d_arrays(void)
+{
+    printf("\n\n");
+    printf("2D array demo\n");
+    printf("-----------------------\n");
+
+
+    int row, col;
+
+    int a[2][5] = {      // Initialize a 2D array
+        {0, 1, 2, 3, 4},
+        {5, 6, 7, 8, 9}
+    };
+
+    for (row = 0; row < 2; row++) {
+        for (col = 0; col < 5; col++) {
+            printf("(%d,%d) = %d\n", row, col, a[row][col]);
+        }
+    }
+}
+
+
+
+// 1	void *memchr(const void *str, int c, size_t n)
+// Searches for the first occurrence of the character c (an unsigned char) 
+// in the first n bytes of the string pointed to, by the argument str.
+
+// 2	int memcmp(const void *str1, const void *str2, size_t n)
+// Compares the first n bytes of str1 and str2.
+
+// 3	void *memcpy(void *dest, const void *src, size_t n)
+// Copies n characters from src to dest.
+
+// 4	void *memmove(void *dest, const void *src, size_t n)
+// Another function to copy n characters from str2 to str1.
+
+// 5	void *memset(void *str, int c, size_t n)
+// Copies the character c (an unsigned char) to the first n characters 
+// of the string pointed to, by the argument str.
+
+
+
+
 int main()
 {
     caesar_cipher_main();
@@ -757,9 +904,17 @@ int main()
     split_string_demo();
     unions_demo();
     // print_this_file();
-    float_header_demo();
-    printf("You finished the demo!\n");
-    
+
+    float_header_demo();  // print float limits
+    limits_header_demo(); // print integral limits
+    stdarg_header_demo(); // va_arg
+    stddef_header_demo(); // offsetof
+
+    demo_2d_arrays();
+
+
     return 0;
 }
+
+
 
