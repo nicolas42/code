@@ -1,16 +1,17 @@
 # the os currently uses floppy emulation
-# using qemu -drive format=raw,file=os.bin,if=floppy
-# reading disk using the ata system requires the qemu subcommand if=ide if I'm not mistaken
+# when using cylinder drive sector boot as a floppy i.e. if=floppy
+# reading disk using the ata requires if=ide
 
 
 
 all:
-	fasm os.asm
-	qemu-system-i386 -drive format=raw,file=os.bin,if=floppy,index=0,media=disk
+	fasm my_second_boot_loader.asm
+	qemu-system-i386 -drive format=raw,file=my_second_boot_loader.bin,if=ide,index=0,media=disk
 
 
 clean:
 	rm *.bin
+
 
 
 

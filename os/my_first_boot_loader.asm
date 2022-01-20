@@ -1,23 +1,19 @@
 
  ; macos
- ; fasm os.asm && /Users/nick/qemu-2.9.1/i386-softmmu/qemu-system-i386 -boot a -fda os.bin
- ; fasm os.asm && /Users/nick/qemu-2.9.1/i386-softmmu/qemu-system-i386 -drive format=raw,file=os.bin,if=floppy
+ ; fasm my_first_boot_loader.asm && /Users/nick/qemu-2.9.1/i386-softmmu/qemu-system-i386 -boot a -fda my_first_boot_loader.bin
+ ; fasm my_first_boot_loader.asm && /Users/nick/qemu-2.9.1/i386-softmmu/qemu-system-i386 -drive format=raw,file=my_first_boot_loader.bin,if=floppy
 
  ;linux
- ; fasm os.asm && qemu-system-i386 -drive format=raw,file=os.bin,if=floppy
+ ; fasm my_first_boot_loader.asm && qemu-system-i386 -drive format=raw,file=my_first_boot_loader.bin,if=floppy
 
 
-    ;; This demo uses interrupt 0x13 with ah=2 to read a disk sector and then jump to it
-;;;  unfortunately this appears to screw up the data segment?
-;;;
-;;; Simple Boot loader that uses INT13 AH2 to read from disk into memory
-;;;
 
-; Note: I did not understood segment:offset addressing fully until later, 
-; a segment register (DS, ES, etc.)  implicitly multiply their value by 16, then the offset 
-; is added to get an address. So mov AX, 100h; mov ES, AX; would leave ES with 100h, but
-;  ES would point to 1000h, 100h*16. 
-;  Then if you did something like mov DI, 100h; ES:DI would point to 100h:100h = 1000h + 100h = 1100h;
+    ;; Read a disk sector and then jump to it
+    ;; -----------------------------------------------
+    
+    ;; Uses INT13 AH=2 to read from disk into memory
+    ;; Does the data segment register need to be set When moving to es:bx where es!=0 ?
+
 
 
 
@@ -25,9 +21,9 @@
 
 
     ;; set up ES:BX memory address/segment:offset to load sector(s) into
-    mov bx, 0x7e00              ; load sector to memory address 0x7e00 
-    mov es, bx                  
-    mov bx, 0x0                 ; ES:BX = 0x7e00:0x0
+    mov ax, 0x0000
+    mov es, ax                  
+    mov bx, 0x7e00                 ; ES:BX = 0x0000:0x7e00
 
     ;; Set up disk read
     mov dh, 0x0                 ; head 0
@@ -39,15 +35,19 @@ read_disk:
     mov ah, 0x02                ; BIOS int 13h/ah=2 read disk sectors
     mov al, 0x01                ; # of sectors to read
     int 0x13                    ; BIOS interrupts for disk functions
-
     jc read_disk                ; retry if disk read error (carry flag set/ = 1)
 
+    ;; ;; reset segment registers for RAM
+    ;; mov ax, 0x0000
+    ;; mov ds, ax                  ; data segment
+    ;; mov es, ax                  ; extra segment
+    ;; mov fs, ax                  ; ""
+    ;; mov gs, ax                  ; ""
+    ;; mov ss, ax                  ; stack segment
 
-    mov ax, 0x7e00
-    mov ds, ax                  ; data segment
 
-    jmp 0x7e00:0x0              ; never return from this!
-
+    
+    jmp 0x7e00              ; never return from this!
 
 
     ;; Boot Sector magic
@@ -56,10 +56,10 @@ read_disk:
 
 
 
-;;; Thing to boot up
+;;; This gets loaded into ram at 0x7e00 and then run
 
 
-    org 0x0000
+    org 0x7e00
 
     ;; Set video mode
     mov ah, 0x00                ; int 0x10/ ah 0x00 = set video mode
@@ -71,6 +71,19 @@ read_disk:
     mov bh, 0x00
     mov bl, 0x01
     int 0x10
+
+    mov ah, 0x0e
+    mov al, 'o'
+    int 0x10
+    mov al, 'm'
+    int 0x10
+    mov al, 'g'
+    int 0x10
+    mov al, 0xA
+    int 0x10
+    mov al, 0xD
+    int 0x10
+
 
     ;; print something
     mov bx, you_have_booted
@@ -90,7 +103,6 @@ you_have_booted:   db 'You have loaded a sector from a disk and then run it.', 0
 
 
 
-
-    ;; boot magic
+    ;; padding why not
     times 1024-($-$$) db 0
 
