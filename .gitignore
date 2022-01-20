@@ -18,11 +18,12 @@ node_modules
 *.out
 *.dSYM
 *.so.dSYM
-*.dll
 *.exe
 *.dat
 *.obj
 *.gch
+*.lib
+*.dll
 
 # python
 *.pyc
