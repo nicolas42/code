@@ -45,8 +45,8 @@ node_modules
 #*.aac
 
 # image
-#*.png
-#*.jpg
-#*.gif
-#*.ppm
-#*.pgm
+*.png
+*.jpg
+*.gif
+*.ppm
+*.pgm
