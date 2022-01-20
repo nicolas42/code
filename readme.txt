@@ -1,3 +1,27 @@
+#Emacs
+--------------------
+in file explorer
+   g refreshes page
+   d selects files for deletion, 
+   x deletes files
+   undo deletion marks with the regular undo
+   ~ selects ~ files for deletion
+   # selects # files for deletion
+   
+m-x (un)comment-region
+
+
+
+
+What is a "block device"
+------------------------------
+It appears the main distinction is between a "character device" where a single character can be read
+versus a "block device" where only a block of information can be read, comprising multiple bytes,
+like a 512 byte sector.
+https://unix.stackexchange.com/questions/259193/what-is-a-block-device
+
+
+
 ------------------------------------------------------------------------------------------------
 Beej's Guide to C Programming 
 ------------------------------------------------------------------------------------------------

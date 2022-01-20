@@ -1,7 +1,5 @@
-;;;
-;;; Simple Boot loader that uses INT13 AH2 to read from disk into memory
-;;;
-    org 0x7c00                  ; 'origin' of Boot code; helps make sure addresses don't change
+    org 0x7c00
+
 
     ;; Set video mode
     mov ah, 0x00                ; int 0x10/ ah 0x00 = set video mode
@@ -18,19 +16,6 @@
     mov bx, str1
     call print_string
 
-
-    jmp 0x7C00+100
-
-    times 100-($-$$) db 0       ; pads out 0s until we reach 100th byte
-
-
-
-;; -------------------------------------------------------------
-;; kernel 
-;; -------------------------------------------------------------
-
-
-    
     mov bx, str2
     call print_string
 
