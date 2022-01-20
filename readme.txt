@@ -549,83 +549,88 @@ Kill the background process by deleting nohup.out
 Make an #SSH key 
 --------------------------------------------
 
-To make an SSH Key for github do the following commands.  You can use git bash in windows.
+ssh-keygen -o
 
-1) create an ssh key
-2) start the ssh-agent
-3) Add your SSH private key to the ssh-agent.
+follow the prompts
+give the public ssh key to the other party
 
-ssh-keygen -t ed25519
-eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/id_ed25519
+In windows, git bash can be used for this.
 
-The public key must be given to github.com.  Find the corresponding id_ed25519.pub file
-and copy the text into an ssh key in github's settings > ssh keys section.
-
-Repos have to be cloned in this fashion.
-
-git clone git@github.com:username/repo
+https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key
 
 
 
 Compiling Stuff on Windows Using Visual Studio on the command line   #visualstudio 
 ----------------------------------------------------------------------------------------
 
-Visual studio needs a special script to be run before it can be called from a terminal.
-It's called vcvarsall.bat and it moves around every time they release a new version of visual studio.
-After it is run the visual studio compiler is available as the "cl" command.
+Calling visual studio from the command line (cl) requires a script be run beforehand.
+It's called vcvarsall.bat and it moves around every new version so you'll have to find it.
+It's buried somewhere in the visual studio folder, which itself will change. yay :)
+
 Here are the commands from the last time that I used them.
 
-call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+     call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 
-cl /nologo /Zi /MD draw_mandelbrot_in_color.c
-del *.pdb *.ilk *.obj 
-
-source https://hero.handmade.network/forums/code-discussion/t/2691-day_001_with_visual_studio_2017
-
-Here's a more complicated example of usage from the imgui repository
-
-mkdir Debug
-cl /nologo /Zi /MD /I .. /I ..\.. /I "%WindowsSdkDir%Include\um" /I "%WindowsSdkDir%Include\shared" /I "%DXSDK_DIR%Include" /D UNICODE /D _UNICODE *.cpp ..\imgui_impl_win32.cpp ..\imgui_impl_dx10.cpp ..\..\imgui*.cpp /FeDebug/example_win32_directx10.exe /FoDebug/ /link /LIBPATH:"%DXSDK_DIR%/Lib/x86" d3d10.lib d3dcompiler.lib
+     cl /nologo /Zi /MD main.c
 
 
-How to set PATH variable in windows
+source: https://hero.handmade.network/forums/code-discussion/t/2691-day_001_with_visual_studio_2017
+
+
+The imgui repo has a bunch of examples of how to use visual studio.  Here's one
+
+    mkdir Debug
+
+    cl /nologo /Zi /MD /I .. /I ..\.. /I "%WindowsSdkDir%Include\um" /I "%WindowsSdkDir%Include\shared" /I "%DXSDK_DIR%Include" /D UNICODE /D _UNICODE *.cpp ..\imgui_impl_win32.cpp ..\imgui_impl_dx10.cpp ..\..\imgui*.cpp /FeDebug/example_win32_directx10.exe /FoDebug/ /link /LIBPATH:"%DXSDK_DIR%/Lib/x86" d3d10.lib d3dcompiler.lib
+
+    del *.pdb *.ilk *.obj 
+
+
+
+
+
+Setting the PATH environmental variable in windows
 -------------------------------------------------------
 SET PATH=%PATH%;c:\nick\sdl_cross_platform\lib_win64
 
 
 
-Building and Linking C/C++ Repositories   #pkg-config #linking
----------------------------------------------------------------------
+Building and Linking C/C++ Repositories in Linux / macos   #pkg-config
+-------------------------------------------------------------------------
 
-Typical unix build
+To link libraries in macos use the -framework flag, e.g.
 
-./configure; make; make install
+   g++ main.cpp -framework SDL2 -framework SDL2_image -framework SDL2_mixer -framework SDL2_net -framework SDL2_ttf
 
-Linking with pkg-config e.g.
 
-pkg-config --libs sdl2 opengl
-
-To link in macos use the -framework flag, e.g.
-
-g++ <input.cpp> -framework SDL2 -framework SDL2_image -framework SDL2_mixer -framework SDL2_net -framework SDL2_ttf
-
-To link libraries in unix use -l<lib name>.  The library name is the filename without its "lib" prefix 
+To link libraries in Linux use -l<lib name>.  The library name is the filename without its "lib" prefix 
 and without the file extension.  
 
-g++ <input.cpp> -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_net -lSDL2_ttf
+    g++ main.cpp -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_net -lSDL2_ttf
 
-.a libraries can be produced using the ar tool (archive?).  For some reason its flags don't need a dash.
 
-ar r lib.a 'ls *.o'
 
-Packaging .o files like this lets linking be done by just adding the .a file to the list which simplifies linking.
 
-g++ main.c lib.a
+pkg-config is a useful utility that gives the linking flags that are required for different libraries, if they're more complicated.
+It can also output the flags necessary to statically link libraries, which is cool.
 
-This works with code that I write but for libraries that are designed to be dynamically linked it appears to be more complicated.
-I still don't really understand how shared object .so files work.  Maybe they are just used by the operating system to find the different libraries
-it needs to link together the program. Dunno.
+   pkg-config --libs sdl2 opengl
+
+
+
+.A libraries (archive)
+
+.a libraries are a bunch of .o objects stuck together.  They can easily be linked on the command line by just putting in their name like a .c or a .o file.
+
+   g++ main.c lib.a
+
+
+.a libraries can be produced with the ar tool.
+
+   ar rcs lib.a  sth.o sthelse.o
+
+
+
 
 
 
