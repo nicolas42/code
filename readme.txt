@@ -1,3 +1,5 @@
+omg an unecessary change
+
 #Emacs
 --------------------
 in file explorer
@@ -544,7 +546,7 @@ Kill the background process by deleting nohup.out
 
 
 
-Make an SSH key
+Make an #SSH key 
 --------------------------------------------
 
 To make an SSH Key for github do the following commands.  You can use git bash in windows.
