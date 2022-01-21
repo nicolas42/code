@@ -1,9 +1,8 @@
 # directories
-bin
-test
-data
-ignore
-node_modules
+gitignore/
+node_modules/
+
+*.zip
 
 *.txt
 !readme.txt
