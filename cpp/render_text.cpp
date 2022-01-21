@@ -21,11 +21,11 @@ int main(int argc, char **argv) {
     char* font_path = (char*)"data/Sans.ttf";
     int font_size = 24;
     TTF_Font *font = TTF_OpenFont(font_path, font_size);
-    if (!font) { 
-        printf("ERROR %s %d %s\n", __FILE__, __LINE__, SDL_GetError());
+    if (!font) {
+        SDL_Log("ERROR %s %d %s\n", __FILE__, __LINE__, SDL_GetError());
+      //      extern DECLSPEC void SDLCALL SDL_Log(SDL_PRINTF_FORMAT_STRING const char *fmt, ...) SDL_PRINTF_VARARG_FUNC(1);
         exit(1);
     }
-
 
 
 
@@ -48,12 +48,12 @@ int main(int argc, char **argv) {
     for(i=0;i<10;++i){
         int count = 0;
         err = TTF_MeasureText(font, text, measure_width, &extent, &count);
-        printf("count: %d\n", count);
+        SDL_Log("count: %d\n", count);
 
         memset(line, 0, sizeof line);
         memcpy(line, text, count);
         line[count] = '\0';
-        printf("%s\n", line);
+        SDL_Log("%s\n", line);
 
         SDL_Surface *text_surface = TTF_RenderText_Shaded(font, line, text_color, background_color); 
         SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, text_surface);
@@ -157,3 +157,24 @@ int main(int argc, char **argv) {
 //     }
 //     SDL_RenderPresent(renderer);
 // }
+
+
+
+
+        // render wrapped text
+        // To render text we need to separate it into lines.  This is either due to a newline in the text or because of line wrapping.
+        // We can use the TTF_SizeText function to determine whether the next line of text will fit on the page.
+        // If it won't then we can determine the length of the string to render using TTF_MeasureText
+        
+        // /* Get the dimensions of a rendered string of text */
+        // extern DECLSPEC int SDLCALL TTF_SizeText(TTF_Font *font, const char *text, int *w, int *h);
+        // extern DECLSPEC int SDLCALL TTF_SizeUTF8(TTF_Font *font, const char *text, int *w, int *h);
+        // extern DECLSPEC int SDLCALL TTF_SizeUNICODE(TTF_Font *font, const Uint16 *text, int *w, int *h);
+
+        // extern DECLSPEC int SDLCALL TTF_SizeText(TTF_Font *font, const char *text, int *w, int *h);
+
+        // int w,h;
+        // int index = strchr(text,'\n');
+        // // err = TTF_SizeText(font, text, &w, &h);
+	
+

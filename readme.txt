@@ -1,4 +1,39 @@
-omg an unecessary change
+Fix the ctrl+tab settings in vscode so I can predict which tab it'll go to
+----------------------------------------------------------------------------
+// ctrl+` pulls up terminal
+// Place your key bindings in this file to override the defaults
+[
+    // ...
+    {
+        "key": "ctrl+tab",
+        "command": "workbench.action.nextEditor"
+    },
+    {
+        "key": "ctrl+shift+tab",
+        "command": "workbench.action.previousEditor"
+    },
+]
+
+
+
+
+
+
+* version control system 
+* notepad  scrolling text and editing 
+* opengl draw shapes 
+
+
+
+Cmder 
+-----------------
+
+Cmder is a decent command line for windows.  It comes with git and other goodies.
+
+It has a .bashrc equivalent at %CMDER_ROOT%\config\user_profile.cmd
+
+
+
 
 #Emacs
 --------------------
@@ -591,7 +626,7 @@ The imgui repo has a bunch of examples of how to use visual studio.  Here's one
 
 Setting the PATH environmental variable in windows
 -------------------------------------------------------
-SET PATH=%PATH%;c:\nick\sdl_cross_platform\lib_win64
+SET PATH=%PATH%;c:\users\nick\bin
 
 
 
@@ -654,8 +689,8 @@ sudo apt install libopengl-dev libglew-dev
 ------------------------------------------------------------------------------
 
 
-file system
------------------------------------------
+"file system" - or storing many files in one file 
+--------------------------------------------------
 * use a single file 1gb
 * use fseek    int fseek(FILE *stream, long int offset, int whence)
 * flat file system 

@@ -1,4 +1,83 @@
-make.sh for all the sdl files
+
+
+Compiling Stuff on Windows Using Visual Studio on the command line   #visualstudio 
+----------------------------------------------------------------------------------------
+
+Calling visual studio from the command line (cl) requires a script be run beforehand.
+It's called vcvarsall.bat and it moves around every new version so you'll have to find it.
+It's buried somewhere in the visual studio folder, which itself will change. yay :)
+
+Here are the commands from the last time that I used them.
+
+   call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+
+   cl /Zi /MD main.c
+
+
+source: https://hero.handmade.network/forums/code-discussion/t/2691-day_001_with_visual_studio_2017
+
+
+The imgui repo has a bunch of examples of how to use visual studio.  Here's one
+
+    mkdir Debug
+
+    cl /nologo /Zi /MD /I .. /I ..\.. /I "%WindowsSdkDir%Include\um" /I "%WindowsSdkDir%Include\shared" /I "%DXSDK_DIR%Include" /D UNICODE /D _UNICODE *.cpp ..\imgui_impl_win32.cpp ..\imgui_impl_dx10.cpp ..\..\imgui*.cpp /FeDebug/example_win32_directx10.exe /FoDebug/ /link /LIBPATH:"%DXSDK_DIR%/Lib/x86" d3d10.lib d3dcompiler.lib
+
+    del *.pdb *.ilk *.obj 
+
+
+
+
+
+Setting the PATH environmental variable in windows
+-------------------------------------------------------
+SET PATH=%PATH%;c:\users\nick\bin
+
+
+
+Building and Linking C/C++ Repositories in Linux / macos   #pkg-config
+-------------------------------------------------------------------------
+
+To link libraries in macos use the -framework flag, e.g.
+
+   g++ main.cpp -framework SDL2 -framework SDL2_image -framework SDL2_mixer -framework SDL2_net -framework SDL2_ttf
+
+
+To link libraries in Linux use -l<lib name>.  The library name is the filename without its "lib" prefix 
+and without the file extension.  
+
+    g++ main.cpp -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_net -lSDL2_ttf
+
+
+
+
+pkg-config is a useful utility that gives the linking flags that are required for different libraries, if they're more complicated.
+It can also output the flags necessary to statically link libraries, which is cool.
+
+   pkg-config --libs sdl2 opengl
+
+
+
+.A libraries (archive)
+
+.a libraries are a bunch of .o objects stuck together.  They can easily be linked on the command line by just putting in their name like a .c or a .o file.
+
+   g++ main.c lib.a
+
+
+.a libraries can be produced with the ar tool.
+
+   ar rcs lib.a  sth.o sthelse.o
+
+
+
+
+
+
+
+
+
+backup of make.sh for all the sdl files
 -----------------------------------
 
 make(){

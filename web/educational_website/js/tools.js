@@ -38,3 +38,16 @@ function showHideMenu(){
 	showHide('nav.container');
 }
 
+
+// attempt to make pages minimum page height
+resize_div_inner = function(){
+    let div_inner = document.querySelector("div.inner");
+    console.log("window onload\n");
+
+    if ( document.body.offsetHeight < window.innerHeight )
+	document.body.style.height = window.innerHeight.toString()+"px";
+	document.querySelector("div.inner").style.height = window.innerHeight.toString()+"px";
+
+}
+
+//  window.onload = resize_div_inner;
