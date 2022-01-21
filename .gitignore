@@ -2,13 +2,7 @@
 gitignore/
 node_modules/
 
-# *.zip
-
-*.iso
-*.tmp
-*.bin
-
-# compillation objects
+# compillation
 *.o
 *.a
 *.so
@@ -21,6 +15,10 @@ node_modules/
 *.gch
 *.lib
 *.dll
+
+# binary
+*.iso
+*.bin
 
 # python
 *.pyc
