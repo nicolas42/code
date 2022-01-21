@@ -38,14 +38,3 @@ node_modules/
 *.mkv
 *.mpg
 
-# audio
-#*.m4a
-#*.mp3
-#*.aac
-
-# image
-*.png
-*.jpg
-*.gif
-*.ppm
-*.pgm
