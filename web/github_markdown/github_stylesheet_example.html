@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<LINK rel="stylesheet" href="github_stylesheet.css">
 <LINK rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css" integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn" crossorigin="anonymous">
 
 <SCRIPT defer src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js" integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8" crossorigin="anonymous"></SCRIPT>
@@ -22,24 +23,8 @@ document.addEventListener("DOMContentLoaded", function() {
 </SCRIPT>
 
 
-<STYLE>
-
-/* * { border: 1px solid #eeeeee; } */
-
-html,body,div,p,img,pre,iframe,video,h1,h6,h6,h4,h5,h6 { 
-	box-sizing: border-box; font-family:'Roboto', sans-serif; color: #333333; font-weight: 100; margin: auto; line-height: 2em; text-align: justify; padding: 10px; 
-}
-
-
-hr { border: 0; margin-bottom: 100px; border-bottom: 1px solid #eeeeee; }
-
-img, video, iframe { display: block; }
-body { width: 800px; }
-iframe { width: 400px; height: 400px; }
-img, video { width: 70%; padding: 20px; }
-
-	
-</STYLE> 
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
 
 
 <h1>The Balloon and the Elephant</h1>
@@ -183,7 +168,7 @@ img, video { width: 70%; padding: 20px; }
 
 <h1>Venus</h1>
 <p>Venus is one of the two planets closest to the Earth but it’s 400 Degrees which is a bit of a show stopper.  Venus also boasts an atmosphere which is about 100 times thicker than Earth’s <a href="https://en.wikipedia.org/wiki/Venus">[source]</a>.</p>
-<h6>Blimp-life</h6>
+<h2>Blimp-life</h2>
 <p>You might be able live above Venus in a blimp.  50km above the surface the weather is quite nice and a blimp full of Earth’s atmosphere would float.  So you could hang out there … in a blimp <a href="https://en.wikipedia.org/wiki/High_Altitude_Venus_Operational_Concept">[source]</a>.</p>
 
 <hr>
@@ -207,13 +192,13 @@ img, video { width: 70%; padding: 20px; }
 
 <p>It turns out that to get to other planets you need to go really fast as well.  In fact the distances between planets are not measured in km they're measured in speeds.</p>
 
-<h6>The Rocket Equation</h6>
+<h2>The Rocket Equation</h2>
 <p>The change in velocity that you can achieve is the product of the exhaust velocity and the natural logarithm of the mass ratio, which is the final mass divided by the initial mass.  Here it is in math gobbledygook.</p>
 <p>$$\Delta v = V_e \ln (M_f / M_i)$$</p>
 
 <p>Rocket people will refer to this as delta-v where delta means change and v means v, I mean velocity.</p>
 <p>The logarithm function causes the relationship to have this shaped curve which indicates that there’s a limit to how fast you can go since speed is on the vertical axis and there's only so much weight you can lose.</p>
-<h6>The Speed (in km/s) of your rocket versus its mass ratio for an exhaust velocity of 3.5km/s</h6>
+<h2>The Speed (in km/s) of your rocket versus its mass ratio for an exhaust velocity of 3.5km/s</h2>
 <p><img src="images/rocket-equation-graph.jpg" alt="rocket equation graph"/></p>
 <p>This means that if your rocket is 20 times as heavy when it’s full as it is when it’s empty and it’s got good engines then it’ll be able to accelerate to about 10km/s or about 36000 km/h which is about the speed you need to go to get into orbit (taking losses into account)</p>
 <p>Getting a higher mass ratio means trying to get your rocket as light as possible when its empty and still strong enough to go through the atmosphere at thousands of kilometers an hour is what keeps rocket scientists up all night.</p>
@@ -246,7 +231,7 @@ img, video { width: 70%; padding: 20px; }
 
   <p class="quote">"Space is big. You just won't believe how vastly, hugely, mind-bogglingly big it is. I mean, you may think it's a long way down the road to the chemist's, but that's just peanuts to space." - Douglas Adams</p>
 
-<h6>The Temperature of Space</h6>
+<h2>The Temperature of Space</h2>
 
 <p>People are sometimes told that space is extremely cold which is misleading.  There's almost nothing in space which means it's not that cold.  It's the difference between putting your hand in boiling water vs putting your hand in the oven when it's 100 degrees.  The water is going to be much worse because there's much more stuff in the water than in the oven.  Similarly there's almost no atoms in space (which you could probably work out from the name) so there's nothing to steal your thermal energy and make you feel cold.  So it wouldn't really feel that cold.  But if your naked skin is feeling space directly then you're probably already in trouble.</p>
 
@@ -264,7 +249,7 @@ img, video { width: 70%; padding: 20px; }
 
 <p>This video doesn't make my point but it's cool.</p>
 
-<h6>Black Holes</h6>
+<h2>Black Holes</h2>
 
 <p>Apparently black holes do exist now and we are all doomed eventually to enjoy living with and eventually in them by the time the universe ends.  So I for one have decided to try to relate to my spatially challenged brethren by finding out just how small I’d have to become become one of them. What followed might surprise or bore you. </p>
 
@@ -322,7 +307,7 @@ img, video { width: 70%; padding: 20px; }
 <p>It's quite hard to imagine how this actually works because rockets are so much larger and more powerful than things we're used to.  But in addition to the exhaust being essentially a continuous explosion, the weight of the stuff shooting out of the back of the rocket is quite high also.  Here is an example of fuel usage as measured in elephants.</p>
 
 <p><iframe src="https://www.youtube.com/embed/X4iMeKif488"></iframe><p>
-<h6>Side note: What about really fast airplanes?</h6>
+<h2>Side note: What about really fast airplanes?</h2>
 
 <p>Airplanes move by using big fans to move air.  There's no air in space so they top out at a certain altitude.  You can use a big plane to lift a little rocket up a bit higher but if you want to lift a big rocket you need an even bigger plane and sometimes there just isn't a large enough plane.  Also the main problem is to go fast enough to get into orbit and planes don't solve that.  Not to mention that plane engines won't get you anywhere else in the Solar System.</p>
 
@@ -354,3 +339,10 @@ img, video { width: 70%; padding: 20px; }
 </ol>
 
 <!-- <p>Now get out there and see the universe!</p> -->
+
+
+
+      
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+<script>anchors.add();</script>
