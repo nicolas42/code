@@ -60,11 +60,12 @@ function show_hide_menu()
 	}
 
 	p,li,h1,h2,a { font-family:'Roboto', sans-serif; color: #555555; font-weight: 100; text-align: justify;  }
-	p,li { line-height: 1.5em; }
+	p,li,h1,h2,a { line-height: 1.5em; }
 	a { color: #3b8bea; text-decoration: none; }
 
 	h1 { border-bottom: 1px solid #eeeeee; padding-top: 1rem; padding-bottom: 1rem; text-align: center;  }
-
+    .quote { font-style: italic; padding: 20px; }
+    pre { padding: 20px; }
 
 	#menu { display: none; flex-wrap: wrap; flex-direction: column; }
 	#menu > a { padding-top: 1em; padding-bottom: 1em; border: 1px solid #eeeeee; }
@@ -77,15 +78,14 @@ function show_hide_menu()
  <!-- https://stackoverflow.com/questions/1367409/how-to-make-button-look-like-a-link ??? -->
 
 <div id="menu">
-	<a href="index.html">The Elephant and the Balloon</a>
-	<a href="Orbit.html">Orbit</a>
-	<a href="Balloon-Technology.html">Balloon Technology</a>
-	<a href="Elephants.html">Elephants</a>
-	<a href="Where-to-go.html">Where To Go</a>
-	<a href="Getting-Around-the-Solar-System.html">Getting Around the Solar System</a>
-	<a href="Space.html">Space</a>
-	<a href="Gravity.html">Gravity</a>
-	<a href="Explosions.html">Explosions</a>
+	<a href="#Orbit">Orbit</a>
+	<a href="#Balloon Technology">Balloon Technology</a>
+	<a href="#Elephants">Elephants</a>
+	<a href="#Where To Go">Where To Go</a>
+	<a href="#Getting Around the Solar System">Getting Around the Solar System</a>
+	<a href="#Space">Space</a>
+	<a href="#Gravity">Gravity</a>
+	<a href="#Explosions">Explosions</a>
 </div>
 
 
@@ -93,7 +93,7 @@ function show_hide_menu()
 
 
 
-<!-- <h1>The Balloon and the Elephant</h1> -->
+<!--<a id="The Balloon and the Elephant</"> <h1>The Balloon and the Elephant</h1</a>> -->
 
 <p>Or how to get to orbit with artful metaphors</p>
 <p><img src="images/kirk_and_spock.jpg" alt="kirk and spock" /></p>
@@ -125,7 +125,7 @@ function show_hide_menu()
 -->
 
 
-<h1>Orbit</h1>
+<h1><a id="Orbit">Orbit</a></h1>
 
 <p>Space is far above your head and it keeps going forever.  Unfortunately so does the gravity of the Earth which poses a problem to those hoping to get off it.  The gravity near the international space station is actually about the same strength as it is on Earth which surprises a lot of people.  Although astronauts look like they are floating above the Earth they are actually falling towards it just like you or I would.</p>
 
@@ -150,7 +150,7 @@ function show_hide_menu()
 
 
 
-<h1>Balloon Technology</h1>
+<h1><a id="Balloon Technology">Balloon Technology</a></h1>
 
 
 <p>One of the options for getting into space is to use balloons.  </p>
@@ -167,7 +167,7 @@ function show_hide_menu()
 
 
 
-<h1>Elephants</h1>
+<h1><a id="Elephants">Elephants</a></h1>
 
 	
 <p>The elephant technique is the main alternative to balloon technology for getting into orbit.</p>
@@ -203,7 +203,7 @@ function show_hide_menu()
 
 
 
-<h1>Where To Go</h1>
+<h1><a id="Where To Go">Where To Go</a></h1>
 
 <p>Once you're actually in space you'll have to decide where to go.  I mean you could hang around in orbit if you want I guess. </p>
 <p>It’s takes a long time to get to another planet so the only reasonable options to go to first are the closest ones; the Moon, Venus, and Mars.</p>
@@ -211,7 +211,7 @@ function show_hide_menu()
 
 
 
-<h1>Our Moon</h1>
+<h1><a id="Our Moon">Our Moon</a></h1>
 <p>The moon is quite close and has wonderful views.</p>
 <p><img src="images/moon.jpg" alt="The Moon" /></p>
 <p>Distance to scale</p>
@@ -224,19 +224,17 @@ function show_hide_menu()
 
 
 
-<h1>Venus</h1>
+<h1><a id="Venus">Venus</a></h1>
 <p>Venus is one of the two planets closest to the Earth but it’s 400 Degrees which is a bit of a show stopper.  Venus also boasts an atmosphere which is about 100 times thicker than Earth’s <a href="https://en.wikipedia.org/wiki/Venus">[source]</a>.</p>
 <h2>Blimp-life</h2>
-<p>Blimp-life: You might be able live above Venus in a blimp (which is like a balloon).  50km above the surface the weather is relatively nice and a blimp full of Earth’s atmosphere would float because Venus's atmosphere is very dense.  So you could hang out there … in a blimp <a href="https://en.wikipedia.org/wiki/High_Altitude_Venus_Operational_Concept">[source]</a>.</p>
-
-
-<p>Blimp-life: You might be able live in a blimp (which is like a balloon). About 50km above the surface the weather is relatively nice. It's about 25 degrees and about atmospheric pressure, and a blimp full of Earth’s atmosphere would float there.  So you could hang out there … in a blimp <a href="https://en.wikipedia.org/wiki/High_Altitude_Venus_Operational_Concept">[source]</a>.</p>
+<p>You might be able live above Venus in a blimp (which is like a balloon).  50km above the surface the weather is relatively nice and a blimp full of Earth’s atmosphere would float because Venus's atmosphere is very dense.  So you could hang out there … in a blimp <a href="https://en.wikipedia.org/wiki/High_Altitude_Venus_Operational_Concept">[source]</a>.</p>
 
 
 
 
 
-<h1>Mars</h1>
+
+<h1><a id="Mars">Mars</a></h1>
 <p>Mars kind of wins by default.  Its nearby.  The days are about 24 hours.  The gravity is 37% of Earth's.  It has all the elements that are needed for life.  It’s pretty cold - colder than the South Pole, but the max temperature is about 30 degrees C, which is doable.  The atmosphere is very thin but better than no atmosphere at all.</p>
 <p>Living on Mars would be a little bit like living in Antarctica with low gravity and space suits.</p>
 <p>Since there’s liquid water and the other necessary elements there might be living things on Mars.</p>
@@ -247,7 +245,7 @@ function show_hide_menu()
 
 
 
-<h1>Getting Around the Solar System</h1>
+<h1><a id="Getting Around the Solar System">Getting Around the Solar System</a></h1>
 
 <p>It turns out that to get to other planets you need to go really fast as well.  In fact the distances between planets are not measured in km they're measured in speeds.</p>
 
@@ -266,7 +264,7 @@ function show_hide_menu()
 
 
 
-<h1>Subway Map of the Solar System</h1>
+<h1><a id="Subway Map of the Solar System">Subway Map of the Solar System</a></h1>
 
 <p><img src="images/subway-map-of-the-solar-system.jpg" alt="subway-map-of-the-solar-system"/></p>
 <p>The small numbers on the image above are the speeds that are necessary to go to other planets in the solar system.  The little triangles mean you can use the atmosphere to slow down instead of your rocket engines (aerobraking).</p>
@@ -279,7 +277,7 @@ function show_hide_menu()
 
 
 
-<h1>Space</h1>
+<h1><a id="Space">Space</a></h1>
 
 
 <p>Space is where you put things.  For instance you'd say "There's a space to put that couch!" but you wouldn't say that if there already was a couch there.  Outer space is mostly the same - there's no couches and also no air.  It would be embarrassing to try to breath in space so don't try.</p>
@@ -323,7 +321,7 @@ function show_hide_menu()
 
 
 
-<h1>Gravity</h1>
+<h1><a id="Gravity">Gravity</a></h1>
 
 
 <p>Gravity is the weakest of the fundamental forces.  It's a trillion trillion trillion times weaker than the other ones.  But it doesn't cancel out like they do, it just keeps on adding up.  So it gets strong when things are big and comes into play when dealing with asteroid sized things and above.</p>
@@ -349,7 +347,7 @@ function show_hide_menu()
 
 
 
-<h1>Explosions</h1>
+<h1><a id="Explosions">Explosions</a></h1>
 
 
 <p>Advanced balloon technology is called rocketry.  Rocket science (engineering) is hard because it's basically about how to sit on top of an explosion. The main problem with our balloon turns out to be the main problem with our rocket. It runs out of gas. If you run out of gas then you might get stuck in empty space. </p>
@@ -372,7 +370,7 @@ function show_hide_menu()
 
 
 
-<h1>How to build a rocket</h1>
+<h1><a id="How to build a rocket">How to build a rocket</a></h1>
 
 <p>Here is the essential process of rocket manufacture in the modern world</p>
 
