@@ -19,6 +19,23 @@ body { margin: auto; width: 800px; height: 100%; }
 </STYLE>    
 
 <SCRIPT>
+
+    function better_eval(code)
+    {
+        // evaluated code or return an error
+        try {
+            result = eval(code); 
+        } catch (e) {
+            if (e instanceof SyntaxError) {
+                result = e.message;
+            } 
+            else {
+                throw e;
+            }
+        }
+        return result;
+    }
+    
     // import Math library    
     Object.getOwnPropertyNames(Math).forEach(function (fn) { 
         let execution_string = "window." + fn + "=" + "Math." + fn + ";"
@@ -34,19 +51,7 @@ body { margin: auto; width: 800px; height: 100%; }
 
     textarea.onkeyup = function(e) {
         let code = textarea.value.replace(/\^/g, "**")
-        let result;
-        // evaluated code or return an error
-        try {
-            result = eval(code); 
-        } catch (e) {
-            if (e instanceof SyntaxError) {
-                result = e.message;
-            } 
-            else {
-                throw e;
-            }
-        }
-
+        let result = better_eval(code);
         output.innerHTML = "= " + JSON.stringify(result); // result.toString();
     }
 
