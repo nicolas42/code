@@ -11,10 +11,16 @@ node_modules/
 *.so.dSYM
 *.exe
 *.dat
-*.obj
 *.gch
 *.lib
 *.dll
+
+# vc
+*.manifest
+*.ilk 
+*.obj 
+*.idb 
+*.pdb
 
 # binary
 *.iso
