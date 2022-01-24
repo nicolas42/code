@@ -1,12 +1,13 @@
 /*
- g++ render_text_preloaded.cpp -ISDL2 -framework SDL2 -framework SDL2_image -framework SDL2_ttf
+ g++ render_text.cpp -ISDL2 -framework SDL2 -framework SDL2_image -framework SDL2_ttf
 
- cl /EHsc /Zi /I "win64\include\SDL2" "render_text_preloaded.cpp" /link "win64\SDL2.lib" "win64\SDL2main.lib" "win64\SDL2_image.lib" "win64\SDL2_mixer.lib" "win64\SDL2_ttf.lib" "kernel32.lib" "user32.lib" "shell32.lib" /SUBSYSTEM:WINDOWS /OUT:"win64\render_text_preloaded.cpp.exe"
+ cl /EHsc /Zi /I "win64\include\SDL2" "render_text.cpp" /link "win64\SDL2.lib" "win64\SDL2main.lib" "win64\SDL2_image.lib" "win64\SDL2_mixer.lib" "win64\SDL2_ttf.lib" "kernel32.lib" "user32.lib" "shell32.lib" /SUBSYSTEM:WINDOWS /OUT:"win64\render_text.cpp.exe"
 
  /EHsc is to use vectors.  they need exceptions or something
  The SDL free functions take a long time.  Their overall duration is decreased if I put all the surface and texture pointers into a big array 
  and then free them all at the same time.  But calling free within a loop is bloody slow.
  The way to go appears to be to store textures for future use.  There's not that many glyphs to render after all.
+
 */
 
 #include <stdio.h>
