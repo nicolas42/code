@@ -158,10 +158,10 @@ int main( int argc, char* args[] )
     const char* surfacePixelFormatName = SDL_GetPixelFormatName(pixelFormatEnum);
     SDL_Log("The surface's pixelformat is %s", surfacePixelFormatName);
 
-    // swap pixels and write
-    for(i=0;i<s->w*s->h;++i) ((u32*)s->pixels)[i] = SDL_Swap32(((u32*)s->pixels)[i]);
-    int success = stbi_write_png("mandy.png", s->w, s->h, 4, s->pixels, s->w * 4);
-    if (success) { SDL_Log("You wrote the png!"); }
+    // // Write image (swap pixels for little endian ints)
+    // for(i=0;i<s->w*s->h;++i) ((u32*)s->pixels)[i] = SDL_Swap32(((u32*)s->pixels)[i]);
+    // int success = stbi_write_png("mandy.png", s->w, s->h, 4, s->pixels, s->w * 4);
+    // if (success) { SDL_Log("You wrote the png!"); }
 
     // event loop
     SDL_Event event;
