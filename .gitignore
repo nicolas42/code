@@ -1,5 +1,7 @@
+# anything containing the word gitignore
+gitignore
+
 # directories
-gitignore/
 node_modules/
 
 # compillation
