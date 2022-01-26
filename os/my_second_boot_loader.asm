@@ -18,14 +18,14 @@ use16
     
 ;; VARIABLES
 drive_num: db 0
-num_sectors_to_read:     db 02h
+num_sectors_to_read:     db 02h     ; 3 sectors
 
 
 read_sectors:   
     mov byte [drive_num], dl	; DL contains initial drive # on boot
 
     ;; READ 2ND STAGE BOOTLOADER INTO MEMORY FIRST
-    mov bl, [num_sectors_to_read] ; Will be reading 3 sectors 
+    mov bl, [num_sectors_to_read]
     mov di, 7E00h       ; Memory address to read sectors into
 
     mov dx, 1F6h        ; Head & drive # port
@@ -79,11 +79,6 @@ second_stage_loop:
     jmp second_stage_loop
 
     
-
-
-
-
-    
 ;; Boot Sector magic
 times 510-($-$$) db 0       ; pads out 0s until we reach 510th byte
 dw 0xaa55                   ; BIOS magic number; BOOT magic #
@@ -92,8 +87,11 @@ dw 0xaa55                   ; BIOS magic number; BOOT magic #
 
 
 
-    
-;;; read this sector from the disk into memory
+;;; ---------------------------------------------------------------    
+;;; Second Sector 
+;;; ---------------------------------------------------------------
+
+;; This sector is read into memory and jumped to by the first sector
 
 
     org 0x7E00
@@ -127,7 +125,6 @@ you_have_booted:   db 'You have loaded a sector from a disk and then run it.', 0
 
 
 
-
-    ;; boot magic
+    ; fill with zeroes
     times 512+512*3-($-$$) db 0
 

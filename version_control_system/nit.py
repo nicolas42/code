@@ -5,6 +5,7 @@
 # checkout(file)
 
 # checkout files are written to ".nit/datetime" in the format ".nit/YYYYMMDD_hhmmss"
+# e.g. .nit/20220126_142431
 
 import os
 import sys
