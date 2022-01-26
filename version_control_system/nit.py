@@ -1,13 +1,20 @@
+# ipython -i ../nit.py
+
+# init()
+# commit()
+# checkout(file)
+
+# checkout files are written to ".nit/datetime" in the format ".nit/YYYYMMDD_hhmmss"
+
 import os
 import sys
+import shutil
+import hashlib
+import datetime
 
-def find(a,b):
-    # find(a,b) => bool
-	result = a.lower().find(b.lower())
-	if result == -1:
-		return False
-	else:
-		return True
+def find(top_dir):
+    for root, dirs, files in os.walk(top_dir):
+        for file in files: print( os.sep.join([root, file]) )
 
 
 
@@ -15,7 +22,6 @@ def sha1(filepath):
     # hash the contents of a file to get a unique identifier
     # from https://stackoverflow.com/questions/22058048/hashing-a-file-in-python
     
-    import hashlib
 
     # BUF_SIZE is totally arbitrary, change for your app!
     BUF_SIZE = 65536  # lets read stuff in 64kb chunks!
@@ -33,36 +39,54 @@ def sha1(filepath):
 
 
 def date_time_string():
-    import datetime
     return datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 
+nit_dir = ".nit"
+nit_files_dir = os.sep.join([nit_dir, "files"])
+
 def init():
-    for dir in [ ".nit", ".nit/files", ".nit/versions" ]:
-        if not os.path.exists(dir): os.makedirs(dir)
+    for dir in [ nit_dir, nit_files_dir ]:
+        if not os.path.exists(dir): 
+            print("Creating", dir)
+            os.makedirs(dir)
 
 
 def commit():
-    top_dir = "."
-    for root, dirs, files in os.walk(top_dir, topdown=False):
+    if not os.path.exists(nit_dir):
+        print("Repository not initialized.")
+        return
 
-        # skip the .nit directory
-        nit_directory = "/".join([top_dir, ".nit"])
-        if root == nit_directory: continue
+    with open(os.sep.join([nit_dir, date_time_string() ]), "w") as output_file:
+        for root, dirs, files in os.walk("."):
 
-        version_file = "/".join([nit_directory, "versions", date_time_string() ])
+            if nit_dir in root.split(os.sep): continue
 
-        with open(version_file, "w") as output_file:
             for file in files: 
-                path = "/".join([root, file])
-                sha1_path = "/".join([nit_directory, "files", sha1(path) ])
-                print(sha1_path, path)
-                output_file.write(sha1_path +" "+ path +"\n")
+                src = os.sep.join([root, file])
+                dst = os.sep.join([ nit_files_dir, sha1(src) ]) # create a unique sha1 name from the file contents
+                shutil.copyfile(src, dst, follow_symlinks=False)
+                output_file.write(dst+'\n')
+                output_file.write(src+'\n')
+                print(dst,src)
 
-# def revert( file ):
-#     with open(filename) as f:
-#         lines = f.read().split("\n")
 
-#     for line in lines:
 
+def checkout( version_file ):
     
+    if not os.path.exists(version_file):
+        print("Version file doesn't exist")
+        return
+    
+    with open(version_file) as f:
+        lines = f.read().split("\n")
+
+    i=0
+    while i < (len(lines)-1):
+        src = lines[i]
+        dst = lines[i+1]
+        dir = os.path.dirname(dst)
+        if not os.path.exists(dir): os.makedirs(dir)
+        shutil.copyfile(src, dst, follow_symlinks=False)
+        i += 2
+
