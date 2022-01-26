@@ -12,11 +12,6 @@ import shutil
 import hashlib
 import datetime
 
-def find(top_dir):
-    for root, dirs, files in os.walk(top_dir):
-        for file in files: print( os.sep.join([root, file]) )
-
-
 
 def sha1(filepath):
     # hash the contents of a file to get a unique identifier
