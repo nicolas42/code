@@ -1,7 +1,9 @@
-// g++ sobel_edge_detection.cpp -framework SDL2 -ISDL2 -fsanitize=address && ./a.out
+/*
+g++ -Iinclude sobel_edge_detection.cpp -framework SDL2 -ISDL2 -fsanitize=address && ./a.out
+*/
 
 #include <stdio.h>
-#include "SDL.h"
+#include "SDL2/SDL.h"
 // #include "SDL_image.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -138,14 +140,12 @@ int main( int argc, char* args[] )
     images[1] = edge_image;
 
 
-
     SDL_Init( SDL_INIT_EVERYTHING );
     SDL_Window* window = SDL_CreateWindow("title", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 800, SDL_WINDOW_SHOWN );
     
     SDL_Renderer* window_renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED );
     SDL_Texture* texture = SDL_CreateTexture( window_renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, width, height );
 
-    
     SDL_UpdateTexture( texture, NULL, images[image_index], width * 4 );
     SDL_SetRenderDrawColor( window_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE );
     SDL_RenderClear( window_renderer );

@@ -1,6 +1,9 @@
+// g++ lazyfoo_examples.cpp -I../include -framework SDL2 -framework SDL2_image && ./a.out
+
+
 #include <stdio.h>
-#include "SDL.h"
-#include "SDL_image.h"
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_image.h"
 
 
 int open_a_window( int argc, char* args[] )
@@ -44,13 +47,17 @@ int open_a_window( int argc, char* args[] )
 
 int load_a_bmp_and_blit_it_to_the_screen( int argc, char* args[] )
 {
-    SDL_Surface *image_surface = SDL_LoadBMP( "data/lenna.bmp" );
+    SDL_Surface *image = SDL_LoadBMP( "../data/lenna.bmp" );
+    if (!image) { 
+        printf("%s", SDL_GetError());
+        return 1;
+    }
 
     SDL_Init( SDL_INIT_VIDEO );
-    SDL_Window *window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, image_surface->w, image_surface->h, SDL_WINDOW_SHOWN );
+    SDL_Window *window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, image->w, image->h, SDL_WINDOW_SHOWN );
     SDL_Surface *surface = SDL_GetWindowSurface( window );
 
-    SDL_BlitSurface( image_surface, NULL, surface, NULL );
+    SDL_BlitSurface( image, NULL, surface, NULL );
     SDL_UpdateWindowSurface( window );
 
     SDL_Event event;
@@ -78,8 +85,8 @@ int respond_to_left_and_right_keyboard_events( int argc, char* args[] )
     SDL_Surface *surface = SDL_GetWindowSurface( window );
 
     SDL_Surface *surfaces[2];
-    surfaces[0] = SDL_LoadBMP( "data/lenna.bmp" );
-    surfaces[1] = SDL_LoadBMP( "data/smiley.bmp" );
+    surfaces[0] = SDL_LoadBMP( "../data/lenna.bmp" );
+    surfaces[1] = SDL_LoadBMP( "../data/smiley.bmp" );
     int surface_index = 1;
 
     SDL_Event event;
@@ -143,7 +150,7 @@ int scale_an_image_and_optimise_it_for_faster_blitting( int argc, char* args[] )
     SDL_Surface *image_surfaces[2];
     int image_index = 0;
 
-    char filenames[2][20] = { "data/lenna.bmp", "data/smiley.bmp" };
+    char filenames[2][20] = { "../data/lenna.bmp", "../data/smiley.bmp" };
 
     // load images
     if (0) 
@@ -215,7 +222,7 @@ int lets_load_a_png( int argc, char* args[] )
     SDL_Surface *window = SDL_GetWindowSurface( window_object );
 
     IMG_Init( IMG_INIT_PNG );
-    SDL_Surface* image = IMG_Load( "data/nyan_cat.png" ); 
+    SDL_Surface* image = IMG_Load( "../data/nyan_cat.png" ); 
 
 	
 
@@ -260,9 +267,9 @@ int use_textures_to_render_an_image( int argc, char* args[] )
     SDL_Renderer *window_renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED );
     SDL_SetRenderDrawColor( window_renderer, 0xFF, 0xFF, 0xFF, 0xFF );
 
-    SDL_Surface* tmp = IMG_Load( "data/lena.png" ); 
+    SDL_Surface* tmp = IMG_Load( "../data/lenna.jpg" ); 
 	SDL_Texture *image = SDL_CreateTextureFromSurface( window_renderer, tmp );
-    if (image == NULL) printf("shit shit fucking guard dogs!\n");
+    if (!image) printf("ERROR %s %d %s\n", __FILE__,__LINE__,SDL_GetError());
     SDL_FreeSurface(tmp);
 
 
@@ -289,18 +296,14 @@ int use_textures_to_render_an_image( int argc, char* args[] )
 
 
 
-// make
-// g++ lazyfoo_examples.cpp -framework SDL2 -framework SDL2_image -ISDL2 && ./a.out
-// 
-// SDL2_image is just needed for reading png files
 
 int main( int argc, char* args[] )
 {
-    // open_a_window(argc, args);
-    // load_a_bmp_and_blit_it_to_the_screen( argc, args);
-    // respond_to_left_and_right_keyboard_events( argc, args);
+    open_a_window(argc, args);
+    load_a_bmp_and_blit_it_to_the_screen( argc, args);
+    respond_to_left_and_right_keyboard_events( argc, args);
     scale_an_image_and_optimise_it_for_faster_blitting( argc, args);
-    // lets_load_a_png( argc, args);
-    // use_textures_to_render_an_image( argc, args);
+    lets_load_a_png( argc, args);
+    use_textures_to_render_an_image( argc, args);
 
 }

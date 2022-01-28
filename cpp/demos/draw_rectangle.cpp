@@ -1,6 +1,6 @@
 /*
 
-g++ draw_rectangle.cpp -framework SDL2 -framework SDL2_mixer -framework SDL2_image -framework SDL2_ttf -Wfatal-errors -fsanitize=address && ./a.out
+g++ draw_rectangle.cpp -I../include -framework SDL2 -framework SDL2_mixer -framework SDL2_image -framework SDL2_ttf -Wfatal-errors -fsanitize=address && ./a.out
 
 based on draw_geometry by thenumbat https://thenumbat.github.io/cpp-course/sdl2/04/04.html
 
@@ -8,9 +8,6 @@ based on draw_geometry by thenumbat https://thenumbat.github.io/cpp-course/sdl2/
 
 #include <iostream>
 #include "SDL2/SDL.h"
-
-#define BASIC_IMPLEMENTATION
-#include "basic.h"
 
 int main( int argc, char* args[] )
 {
@@ -29,8 +26,6 @@ int main( int argc, char* args[] )
     int render_mouse_rectangle = 0;
     int quit = 0;
 
-    double t0 = time_elapsed();
-    printf("%f\n", t0);
 
 	while ( !quit ) {
 

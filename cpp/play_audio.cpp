@@ -1,5 +1,5 @@
 /*
-g++ play_audio.cpp -framework SDL2 -framework SDL2_mixer -framework SDL2_image -framework SDL2_ttf -Wfatal-errors -fsanitize=address && ./a.out
+g++ play_audio.cpp -Iinclude -framework SDL2 -framework SDL2_mixer -framework SDL2_image -framework SDL2_ttf -Wfatal-errors -fsanitize=address && ./a.out
 
 call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 cl /Zi /I "win64\include\SDL2" "play_audio.cpp" /link "win64\SDL2.lib" "win64\SDL2main.lib" "win64\SDL2_image.lib" "win64\SDL2_mixer.lib" "win64\SDL2_ttf.lib" "kernel32.lib" "user32.lib" "shell32.lib" /SUBSYSTEM:WINDOWS /OUT:"win64\play_audio.cpp.exe" && win64\play_audio.cpp.exe
@@ -8,15 +8,90 @@ del *.obj *.pdb
 based on code by the lazyfoo
 */
 
-#include "SDL.h"
-#include "SDL_image.h"
-#include "SDL_mixer.h"
-#include "SDL_ttf.h"
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_image.h"
+#include "SDL2/SDL_mixer.h"
+#include "SDL2/SDL_ttf.h"
 #include <stdio.h>
 #include <string>
 
-#define BASIC_IMPLEMENTATION
-#include "basic.h"
+
+typedef uint8_t     u8;
+typedef int8_t      s8;
+typedef uint16_t    u16;
+typedef int16_t     s16;
+typedef uint32_t    u32;
+typedef int32_t     s32;
+typedef uint64_t    u64;
+typedef int64_t     s64;
+typedef float       f32;
+typedef double      f64;
+
+
+#define DEFINE_ARRAY(TYPENAME)\
+\
+typedef struct {\
+  TYPENAME* data;\
+  int length;\
+  int allocated;\
+} TYPENAME ## _array;\
+\
+TYPENAME ## _array TYPENAME ## _array_make()\
+{\
+    TYPENAME ## _array arr;\
+    arr.length = 0;\
+    arr.allocated = 16;\
+    arr.data = (TYPENAME*)malloc( arr.allocated * sizeof(TYPENAME) );\
+    return arr;\
+}\
+\
+TYPENAME ## _array TYPENAME ## _array_add(TYPENAME ## _array arr, TYPENAME item)\
+{\
+    if ( arr.length == arr.allocated ) {\
+      arr.allocated *= 2;\
+      arr.data = (TYPENAME*)realloc( arr.data, arr.allocated * sizeof(TYPENAME) );\
+    }\
+    arr.data[arr.length] = item;\
+    arr.length += 1;\
+    return arr;\
+}\
+
+
+
+
+
+typedef char* string;
+DEFINE_ARRAY(string);
+
+
+// destructively split a string by converting delimiters into null bytes
+// and noting down the positions after them.
+string_array split_string(char *str, const char *delim)
+{
+    size_t string_length = strlen(str);
+
+    // convert delimiters to null bytes
+    for (int i = 0; i < string_length; i++ ) {
+        for ( int j = 0; delim[j] != '\0'; j += 1 ) {
+            if (str[i]==delim[j]) { 
+                str[i] = '\0'; 
+                break; 
+            }
+        }
+    }
+
+    string_array l = string_array_make();
+
+    // add pointer to first element if it's not null
+    if ( str[0] != '\0' ) l = string_array_add(l, str);
+    for ( int i = 1; i < string_length; i++ ) {
+        // add locations which are directly after null bytes
+        if ( str[i-1] == '\0' && str[i] != '\0' ) l = string_array_add(l, str+i);
+    }
+    return l;
+}
+
+
 
 
 void stop_music(Mix_Music *music)
@@ -97,7 +172,9 @@ int main( int argc, char* args[] )
         "SDLK_3 play_sound_effect(scratch) \n"
         "SDLK_4 play_sound_effect(high) \n";
 
-    List list = split_string(text,"\n");
+
+
+    string_array lines = split_string(text,"\n");
 
     TTF_Init();
     char* font_path = (char*)"data/Sans.ttf";
@@ -118,8 +195,8 @@ int main( int argc, char* args[] )
     int x = 0;
     int y = 0;
 
-    for(int i=0;i<list.length;++i){
-        char *line = (char*)list.data[i];
+    for(int i=0;i<lines.length;++i){
+        char *line = lines.data[i];
         SDL_Surface *text_surface = TTF_RenderText_Shaded(font, line, text_color, background_color); 
         SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, text_surface);
         SDL_Rect rect;

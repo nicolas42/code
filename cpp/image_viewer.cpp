@@ -1,6 +1,6 @@
 /*
 macos:
-g++ -ISDL2 -framework SDL2 -framework SDL2_image -std=c++11 image_viewer.cpp
+g++ image_viewer.cpp -Iinclude -framework SDL2 -framework SDL2_image -std=c++11 && ./a.out
 
 linux:
 g++ -ISDL2 -lSDL2 -lSDL2_image -std=c++11 image_viewer.cpp
@@ -8,7 +8,6 @@ g++ -ISDL2 -lSDL2 -lSDL2_image -std=c++11 image_viewer.cpp
 windows:
 call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 cl /Zi /I "win64\include\SDL2" "image_viewer.cpp" /link "win64\SDL2.lib" "win64\SDL2main.lib" "win64\SDL2_image.lib" "win64\SDL2_mixer.lib" "win64\SDL2_ttf.lib" "kernel32.lib" "user32.lib" "shell32.lib" /SUBSYSTEM:WINDOWS /OUT:"win64\image_viewer.cpp.exe" && win64\play_audio.cpp.exe
-del *.obj *.pdb
 
 */
 
@@ -27,8 +26,8 @@ del *.obj *.pdb
 #include <string>
 #include <vector>
 
-#include "SDL.h"
-#include "SDL_image.h"
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_image.h"
 // #include "find_files.h"
 
 #define PRINT_ERROR(ERR) printf("ERROR %s %d %s\n", __FILE__, __LINE__, ERR)
@@ -340,8 +339,8 @@ void show_using_surfaces( SDL_Window *window, std::vector<std::string> filenames
 
     // optimise image
     image_surface = IMG_Load( filenames[filenames_index].c_str() );
-    if(!image_surface) {
-        printf("IMG_Load: %s\n", IMG_GetError());
+    if(!image_surface) { 
+        printf("ERROR %s %d %s\n", __FILE__, __LINE__, SDL_GetError());
         return;
     }
 
@@ -377,9 +376,15 @@ void show_using_renderer( SDL_Window *window, std::vector<std::string> filenames
     SDL_Renderer *renderer = SDL_GetRenderer(window);
 
     SDL_Surface* image = IMG_Load( filenames[filenames_index].c_str() );
-    if(!image) { PRINT_ERROR(SDL_GetError()); return; }
+    if(!image) { 
+        printf("ERROR %s %d %s\n", __FILE__, __LINE__, SDL_GetError());
+        return;
+    }
 	SDL_Texture *texture = SDL_CreateTextureFromSurface( renderer, image );
-    if (!texture) PRINT_ERROR(SDL_GetError());
+    if (!texture) { 
+        printf("ERROR %s %d %s\n", __FILE__, __LINE__, SDL_GetError());
+        return;
+    }
 
     int w,h;
     SDL_GetWindowSize(window, &w, &h);
@@ -451,72 +456,77 @@ int main( int argc, char* argv[] )
 	filenames_index = 0;
 	show( window, filenames, filenames_index );
 
-    int pending = 0;
+    bool do_show = false;
     while (!time_to_quit)
     {
-        SDL_WaitEvent(&event);
-        // while(SDL_PollEvent(&event)) { // poll event uses 100% cpu
+        // SDL_WaitEvent(&event);
+        while( SDL_PollEvent(&event) ) { 
             // print_event(event);
 
 
-        if (event.type == SDL_DROPFILE) {
-            dropped_filename = event.drop.file;
-            filenames = get_image_filenames(dropped_filename);
-            filenames_index = 0;
-            show( window, filenames, filenames_index );
+            if (event.type == SDL_DROPFILE) {
+                dropped_filename = event.drop.file;
+                filenames = get_image_filenames(dropped_filename);
+                filenames_index = 0;
+                do_show = true;
 
-            SDL_free(dropped_filename);    // Free dropped_filename memory
-        }
-
-        if (event.type == SDL_QUIT) {
-            time_to_quit = true;
-        }
-
-        if (event.type == SDL_WINDOWEVENT) {
-            // printf("window event %d\n", (int)(event.window.event) );
-            if ( 
-                event.window.event == SDL_WINDOWEVENT_RESIZED || 
-                event.window.event == SDL_WINDOWEVENT_MINIMIZED || 
-                event.window.event == SDL_WINDOWEVENT_MAXIMIZED || 
-                event.window.event == SDL_WINDOWEVENT_RESTORED
-            ){
-                print_window_event(&event);
-                printf("omg show\n");
-                show( window, filenames, filenames_index ); 
+                SDL_free(dropped_filename);    // Free dropped_filename memory
             }
 
-            // show( window, filenames, filenames_index );
-        }
+            if (event.type == SDL_QUIT) {
+                time_to_quit = true;
+            }
 
-        if (event.type == SDL_MOUSEBUTTONDOWN) {
-            filenames_index += 1;
-            if ( filenames_index >= filenames.size() ) filenames_index = 0;
-            show( window, filenames, filenames_index );
-        }
+            if (event.type == SDL_WINDOWEVENT) {
+                // printf("window event %d\n", (int)(event.window.event) );
+                if ( 
+                    event.window.event == SDL_WINDOWEVENT_RESIZED || 
+                    event.window.event == SDL_WINDOWEVENT_MINIMIZED || 
+                    event.window.event == SDL_WINDOWEVENT_MAXIMIZED || 
+                    event.window.event == SDL_WINDOWEVENT_RESTORED
+                ){
+                    print_window_event(&event);
+                    printf("omg show\n");
+                    do_show = true; 
+                }
+            }
 
-        if (event.type == SDL_KEYDOWN) {
-
-            if ( event.key.keysym.sym == SDLK_RIGHT ) {
+            if (event.type == SDL_MOUSEBUTTONDOWN) {
                 filenames_index += 1;
                 if ( filenames_index >= filenames.size() ) filenames_index = 0;
-                show( window, filenames, filenames_index );
+                do_show = true;
             }
 
-            if ( event.key.keysym.sym == SDLK_LEFT ) {
-                filenames_index += -1;
-                if ( filenames_index < 0 ) filenames_index = filenames.size()-1;
-                show( window, filenames, filenames_index );
-            }
-            
-            if ( event.key.keysym.sym == SDLK_f ) {
-                if (is_fullscreen) {
-                    SDL_SetWindowFullscreen(window, 0);
-                } else {
-                    SDL_SetWindowFullscreen( window, SDL_WINDOW_FULLSCREEN_DESKTOP );
+            if (event.type == SDL_KEYDOWN) {
+
+                if ( event.key.keysym.sym == SDLK_RIGHT ) {
+                    filenames_index += 1;
+                    if ( filenames_index >= filenames.size() ) filenames_index = 0;
+                    do_show = true;
                 }
-                is_fullscreen = !is_fullscreen;
+
+                if ( event.key.keysym.sym == SDLK_LEFT ) {
+                    filenames_index += -1;
+                    if ( filenames_index < 0 ) filenames_index = filenames.size()-1;
+                    do_show = true;
+                }
+                
+                if ( event.key.keysym.sym == SDLK_f ) {
+                    if (is_fullscreen) {
+                        SDL_SetWindowFullscreen(window, 0);
+                    } else {
+                        SDL_SetWindowFullscreen( window, SDL_WINDOW_FULLSCREEN_DESKTOP );
+                    }
+                    is_fullscreen = !is_fullscreen;
+                }
             }
         }
+
+
+        if (do_show) show( window, filenames, filenames_index );
+        do_show = false;
+        SDL_Delay(10);
+
     }
 
 	// SDL_FreeSurface( window_surface );

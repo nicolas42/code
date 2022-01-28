@@ -1,5 +1,5 @@
 /*
- g++ render_text.cpp -ISDL2 -framework SDL2 -framework SDL2_image -framework SDL2_ttf
+ g++ render_text.cpp -Iinclude -framework SDL2 -framework SDL2_image -framework SDL2_ttf && ./a.out
 
 
  call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
@@ -17,9 +17,10 @@
 #include <stdlib.h>
 #include <vector>
 #include <string>
-#include "SDL.h"
-#include "SDL_ttf.h"
 #include <map>
+
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_ttf.h"
 
 void render_text(SDL_Window *window, TTF_Font *font, const char *text, int y_offset, std::map<char, SDL_Texture*> *text_textures )
 {

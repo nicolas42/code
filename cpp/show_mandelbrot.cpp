@@ -1,5 +1,5 @@
 /*
-g++ show_mandelbrot.cpp -ISDL2 -framework SDL2 && ./a.out
+g++ show_mandelbrot.cpp -Iinclude -framework SDL2 && ./a.out
 
 from https://stackoverflow.com/questions/33304351/sdl2-fast-pixel-manipulation
 
@@ -15,8 +15,13 @@ stb image functions operate on the data as a series of bytes whereas SDL functio
 #include <cstring>
 #include <stdio.h>
 #include <stdlib.h>
-#include "SDL.h"
+#include "SDL2/SDL.h"
 #include "types.h"
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
+
 
 
 float hue2rgb(float p, float q, float t) {
@@ -113,10 +118,6 @@ void draw_mandelbrot_rgba(Image im, float x, float y, float zoom, float max_iter
 }
 
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-
-
 int main( int argc, char* args[] )
 {
     // window width, height, channels
@@ -178,6 +179,9 @@ int main( int argc, char* args[] )
 
 
 
+
+
+
 // int texture_main(int argc, char ** argv)
 // {
 //     int WINDOW_WIDTH = 800;
@@ -219,27 +223,29 @@ int main( int argc, char* args[] )
 
 
 
-void reverse_pixel_order(Image im)
-{
-    // rbga <=> gbra, doesn't move alpha
-    float i,j;
-    int pos;
-    char r,g,b;
 
-    for(j=0;j<im.h;++j){
-        for(i=0;i<im.h;++i){
 
-            pos = (j * im.w * im.c) + (i * im.c);
+// void reverse_pixel_order(Image im)
+// {
+//     // rbga <=> gbra, doesn't move alpha
+//     float i,j;
+//     int pos;
+//     char r,g,b;
 
-            r = im.data[pos+0];
-            g = im.data[pos+1];
-            b = im.data[pos+2];
+//     for(j=0;j<im.h;++j){
+//         for(i=0;i<im.h;++i){
 
-            im.data[pos + 0] = b;
-            im.data[pos + 1] = g;
-            im.data[pos + 2] = r;
-            im.data[pos + 3] = (char)255;
+//             pos = (j * im.w * im.c) + (i * im.c);
 
-        }
-    }
-}
+//             r = im.data[pos+0];
+//             g = im.data[pos+1];
+//             b = im.data[pos+2];
+
+//             im.data[pos + 0] = b;
+//             im.data[pos + 1] = g;
+//             im.data[pos + 2] = r;
+//             im.data[pos + 3] = (char)255;
+
+//         }
+//     }
+// }

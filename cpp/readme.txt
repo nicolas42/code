@@ -1,4 +1,72 @@
 
+Header only libraries
+----------------------------------------------
+
+A header only library of the sort used by the stb library works by only 
+including implementation of a header library if a particular define is set.
+Usually it's called XX_IMPLEMENTATION.  The idea being that the header file 
+can still be used normally.  Importantly in *ONE* file and only one file 
+the previously mentioned define is set.  And that is the file that actually
+includes the implementation.
+
+
+Only define BASIC_IMPLEMENTATION in *ONE* file, like this.
+
+#define BASIC_IMPLEMENTATION
+#include "basic.h"
+
+
+The header only file will look like this.  In addition to header guards to 
+prevent multiple includes, there is an ifdef on BASIC_IMPLEMENTATION.
+There's also a header guard for the implementation, because why not.
+
+
+
+
+#ifndef BASIC_HEADER_GUARD
+#define BASIC_HEADER_GUARD
+
+
+.......
+
+
+#endif // BASIC_HEADER_GUARD
+
+#ifdef BASIC_IMPLEMENTATION
+
+#ifndef BASIC_IMPLEMENTATION_GUARD
+#define BASIC_IMPLEMENTATION_GUARD
+
+.......
+
+#endif // BASIC_IMPLEMENTATION_GUARD 
+
+#endif // #ifdef BASIC_IMPLEMENTATION
+
+
+
+
+
+
+Does a global signal flag need to be atomic?
+------------------------------------------------
+
+static int sigflag = 0;
+sig_atomic_t sigflag = 0;
+sig_atomic_t is an integer type which can be accessed as an atomic entity even in the presence of asynchronous interrupts made by signals.
+could I just use a mutex?
+It appears that atomic things are more efficient than mutexes
+
+"Atomic operations leverage processor support (compare and swap instructions) and don't use locks at all, whereas locks are more OS-dependent and perform differently on, for example, Win and Linux.
+Locks actually suspend thread execution, freeing up cpu resources for other tasks, but incurring in obvious context-switching overhead when stopping/restarting the thread. On the contrary, threads attempting atomic operations don't wait and keep trying until success (so-called busy-waiting), so they don't incur in context-switching overhead, but neither free up cpu resources.
+Summing up, in general atomic operations are faster if contention between threads is sufficiently low. You should definitely do benchmarking as there's no other reliable method of knowing what's the lowest overhead between context-switching and busy-waiting."
+https://stackoverflow.com/questions/15056237/which-is-more-efficient-basic-mutex-lock-or-atomic-integer
+
+
+
+
+
+
 
 Compiling Stuff on Windows Using Visual Studio on the command line   #visualstudio 
 ----------------------------------------------------------------------------------------
