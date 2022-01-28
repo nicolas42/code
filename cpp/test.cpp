@@ -1,16 +1,21 @@
-#define BASIC_IMPLEMENTATION
-#include "basic.h"
+// cl /Zi test.cpp /link  "kernel32.lib" "user32.lib" "shell32.lib" /SUBSYSTEM:WINDOWS
 
-#define MISC_IMPLEMENTATION
-#include "misc.h"
+#include <stdint.h>
+#include <stdio.h>
 
-int main(int argc, char **argv)
+
+
+int main()
 {
+  int candidate = 887;
+  
+  int is_prime = 1;
+    for (int i=2; i<candidate; i++){
+      if ( candidate % i == 0 ) { is_prime = 0; break; }
+    }
+    printf("%d\n\r", is_prime);
 
-    char string[] = "nicolas schmidt,0459 986 668,some address\nsingle female lawyer,3325 7778,another address\nomgomgomg,0459654987,omg it's like everyone has an address\n";
-    struct list list;
-    list = split_string(string,",\n");
-    for(int i=0;i<list.length;i+=1) printf("%s\n", (char*)list.data[i]);
-
-    return 0;
+    
+  return 0;
 }
+

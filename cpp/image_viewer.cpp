@@ -3,7 +3,13 @@ macos:
 g++ -ISDL2 -framework SDL2 -framework SDL2_image -std=c++11 image_viewer.cpp
 
 linux:
-	g++ -ISDL2 -lSDL2 -lSDL2_image -std=c++11 image_viewer.cpp
+g++ -ISDL2 -lSDL2 -lSDL2_image -std=c++11 image_viewer.cpp
+
+windows:
+call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+cl /Zi /I "win64\include\SDL2" "image_viewer.cpp" /link "win64\SDL2.lib" "win64\SDL2main.lib" "win64\SDL2_image.lib" "win64\SDL2_mixer.lib" "win64\SDL2_ttf.lib" "kernel32.lib" "user32.lib" "shell32.lib" /SUBSYSTEM:WINDOWS /OUT:"win64\image_viewer.cpp.exe" && win64\play_audio.cpp.exe
+del *.obj *.pdb
+
 */
 
 
@@ -12,7 +18,9 @@ linux:
 #include <sys/types.h>
 #include <string.h>
 #include <errno.h>
-#include <dirent.h> /* "readdir" etc. are defined here. */
+#include <assert.h>
+// #include <dirent.h> /* "readdir" etc. are defined here. */
+#include "dirent.h"
 #include <limits.h> /* limits.h defines "PATH_MAX". */
 
 #include <iostream>

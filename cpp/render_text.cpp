@@ -1,6 +1,9 @@
 /*
  g++ render_text.cpp -ISDL2 -framework SDL2 -framework SDL2_image -framework SDL2_ttf
 
+
+ call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+
  cl /EHsc /Zi /I "win64\include\SDL2" "render_text.cpp" /link "win64\SDL2.lib" "win64\SDL2main.lib" "win64\SDL2_image.lib" "win64\SDL2_mixer.lib" "win64\SDL2_ttf.lib" "kernel32.lib" "user32.lib" "shell32.lib" /SUBSYSTEM:WINDOWS /OUT:"win64\render_text.cpp.exe"
 
  /EHsc is to use vectors.  they need exceptions or something
@@ -104,7 +107,7 @@ int main(int argc, char **argv) {
     SDL_Window *window = NULL;
     SDL_CreateWindowAndRenderer(window_width, window_height, 0, &window, &renderer);
 
-    SDL_SetWindowTitle(window, "Press 1, 2, or 3 for different rendering modes.  The text should scroll using mouse wheel.");
+    SDL_SetWindowTitle(window, "Scroll text using the mouse wheel or arrow keys.");
 
     TTF_Init();
     char font_path[] = "data/Sans.ttf"; // "c:/windows/fonts/verdana.ttf"; 

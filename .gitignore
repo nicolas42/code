@@ -17,7 +17,7 @@ node_modules/
 *.lib
 *.dll
 
-# vc
+# msvc
 *.manifest
 *.ilk 
 *.obj 
