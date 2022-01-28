@@ -1,3 +1,16 @@
+#ifdef _SUNOS
+//code
+#elseif _LINUX
+//code
+#elseif _HPUX
+//code
+#elseif _WIN32
+//code
+#else
+#error OS not supported
+#endif
+
+
 
 Header only libraries
 ----------------------------------------------
