@@ -575,7 +575,7 @@ void thread_race_main()
 
 	for (int i = 0; i < 1e6; i++){
 		
-		printf("Race %d: ", i);
+		printf("Thread Race %d: ", i);
 
 		thread_race_global = 0;
 		// Launch threads
@@ -597,54 +597,6 @@ void thread_race_main()
 
 }
 
-
-
-
-// Unions Demo
-// ---------------------
-
-
-int unions_demo( )
-{
-
-    typedef enum shape_type_t { CIRCLE, RECTANGLE } shape_type_t;
-
-    typedef struct shape_t { 
-        shape_type_t type;
-        union { double radius; double width; };
-        double height;
-    } shape_t;
-
-    typedef struct rectangle_t { shape_type_t type; double width; double height; } rectangle_t;
-
-    #define shapes_length 2
-    shape_t shapes[shapes_length] = { 
-        { .type = RECTANGLE, .width = 2, .height = 3 },
-        { .type = CIRCLE, .radius = 3 }
-    };
-
-    for (size_t i = 0; i < shapes_length; i++)
-    {
-        double r,w,h;
-
-        switch (shapes[i].type)
-        {
-        case CIRCLE:
-            r = shapes[i].radius;
-            printf("circle :). radius: %f, area: %f\n", r, 3.14159*r*r);
-            break;
-        case RECTANGLE:
-            w = shapes[i].width; h = shapes[i].height;
-            printf("rectangle :). width: %f, height: %f, area: %f\n", w, h, w*h);
-            break;        
-        default:
-            break;
-        }
-    }
-        
-
-   return 0;
-}
 
 
 #include <iostream>
@@ -1134,6 +1086,126 @@ void demo_read_file2()
 }
 
 
+#include "basic.h"
+
+typedef char* string;
+DEFINE_ARRAY(string);
+
+// destructively split a string by converting delimiters into null bytes
+// and noting down the positions after them.
+string_array split_string(char *str, const char *delim)
+{
+    size_t string_length = strlen(str);
+
+    // convert delimiters to null bytes
+    for (int i = 0; i < string_length; i++ ) {
+        for ( int j = 0; delim[j] != '\0'; j += 1 ) {
+            if (str[i]==delim[j]) { 
+                str[i] = '\0'; 
+                break; 
+            }
+        }
+    }
+
+    string_array l = string_array_make();
+
+    // add pointer to first element if it's not null
+    if ( str[0] != '\0' ) l = string_array_add(l, str);
+    for ( int i = 1; i < string_length; i++ ) {
+        // add locations which are directly after null bytes
+        if ( str[i-1] == '\0' && str[i] != '\0' ) l = string_array_add(l, str+i);
+    }
+    return l;
+}
+
+
+void demo_split_string()
+{
+    printf("\n\n");
+    printf("Split String Demo\n");
+    printf("-----------------------\n");
+
+    char text[] = 
+        "SDLK_1 play_pause_music(music) \n"
+        "SDLK_2 stop_music(music) \n"
+        "SDLK_3 play_sound_effect(scratch) \n"
+        "SDLK_4 play_sound_effect(high) \n";
+
+
+    string_array lines = split_string(text,"\n");
+    for(int i=0;i<lines.length; i++) printf("{%s}\n", lines.data[i]);
+
+}
+
+
+
+int union_of_structs_demo( )
+{
+    // In this demo we put a bunch of structs in a union.
+    // Notably we also put an integer representing the type.
+    // Since this type is also (and must be) in all of the structs
+    // that are in the union, this type field can be addressed directly
+    // without going through one of the other unions 
+    // This might be a bit confusing if you are looking at the code.
+
+
+    // Each struct in the union must have as its first member 
+    // uint32_t type
+
+    // unions share the space between all possible structures.
+    // So to have a type field that is directly addressable like this
+    // it must be in all of the structures of the union.
+    // This is the way it appears to be done in the SDL event code. 
+
+    // An alternative way to do this is available here but it is more verbose.
+    // Members would have to be addressed using another layer of indirection like this
+    // shape.data.rectangle.w;
+    // which would be annoying.
+    // https://stackoverflow.com/questions/20752551/working-with-a-union-of-structs-in-c
+
+
+    printf("\n\n");
+    printf("Unions Demo\n");
+    printf("-----------------------\n");
+
+
+    enum { RECTANGLE, CIRCLE, TRIANGLE };
+
+    typedef struct { uint32_t type; float w; float h; }  rectangle_t;
+    typedef struct { uint32_t type; float r; }  circle_t;
+    typedef struct { uint32_t type; float base; float height; }  triangle_t;
+
+    // The event type is shared with all events
+    typedef union shape_t { uint32_t type; rectangle_t rectangle; circle_t circle; triangle_t triangle; } shape_t;
+
+
+
+    const int shapes_length = 3;
+    shape_t shapes[shapes_length];
+
+    shapes[0].type = RECTANGLE;
+    shapes[0].rectangle.w = 2;
+    shapes[0].rectangle.h = 3;
+
+    shapes[1].type = CIRCLE;
+    shapes[1].circle.r = 4;
+
+    shapes[2].type = TRIANGLE;
+    shapes[2].triangle.base = 2;
+    shapes[2].triangle.height = 5;
+
+    for (int i=0;i<shapes_length;i+=1) {
+        float area = 0;
+
+        if (shapes[i].type == RECTANGLE)    area = shapes[i].rectangle.w * shapes[i].rectangle.h;
+        else if (shapes[i].type == CIRCLE)  area = 3.14159 * shapes[i].circle.r * shapes[i].circle.r;
+        else if (shapes[i].type == TRIANGLE)  area = 0.5 * shapes[i].triangle.base * shapes[i].triangle.height;
+
+        printf("shape type %d shape area %f\n", shapes[i].type, area );
+    }
+   return 0;
+}
+
 
 int main()
 {
@@ -1147,7 +1219,6 @@ int main()
     sprint_float3_main();
     thread_race_main();
     demo_cpp_vectors();
-    unions_demo();
     // print_this_file();
 
     float_header_demo();  // print float limits
@@ -1163,7 +1234,9 @@ int main()
 
     demo_errno ();
     demo_read_file2();
+    demo_split_string();
 
+    union_of_structs_demo();
 
     return 0;
 }
