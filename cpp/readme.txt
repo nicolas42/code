@@ -1,3 +1,27 @@
+Making Stuff 
+--------------------------
+
+macos:
+g++ $1 -Iinclude -framework SDL2 -framework SDL2_image -framework SDL2_ttf -framework SDL2_mixer  -Wfatal-errors -Wall -Wpedantic -g -fsanitize=address  && ./a.out
+
+
+linux:
+g++ $1 -Iinclude -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_net -lSDL2_ttf -Wfatal-errors -Wall -Wpedantic -g -fsanitize=address  && ./a.out
+
+
+windows:
+call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+cl /Zi /I "win64\include" "%1" /link "win64\SDL2.lib" "win64\SDL2main.lib" "win64\SDL2_image.lib" "win64\SDL2_mixer.lib" "win64\SDL2_ttf.lib" "kernel32.lib" "user32.lib" "shell32.lib" /SUBSYSTEM:WINDOWS /OUT:"win64\%1.exe"
+
+
+
+
+pkg-config --libs sdl2 --static
+See imgui example makefile for more stuff 
+
+
+
+
 Joining strings in a macro 
 ------------------------------
 ## joins two strings in a macro

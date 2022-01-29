@@ -61,10 +61,11 @@ void string_add(string_t *str, int num_args, ... )
 int main()
 {
 
-    // Fix NULL pointer terminations !!!!!!
-
     // string_add can take a char, a string, or a variadic argument list of strings.
+
+    // string_add can only add a null byte when adding a char.
     
+
     string_t s = string_make();
     string_add( &s, 'h');
     string_add( &s, "i ");
@@ -82,8 +83,9 @@ int main()
 
     string_add( &s, 4, str1, str2, str3, "\0" );
 
-    char os_sep[2] = "/";
-    string_add( &s, 6, "\nfile: some_folder", os_sep, "another_folder", os_sep, "filename.extension", "\n\0" );
+    const char os_sep[2] = "/";
+    string_add( &s, 5, "\nfile: some_folder", os_sep, "another_folder", os_sep, "filename.extension\n" );
+    string_add(&s, '\0');
 
     printf("%s\n", s.data);
 
