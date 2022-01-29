@@ -229,7 +229,7 @@ void print_event(SDL_Event event)
     if ( event.type == SDL_JOYBUTTONUP ) printf("SDL_JOYBUTTONUP\n");
     if ( event.type == SDL_JOYDEVICEADDED ) printf("SDL_JOYDEVICEADDED\n");
     if ( event.type == SDL_JOYDEVICEREMOVED ) printf("SDL_JOYDEVICEREMOVED\n");
-    if ( event.type == SDL_MOUSEMOTION ) printf("SDL_MOUSEMOTION ");
+    if ( event.type == SDL_MOUSEMOTION ) printf("SDL_MOUSEMOTION "); // no newline
     if ( event.type == SDL_MOUSEBUTTONDOWN ) printf("SDL_MOUSEBUTTONDOWN\n");
     if ( event.type == SDL_MOUSEBUTTONUP ) printf("SDL_MOUSEBUTTONUP\n");
     if ( event.type == SDL_MOUSEWHEEL ) printf("SDL_MOUSEWHEEL\n");

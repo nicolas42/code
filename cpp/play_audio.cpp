@@ -1,5 +1,5 @@
 /*
-g++ play_audio.cpp -Iinclude -framework SDL2 -framework SDL2_mixer -framework SDL2_image -framework SDL2_ttf -Wfatal-errors -fsanitize=address && ./a.out
+g++ play_audio.cpp -Iinclude -framework SDL2 -framework SDL2_mixer -framework SDL2_image -framework SDL2_ttf -Wfatal-errors -g -fsanitize=address -Wall -Wpedantic  && ./a.out
 
 call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 cl /Zi /I "win64\include\SDL2" "play_audio.cpp" /link "win64\SDL2.lib" "win64\SDL2main.lib" "win64\SDL2_image.lib" "win64\SDL2_mixer.lib" "win64\SDL2_ttf.lib" "kernel32.lib" "user32.lib" "shell32.lib" /SUBSYSTEM:WINDOWS /OUT:"win64\play_audio.cpp.exe" && win64\play_audio.cpp.exe
@@ -15,48 +15,14 @@ based on code by the lazyfoo
 #include <stdio.h>
 #include <string>
 
-#include "basic.h"
-
-typedef char* string;
-DEFINE_ARRAY(string);
-
-// destructively split a string by converting delimiters into null bytes
-// and noting down the positions after them.
-string_array split_string(char *str, const char *delim)
-{
-    size_t string_length = strlen(str);
-
-    // convert delimiters to null bytes
-    for (int i = 0; i < string_length; i++ ) {
-        for ( int j = 0; delim[j] != '\0'; j += 1 ) {
-            if (str[i]==delim[j]) { 
-                str[i] = '\0'; 
-                break; 
-            }
-        }
-    }
-
-    string_array l = string_array_make();
-
-    // add pointer to first element if it's not null
-    if ( str[0] != '\0' ) l = string_array_add(l, str);
-    for ( int i = 1; i < string_length; i++ ) {
-        // add locations which are directly after null bytes
-        if ( str[i-1] == '\0' && str[i] != '\0' ) l = string_array_add(l, str+i);
-    }
-    return l;
-}
 
 
-
-
-
-void stop_music(Mix_Music *music)
+void stop_audio(Mix_Music *music)
 {
     Mix_HaltMusic(); // stop
 }
 
-void play_pause_music(Mix_Music *music)
+void play_pause_audio(Mix_Music *music)
 {
     // If there is no music playing then play the music.
     // If the music is in being "played" then check whether the piece is paused of not
@@ -102,36 +68,30 @@ int main( int argc, char* args[] )
 
     //Initialize SDL_mixer
     int err = Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 );
-    if (err) { printf("%s %d %s",__FILE__,__LINE__,Mix_GetError()); exit(1); }
+    if (err) { 
+        printf("%s %d %s",__FILE__,__LINE__,Mix_GetError()); 
+        exit(1); 
+    }
 
-    // music
-    Mix_Music *music = NULL;
+    Mix_Music *music; 
+    Mix_Chunk *scratch, *high;
+
 	music = Mix_LoadMUS( "data/beat.wav");
-	if( !music ) { printf("%s %d %s",__FILE__,__LINE__,Mix_GetError()); exit(1); }
-
-    // sound effects
-    Mix_Chunk *scratch = NULL;
+	if( !music ) { 
+        printf("%s %d %s",__FILE__,__LINE__,Mix_GetError()); 
+        exit(1); 
+    }
 	scratch = Mix_LoadWAV( "data/scratch.wav" );
-	if( !scratch ) { printf("%s %d %s",__FILE__,__LINE__,Mix_GetError()); exit(1); }
-
-    Mix_Chunk *high = NULL;
+	if( !scratch ) { 
+        printf("%s %d %s",__FILE__,__LINE__,Mix_GetError()); 
+        exit(1); 
+    }
 	high = Mix_LoadWAV( "data/high.wav" );
-	if( !high ) { printf("%s %d %s",__FILE__,__LINE__,Mix_GetError()); exit(1); }
-	
+	if( !high ) { 
+        printf("%s %d %s",__FILE__,__LINE__,Mix_GetError()); 
+        exit(1); 
+    }
 
-
-
-    // Draw lines of text
-
-    char text[] = 
-        "SDLK_1 play_pause_music(music) \n"
-        "SDLK_2 stop_music(music) \n"
-        "SDLK_3 play_sound_effect(scratch) \n"
-        "SDLK_4 play_sound_effect(high) \n";
-
-
-
-    string_array lines = split_string(text,"\n");
 
     TTF_Init();
     char* font_path = (char*)"data/Sans.ttf";
@@ -142,28 +102,36 @@ int main( int argc, char* args[] )
         exit(1);
     }
 
-    int extent = 0;
-    int measure_width = 400;
-    char line[1000];
-    SDL_Color text_color = {20,20,20,0};
-    SDL_Color background_color = {255,255,255,0};
+
     SDL_SetRenderDrawColor(renderer, 255,255,255,255);
     SDL_RenderClear(renderer);
-    int x = 0;
-    int y = 0;
 
-    for(int i=0;i<lines.length;++i){
-        char *line = lines.data[i];
+
+    char text[] = 
+        "SDLK_1 play_pause_audio(music)\n"
+        "SDLK_2 stop_audio(music)\n"
+        "SDLK_3 play_sound_effect(scratch)\n"
+        "SDLK_4 play_sound_effect(high)\n";
+
+    int char_pos_x = 0;
+    int char_pos_y = 0;
+
+    for ( const char *line = strtok(text, "\n"); line != NULL; line = strtok(NULL, "\n") ) {
+
+        const SDL_Color text_color = {20,20,20,0};
+        const SDL_Color background_color = {255,255,255,0};
+
         SDL_Surface *text_surface = TTF_RenderText_Shaded(font, line, text_color, background_color); 
         SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, text_surface);
         SDL_Rect rect;
-        rect.x = x;
-        rect.y = y;
+        rect.x = char_pos_x;
+        rect.y = char_pos_y;
         rect.w = text_surface->w;
         rect.h = text_surface->h;
+        
         SDL_RenderCopy(renderer, texture, NULL, &rect);
 
-        y += text_surface->h;
+        char_pos_y += text_surface->h;
 
         SDL_FreeSurface(text_surface);
         SDL_DestroyTexture(texture);
@@ -171,14 +139,6 @@ int main( int argc, char* args[] )
     }
 
     SDL_RenderPresent(renderer);
-
-
-
-
-
-
-
-
 
 
 
@@ -192,8 +152,8 @@ int main( int argc, char* args[] )
         }
         if (e.type == SDL_KEYDOWN) {
 
-            if (e.key.keysym.sym == SDLK_1) { play_pause_music(music); }
-            if (e.key.keysym.sym == SDLK_2) { stop_music(music); }
+            if (e.key.keysym.sym == SDLK_1) { play_pause_audio(music); }
+            if (e.key.keysym.sym == SDLK_2) { stop_audio(music); }
 
             if (e.key.keysym.sym == SDLK_3) { play_sound_effect(scratch); }
             if (e.key.keysym.sym == SDLK_4) { play_sound_effect(high); }

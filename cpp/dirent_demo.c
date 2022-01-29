@@ -3,9 +3,6 @@
 #include <stdio.h>
 #include <dirent.h>
 #include <string.h>
-#include "basic.h"
-
-DEFINE_ARRAY(u8)
 
 int bash_ls(const char *path) 
 {
@@ -48,8 +45,8 @@ int bash_find(const char *path)
         // }
         if ( entry->d_type == DT_DIR ) {
 
-            char newpath[1024];
-            snprintf(newpath, 1024, "%s/%s", path, entry->d_name);
+            char newpath[1000];
+            snprintf(newpath, 1000, "%s/%s", path, entry->d_name);
             bash_find(newpath);
         }
 

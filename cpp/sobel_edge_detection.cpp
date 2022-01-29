@@ -23,7 +23,7 @@ void sobel_edge_detection(u8* original_image, int width, int height, u8** edge_i
 
             char v = 0.212671f * r + 0.715160f * g + 0.072169f * b;
 
-            grey_image_floats[j*width+i] = (double)((v-127.)); // "centered" around zero
+            grey_image_floats[j*width+i] = (double)((v-127.0)); // "centered" around zero
 
         }
     }
@@ -142,31 +142,32 @@ int main( int argc, char* args[] )
 
     SDL_Init( SDL_INIT_EVERYTHING );
     SDL_Window* window = SDL_CreateWindow("title", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 800, SDL_WINDOW_SHOWN );
-    
-    SDL_Renderer* window_renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED );
-    SDL_Texture* texture = SDL_CreateTexture( window_renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, width, height );
+    SDL_Renderer* renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED );
+    SDL_Texture* texture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, width, height );
+
 
     SDL_UpdateTexture( texture, NULL, images[image_index], width * 4 );
-    SDL_SetRenderDrawColor( window_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE );
-    SDL_RenderClear( window_renderer );
-    SDL_RenderCopy( window_renderer, texture, NULL, NULL );
-    SDL_RenderPresent( window_renderer );
+    // SDL_SetRenderDrawColor( renderer, 0, 0, 0, SDL_ALPHA_OPAQUE );
+    // SDL_RenderClear( renderer );
+    SDL_RenderCopy( renderer, texture, NULL, NULL );
+    SDL_RenderPresent( renderer );
+
 
     SDL_Event event;
-    bool running = true;
-    while ( running )
+    bool quit = false;
+    while ( !quit )
     {
         SDL_WaitEvent( &event );
-        if ( event.type == SDL_QUIT ) running = false;
+        if ( event.type == SDL_QUIT ) quit = true;
         if ( event.type == SDL_KEYDOWN || event.type == SDL_MOUSEBUTTONDOWN ) {
             printf("woo keydown or mouse button\n");
             if ( image_index == 0 ) image_index = 1; else image_index = 0;
 
             SDL_UpdateTexture( texture, NULL, images[image_index], width * 4 );
-            SDL_SetRenderDrawColor( window_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE );
-            SDL_RenderClear( window_renderer );
-            SDL_RenderCopy( window_renderer, texture, NULL, NULL );
-            SDL_RenderPresent( window_renderer );
+            // SDL_SetRenderDrawColor( renderer, 0, 0, 0, SDL_ALPHA_OPAQUE );
+            // SDL_RenderClear( renderer );
+            SDL_RenderCopy( renderer, texture, NULL, NULL );
+            SDL_RenderPresent( renderer );
         }
     }
 
