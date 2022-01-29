@@ -2,7 +2,7 @@
 
 // g++ std_vector_is_slow_demo.cpp -Ofast && ./a.out
 
-// A simple expanding array is almost 3 times faster than std::vector
+// std::vector is almost 3 times slower than this simple expanding array implementation
 
 #include <vector>
 
