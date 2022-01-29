@@ -1,15 +1,48 @@
-// g++ make_primes.cpp && ./a.out
+/*
+g++ make_primes.cpp -Iinclude -Ofast && ./a.out
+*/
 
-#include "basic.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <stdint.h>
+#include <string.h>
+#include <signal.h>
 
-DEFINE_ARRAY(u64)
-DEFINE_ARRAY(u8)
 
 
-int prime_sieve( uint64_t candidate, u64_array primes )
+struct u64_array { uint64_t* data; int length; int allocated; }; 
+typedef struct u64_array u64_array;
+
+u64_array u64_array_make()
 {
+    u64_array arr;
+    arr.length = 0;
+    arr.allocated = 1000;
+    arr.data = (uint64_t*)malloc( arr.allocated * sizeof(uint64_t) );
+    return arr;
+}
+
+void u64_array_add(u64_array *arr, uint64_t item)
+{
+    if ( arr->length == arr->allocated ) {
+      arr->allocated *= 2;
+      arr->data = (uint64_t*)realloc( arr->data, arr->allocated * sizeof(uint64_t) );
+    }
+    arr->data[arr->length] = item;
+    arr->length += 1;
+}
+
+
+
+
+int is_prime( uint64_t candidate, u64_array primes )
+{
+    // prime sieve:  divides the candidate number by the already known prime numbers
+    // if one of them divides it equally then it's not prime.
+
     for (uint64_t i=0; i<primes.length; i++){
-        if ( candidate % primes.data[i] == 0) return 0;
+        if ( candidate % primes.data[i] == 0 ) return 0;
     }
     return 1;
 }
@@ -18,17 +51,18 @@ int prime_sieve( uint64_t candidate, u64_array primes )
 u64_array make_primes( int num_to_make )
 {
     u64_array primes = u64_array_make();
-    primes = u64_array_add( primes, 2 );
+    u64_array_add( &primes, 2 );
     uint64_t i;
 
 	for ( i=3; i < num_to_make; i+=2){
-		if ( prime_sieve(i, primes) ) {
-            primes = u64_array_add( primes, i );
+		if ( is_prime(i, primes) ) {
+            u64_array_add( &primes, i );
         }
     }
     for(i=0;i<primes.length;++i) printf("%llu ", primes.data[i]);
 
     return primes;
+
 }
 
 
@@ -39,14 +73,12 @@ static sig_atomic_t sigint_flag = 0;
 void signal_handler(int signal)
 {
     if (signal == SIGINT){
-        // fclose(file);
         printf("\nYou handled the SIGINT!\n");
         sigint_flag = 1;
     }
 }
-      
-// sieve some primes and write them to the file
-// read primes from file if it already exists
+
+
 u64_array make_primes_with_file(const char *filename)
 {
     // register signal handler
@@ -82,12 +114,12 @@ u64_array make_primes_with_file(const char *filename)
             if (!ret) break;
             pos1 = pos2;
             // printf("The number(unsigned long integer) is %ld\n", ret);
-            primes = u64_array_add( primes, (u64)ret );
+            u64_array_add( &primes, (uint64_t)ret );
         }
 
     } else {
-        primes = u64_array_add( primes, 2 );
-        primes = u64_array_add( primes, 3 );
+        u64_array_add( &primes, 2 );
+        u64_array_add( &primes, 3 );
         file = fopen(filename, "a");
         fprintf(file, "%llu %llu ", (uint64_t)(2), (uint64_t)(3));
         fclose(file);
@@ -112,8 +144,8 @@ u64_array make_primes_with_file(const char *filename)
             sigint_flag = 0; 
             return primes; 
         }
-		if ( prime_sieve(j, primes) ) {
-            primes = u64_array_add( primes, j );
+		if ( is_prime(j, primes) ) {
+            u64_array_add( &primes, j );
 
             fprintf(file, "%llu ", j);
 		}
@@ -133,13 +165,17 @@ u64_array make_primes_with_file(const char *filename)
 
 
 
+
 int main()
 {
+    time_t t0 = clock();
+
     make_primes(100*1000);
     // make_primes_with_file("primes_gitignore.txt");
 
+    printf("\n\nduration: %f\n", ((double)( clock() - t0 )) / (double)CLOCKS_PER_SEC );
+
     return 0;
 }
-
 
 

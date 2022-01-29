@@ -11,26 +11,20 @@ cl /Zi /I "win64\include\SDL2" "image_viewer.cpp" /link "win64\SDL2.lib" "win64\
 
 */
 
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_image.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include <string.h>
+// #include <errno.h>
+// #include <assert.h>
+
+#include <dirent.h>
 #include <sys/types.h>
-#include <string.h>
-#include <errno.h>
-#include <assert.h>
-// #include <dirent.h> /* "readdir" etc. are defined here. */
-#include "dirent.h"
-#include <limits.h> /* limits.h defines "PATH_MAX". */
-
 #include <iostream>
 #include <string>
 #include <vector>
-
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
-// #include "find_files.h"
-
-#define PRINT_ERROR(ERR) printf("ERROR %s %d %s\n", __FILE__, __LINE__, ERR)
 
 
 SDL_Rect make_rect(int x, int y, int w, int h)

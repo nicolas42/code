@@ -1,3 +1,30 @@
+Joining strings in a macro 
+------------------------------
+## joins two strings in a macro
+TYPENAME ## _array => TYPENAME_array
+
+
+std::vector is a bit slow
+----------------------------------------------
+
+My 10 line expanding array implementation appeared to be almost 3 times faster than std::vector.  
+Optimising with -Ofast didn't make any difference.
+
+
+
+Endianness in SDL and stb
+--------------------------------------
+
+The *INTEGER* rgba is stored in memory as abgr in little-endian systems, which is most of them including x86.
+If the same things is declared as a four byte array then the order is exactly as it is defined in the program.
+
+SDL functions operate on images as a series of integers whereas 
+stb image functions operate on the data as a series of bytes 
+
+
+Cross platform defines 
+-------------------------------------
+
 #ifdef _SUNOS
 //code
 #elseif _LINUX

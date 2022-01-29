@@ -1,25 +1,35 @@
 /*
 g++ show_mandelbrot.cpp -Iinclude -framework SDL2 && ./a.out
 
-from https://stackoverflow.com/questions/33304351/sdl2-fast-pixel-manipulation
+Endianness in SDL and stb
+--------------------------------------
 
-Endianness
-the integer rgba is stored in memory as abgr in x86 systems.
-stb image functions operate on the data as a series of bytes whereas SDL functions operate on the data as a series of integers.
+The *INTEGER* rgba is stored in memory as abgr in little-endian systems, which is most of them including x86.
+If the same things is declared as a four byte array then the order is exactly as it is defined in the program.
+
+SDL functions operate on images as a series of integers whereas 
+stb image functions operate on the data as a series of bytes 
+
+
+
+https://stackoverflow.com/questions/33304351/sdl2-fast-pixel-manipulation
 
 */
+
+#include "SDL2/SDL.h"
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include <stdint.h>
 
 #include <iostream>
 #include <iomanip>
 #include <vector>
-#include <cstring>
-#include <stdio.h>
-#include <stdlib.h>
-#include "SDL2/SDL.h"
-#include "types.h"
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+
 
 
 
@@ -43,7 +53,7 @@ float hue2rgb(float p, float q, float t) {
     return p;
 }
 
-u32 hsl2rgba(float h, float s, float l) {
+uint32_t hsl2rgba(float h, float s, float l) {
 
     float r,g,b;
     float q = l < 0.5 ? l * (1 + s) : l + s - l * s;
@@ -59,15 +69,15 @@ u32 hsl2rgba(float h, float s, float l) {
     }
 
     // scale channels by 255.0 and combine them into a 32 bit integer
-    u32 rgba = (u32)(  
-        ((u8)(r*255.0))<<24 | ((u8)(g*255.0))<<16 | ((u8)(b*255.0))<<8 | (u8)255  
+    uint32_t rgba = (uint32_t)(  
+        ((uint8_t)(r*255.0))<<24 | ((uint8_t)(g*255.0))<<16 | ((uint8_t)(b*255.0))<<8 | (uint8_t)255  
     );
     return rgba;
 }
     
 typedef struct {
     // width, height, number of channels, image data
-    u32 w,h,c,*data;
+    uint32_t w,h,c,*data;
 } Image;
 
 Image make_image(float w, float h, float c)
@@ -76,14 +86,14 @@ Image make_image(float w, float h, float c)
     im.w = w;
     im.h = h;
     im.c = c;
-    im.data = (u32*)malloc(im.w * im.h * sizeof(u32));
+    im.data = (uint32_t*)malloc(im.w * im.h * sizeof(uint32_t));
     return im;
 }
 
 void draw_mandelbrot_rgba(Image im, float x, float y, float zoom, float max_iterations )
 {
     float i,j,h,w,cx,cy,zx,zy,zxtemp,hue;
-    u32 in_set,num_iterations,pos,rgba,black;
+    uint32_t in_set,num_iterations,pos,rgba,black;
 
     for (j = 0; j < im.h; j += 1) {
         for (i = 0; i < im.w; i += 1) {
@@ -140,7 +150,7 @@ int main( int argc, char* args[] )
     im = make_image(w,h,c);
     draw_mandelbrot_rgba(im, -0.6999687500000003, -0.2901249999999999, 1000, 1000);
     // image to surface
-    u32 pitch, depth, rmask, gmask, bmask, amask;
+    uint32_t pitch, depth, rmask, gmask, bmask, amask;
     pitch = 4*im.w; // The "pitch" is the length of a row in bytes, it appears.
     depth = 32;
     rmask = 0xff000000;
@@ -160,7 +170,7 @@ int main( int argc, char* args[] )
     SDL_Log("The surface's pixelformat is %s", surfacePixelFormatName);
 
     // // Write image (swap pixels for little endian ints)
-    // for(i=0;i<s->w*s->h;++i) ((u32*)s->pixels)[i] = SDL_Swap32(((u32*)s->pixels)[i]);
+    // for(i=0;i<s->w*s->h;++i) ((uint32_t*)s->pixels)[i] = SDL_Swap32(((uint32_t*)s->pixels)[i]);
     // int success = stbi_write_png("mandy.png", s->w, s->h, 4, s->pixels, s->w * 4);
     // if (success) { SDL_Log("You wrote the png!"); }
 

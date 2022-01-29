@@ -2,14 +2,16 @@
 g++ -Iinclude sobel_edge_detection.cpp -framework SDL2 -ISDL2 -fsanitize=address && ./a.out
 */
 
-#include <stdio.h>
 #include "SDL2/SDL.h"
-// #include "SDL_image.h"
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-#include "types.h"
 
-void sobel_edge_detection(u8* original_image, int width, int height, u8** edge_image_arg)
+// #include <stdio.h>
+// #include "types.h"
+
+
+void sobel_edge_detection(uint8_t* original_image, int width, int height, uint8_t** edge_image_arg)
 {
     // make a greyscale image of floats which is centered around zero.
     double *grey_image_floats = (double*)calloc(height * width, sizeof(double));
@@ -89,8 +91,8 @@ void sobel_edge_detection(u8* original_image, int width, int height, u8** edge_i
 
 
     // Convert back to a regular image
-    // u8 *edge_image = (u8*)calloc(height * width * 4, sizeof(u8));
-    u8* edge_image = *edge_image_arg;
+    // uint8_t *edge_image = (uint8_t*)calloc(height * width * 4, sizeof(uint8_t));
+    uint8_t* edge_image = *edge_image_arg;
     for (int j=1; j<height-1; j++ ){
         for (int i=1; i<width-1; i++ ){
             int pos = j*width*4 + i*4;
@@ -99,7 +101,7 @@ void sobel_edge_detection(u8* original_image, int width, int height, u8** edge_i
             // min value goes to zero
             // max value goes to 255
             // y = (max-min)*(x - min)
-            u8 v = (u8)( (edge_image_floats[j*width+i] - minimum_value) / (maximum_value-minimum_value) * 255. );
+            uint8_t v = (uint8_t)( (edge_image_floats[j*width+i] - minimum_value) / (maximum_value-minimum_value) * 255. );
 
             edge_image[pos+0] = v;
             edge_image[pos+1] = v;
@@ -125,23 +127,23 @@ int main( int argc, char* args[] )
     // use STBI_rgb if you don't want/need the alpha channel
     int req_format = STBI_rgb_alpha;
     int width, height, orig_format;
-    u8* original_image = stbi_load("data/Valve_original.png", &width, &height, &orig_format, req_format);
+    uint8_t* original_image = stbi_load("data/Valve_original.png", &width, &height, &orig_format, req_format);
     if (original_image == NULL) {
         SDL_Log("Loading image failed: %s", stbi_failure_reason());
         exit(1);
     }
 
-    u8 *edge_image = (u8*)calloc(height * width * 4, sizeof(u8));
+    uint8_t *edge_image = (uint8_t*)calloc(height * width * 4, sizeof(uint8_t));
     sobel_edge_detection(original_image, width, height, &edge_image);
 
-    u8 *images[2];
+    uint8_t *images[2];
     int image_index = 0;
     images[0] = original_image;
     images[1] = edge_image;
 
 
     SDL_Init( SDL_INIT_EVERYTHING );
-    SDL_Window* window = SDL_CreateWindow("title", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 800, SDL_WINDOW_SHOWN );
+    SDL_Window* window = SDL_CreateWindow("Click the image", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 800, SDL_WINDOW_SHOWN );
     SDL_Renderer* renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED );
     SDL_Texture* texture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, width, height );
 

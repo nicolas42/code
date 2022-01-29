@@ -1,13 +1,11 @@
 /*
 g++ misc.cpp -Iinclude -framework SDL2 -framework SDL2_image -Wfatal-errors -Wall && ./a.out 
-
 */
+
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-
 
 char* caesar_cipher(char* text, int shift)
 {
@@ -49,10 +47,10 @@ char* caesar_cipher(char* text, int shift)
     return code;
 }
 
-int caesar_cipher_main()
+int caesar_cipher_demo()
 {
     printf(
-        "\n\ncaesar_cipher_main\n"
+        "\n\ncaesar_cipher_demo\n"
         "--------------------------\n"
     );
 
@@ -115,6 +113,10 @@ int variadic_sum(int num_args, ...)
 
 int demo_variadic_sum(void)
 {
+    printf("\n\n");
+    printf("demo_variadic_sum\n");
+    printf("-----------------------\n");
+
    printf("Sum of 10, 20 and 30 = %d\n",  variadic_sum(3, 10, 20, 30) );
    printf("Sum of 4, 20, 25 and 30 = %d\n",  variadic_sum(4, 4, 20, 25, 30) );
 
@@ -128,8 +130,12 @@ int demo_variadic_sum(void)
 
 // float f_dash(float x, float y, float *dx, float *dy) { return y; }
 
-int eulers_method_main()
+int eulers_method_demo()
 {
+    printf("\n\n");
+    printf("Euler's Method for solving differential equations and vector fields\n");
+    printf("---------------------------------------------------------------------\n");
+
     // Euler's Method for solving a differential equation
     // ---------------------------------------------------
     // start at a point.  calculate the slope
@@ -177,9 +183,6 @@ int eulers_method_main()
         float step = 0.0001;
         #define TWOPI 6.28318530718
 
-        printf("\n\n");
-        printf("Euler's Method for solving differential equations and vector fields\n");
-        printf("---------------------------------------------------------------------\n");
         printf("Drawing a circle using the vector field < -y, x >\n");
         printf("Starting point\n");
         printf("x, y, dx, dy: [ %f %f %f %f %f ]\n", x, y, dx, dy, step);
@@ -237,26 +240,42 @@ int eulers_method_main()
 }
 
 
-// int main()
-// {
-//     eulers_method_main();
-// }
 
 
 
-
-
-int newtons_method_main()
+int newtons_method_demo()
 {
 
-    // Newton's Method for solving an equation of one variable
-    // ---------------------------------------
+    printf("\n\n");
+    printf("newtons_method_demo\n");
+    printf("-----------------------\n");
 
-    // x1 = x0 - f(x0)/f'(x0)
 
-    // This can solve any equation of the form f(x) = some_number.
-    // You do need to give it a good initial x position, specially if it's a higher
-    // order equation.
+    // Newton's Method for solving equations of one variable
+    // ---------------------------------------------------------
+
+    // Newton's method can find real solutions to differentiable functions.
+    // It will find an input value that will produce the given output value.
+
+    // It requires that a starting x value is initially chosen.  
+    // 1. The corresponding y value is easily found.
+    // 2. It draws a tangent line from this point, which is followed to where it intersects
+    // 3. with the x-axis.  The algorithm repeats
+
+    // The equation of a tangent line going through ( x0, f(x0) )
+
+    // f(x) - f(x0) = f'(x0) * ( x - x0 )
+
+    // To find the x intercept set f(x) = 0 and solve for x. This new x value
+    // is hopefully closer to a solution than the previous one.
+
+    // x = x0 - f(x0) / f'(x0)
+
+
+
+    // This can solve any equation of the form y = f(x).
+
+    // Different initial conditions will give different solutions, if there are multiple.
 
     // Simply 
     // 1. Put the equation into homogenous form f(x) = 0
@@ -286,94 +305,22 @@ int newtons_method_main()
 #include <stdio.h>
 #include <unistd.h>
 
-void demo_print_stuff_on_one_line()
+void print_stuff_on_one_line_demo()
 {
-    int i;
     printf("\n\n");
-    printf("OMG Carriage Return without newline prints to one line omg\n");
+    printf("print_stuff_on_one_line_demo\n");
     printf("-----------------------------------\n");
-    for (i=0;i<100;++i) { fprintf(stdout, "\romg I'm printing stuff on one line [%d%%]", i ); fflush(stdout); usleep(1e4); } 
+
+    int i;    
+    for (i=0;i<100;++i) { 
+        fprintf(stdout, "\romg I'm printing stuff on one line [%d%%]", i ); 
+        fflush(stdout); 
+        usleep(1e4); 
+    } 
     printf("\n");
 }
 
 
-
-
-
-
-char *myprintf_convert(unsigned int num, int base)
-{ 
-    static char Representation[]= "0123456789ABCDEF";
-    static char buffer[50]; 
-    char *ptr; 
-
-    ptr = &buffer[49]; 
-    *ptr = '\0'; 
-
-    do 
-    { 
-        *--ptr = Representation[num%base]; 
-        num /= base; 
-    }while(num != 0); 
-
-    return(ptr); 
-}
-
-
-void myprintf(char* format,...)
-{ 
-
-    char *traverse; 
-    int i; 
-    char *s; 
-
-    //Module 1: Initializing Myprintf's arguments 
-    va_list arg; 
-    va_start(arg, format); 
-
-    for(traverse = format; *traverse != '\0'; traverse++) 
-    { 
-        while( *traverse != '%' ) 
-        { 
-            putchar(*traverse);
-            traverse++; 
-        } 
-
-        traverse++; 
-
-        //Module 2: Fetching and executing arguments
-        switch(*traverse) 
-        { 
-            case 'c' : i = va_arg(arg,int);     //Fetch char argument
-                        putchar(i);
-                        break; 
-
-            case 'd' : i = va_arg(arg,int);         //Fetch Decimal/Integer argument
-                        if(i<0) 
-                        { 
-                            i = -i;
-                            putchar('-'); 
-                        } 
-                        puts(myprintf_convert(i,10));
-                        break; 
-
-            case 'o': i = va_arg(arg,unsigned int); //Fetch Octal representation
-                        puts(myprintf_convert(i,8));
-                        break; 
-
-            case 's': s = va_arg(arg,char *);       //Fetch string
-                        puts(s); 
-                        break; 
-
-            case 'x': i = va_arg(arg,unsigned int); //Fetch Hexadecimal representation
-                        puts(myprintf_convert(i,16));
-                        break; 
-        }   
-    } 
-
-    //Module 3: Closing argument list to necessary clean-up
-    va_end(arg); 
-} 
 
 
 
@@ -425,10 +372,12 @@ void read_file (char *filename, char **ret_char_array, int *ret_char_length)
     *ret_char_length = char_length;
 }
 
-static void print_char(unsigned char theChar)
+
+
+static void print_escape_char(unsigned char the_char)
 {
 
-    switch (theChar) {
+    switch (the_char) {
 
         case '\n':
             printf("\\n");
@@ -440,18 +389,24 @@ static void print_char(unsigned char theChar)
             printf("\\t");
             break;
         default:
-            if ((theChar < 0x20) || (theChar > 0x7f)) {
-                printf("\\%03o", (unsigned char)theChar);
+            if ((the_char < 0x20) || (the_char > 0x7f)) {
+                printf("\\%03o", (unsigned char)the_char);
             } else {
-                printf("%c", theChar);
+                printf("%c", the_char);
             }
         break;
    }
 }
 
 
-int read_file_main()
+
+int read_file_demo()
 {
+
+    printf("\n\n");
+    printf("read_file_demo\n");
+    printf("-----------------------------------\n");
+
 	// __FILE__ appears to be the filename of this file
 	// putting two string immediately next to each other concatenates them in c
 	// "./"__FILE__
@@ -471,7 +426,7 @@ int read_file_main()
 	int end   = 100;
 
 	fputs("\n{", stdout);
-	for (int i=start; i<end; ++i) print_char(data[i]);
+	for (int i=start; i<end; ++i) print_escape_char( data[i] );
 	fputs("}", stdout);
 	printf("\n");
 
@@ -480,64 +435,6 @@ int read_file_main()
 	free(data);
     return 0;
 }
-
-
-
-/*
-Use this if you can't print floats - in an embedded system for example.
-*/
-
-#include <stdio.h>
-#include <math.h>
-
-void sprint_float3(char* str, float arg)
-{
-
-  // sprint float to 3 decimal places
-  // to change decimal places change 1000 and %03d
-  // from https://stackoverflow.com/questions/905928/using-floats-with-sprintf-in-embedded-c
-
-  char *sign;
-  float val;
-  int a;
-  int b;
-
-  // arg = 678.0123;
-
-    if (arg<0) { sign=(char*)"-"; } else { sign=(char*)""; }
-//   sign = (arg < 0) ? "-" : "";
-  val = (arg < 0) ? -arg : arg;
-
-  a = val;                  // Get the integer (678).
-  b = trunc((val - a) * 1000);  // Get fraction then turn into integer (123).
-
-  // Print as parts, note that you need 0-padding for fractional bit.
-
-  if (b == 0){
-    sprintf (str, "%s%d", sign, a);
-  } else {
-    sprintf (str, "%s%d.%03d", sign, a, b);  
-  }
-  // puts(str);
-
-}
-
-
-int sprint_float3_main()
-{
-
-  char str[100];
-
-  sprint_float3(str, 0.01234);
-  puts(str);
-  sprint_float3(str, 3.1415926535);
-  puts(str);
-  sprint_float3(str, 3234);
-  puts(str);
-
-  return 0;
-}
-
 
 
 
@@ -568,12 +465,17 @@ void* add1_to_global(void* arg)
 
 }
 
-void thread_race_main()
+void thread_race_demo()
 {
+
+    printf("\n\n");
+    printf("thread_race_demo\n");
+    printf("-----------------------------------\n");
+
     printf("\n\n");
 	printf("1000 threads adding 1 to a global. Who will win the race?\n");
 
-	for (int i = 0; i < 1e6; i++){
+	for (int i = 0; i < 10; i++){
 		
 		printf("Thread Race %d: ", i);
 
@@ -592,7 +494,10 @@ void thread_race_main()
 		}
 
 		printf("Result is %d\n", thread_race_global);
-		if (thread_race_global != 1000){ break; }
+		if (thread_race_global != 1000){ 
+            printf("Race condition!\n");
+            break; 
+        }
 	}
 
 }
@@ -603,8 +508,13 @@ void thread_race_main()
 #include <vector>
 #include <string>
  
-int demo_cpp_vectors()
+int cpp_vector_demo()
 {
+
+    printf("\n\n");
+    printf("cpp_vector_demo\n");
+    printf("-----------------------------------\n");
+
     using namespace std;
 
     // integers
@@ -762,6 +672,10 @@ void stdarg_header_demo()
 void stddef_header_demo ()
 {
 
+    printf("\n\n");
+    printf("stddef.h demo\n");
+    printf("-----------------------\n");
+
     struct address {
         char name[50];
         char street[50];
@@ -830,7 +744,7 @@ void demo_2d_arrays(void)
 #include <stdint.h>
 #include <stdio.h>
 
-int demo_make_primes()
+int demo_is_prime()
 {
   int candidate = 887;
   
@@ -1019,7 +933,7 @@ int sdl_use_renderer( )
 
 extern int errno ;
 
-int demo_errno () {
+int errno_demo () {
    FILE *fp;
 
    fp = fopen("file.txt", "r");
@@ -1070,7 +984,7 @@ int read_file2 ( const char *filename, char **ret_str, int *ret_length)
 
 
 
-void demo_read_file2()
+void read_file2_demo()
 {
     const char *filename = "misc.cpp";
     char *str;
@@ -1085,57 +999,6 @@ void demo_read_file2()
     for(i=0;i<100;i+=1) putc( str[i], stdout );
 }
 
-
-#include "basic.h"
-
-typedef char* string;
-DEFINE_ARRAY(string);
-
-// destructively split a string by converting delimiters into null bytes
-// and noting down the positions after them.
-string_array split_string(char *str, const char *delim)
-{
-    size_t string_length = strlen(str);
-
-    // convert delimiters to null bytes
-    for (int i = 0; i < string_length; i++ ) {
-        for ( int j = 0; delim[j] != '\0'; j += 1 ) {
-            if (str[i]==delim[j]) { 
-                str[i] = '\0'; 
-                break; 
-            }
-        }
-    }
-
-    string_array l = string_array_make();
-
-    // add pointer to first element if it's not null
-    if ( str[0] != '\0' ) l = string_array_add(l, str);
-    for ( int i = 1; i < string_length; i++ ) {
-        // add locations which are directly after null bytes
-        if ( str[i-1] == '\0' && str[i] != '\0' ) l = string_array_add(l, str+i);
-    }
-    return l;
-}
-
-
-void demo_split_string()
-{
-    printf("\n\n");
-    printf("Split String Demo\n");
-    printf("-----------------------\n");
-
-    char text[] = 
-        "SDLK_1 play_pause_music(music) \n"
-        "SDLK_2 stop_music(music) \n"
-        "SDLK_3 play_sound_effect(scratch) \n"
-        "SDLK_4 play_sound_effect(high) \n";
-
-
-    string_array lines = split_string(text,"\n");
-    for(int i=0;i<lines.length; i++) printf("{%s}\n", lines.data[i]);
-
-}
 
 
 
@@ -1175,8 +1038,14 @@ int union_of_structs_demo( )
     typedef struct { uint32_t type; float r; }  circle_t;
     typedef struct { uint32_t type; float base; float height; }  triangle_t;
 
+    // Union of Structs with type
     // The event type is shared with all events
-    typedef union shape_t { uint32_t type; rectangle_t rectangle; circle_t circle; triangle_t triangle; } shape_t;
+    typedef union shape_t { 
+        uint32_t type; 
+        rectangle_t rectangle; 
+        circle_t circle; 
+        triangle_t triangle; 
+    } shape_t;
 
 
 
@@ -1207,36 +1076,376 @@ int union_of_structs_demo( )
 }
 
 
+
+
+
+
+// // It appears that strtok is better than split_string()
+// // ----------------------------------------------------------
+
+
+// #include "basic.h"
+
+// typedef char* string;
+// DEFINE_ARRAY(string);
+
+// // destructively split a string by converting delimiters into null bytes
+// // and noting down the positions after them.
+// string_array split_string(char *str, const char *delim)
+// {
+//     size_t string_length = strlen(str);
+
+//     // convert delimiters to null bytes
+//     for (int i = 0; i < string_length; i++ ) {
+//         for ( int j = 0; delim[j] != '\0'; j += 1 ) {
+//             if (str[i]==delim[j]) { 
+//                 str[i] = '\0'; 
+//                 break; 
+//             }
+//         }
+//     }
+
+//     string_array l = string_array_make();
+
+//     // add pointer to first element if it's not null
+//     if ( str[0] != '\0' ) l = string_array_add(l, str);
+//     for ( int i = 1; i < string_length; i++ ) {
+//         // add locations which are directly after null bytes
+//         if ( str[i-1] == '\0' && str[i] != '\0' ) l = string_array_add(l, str+i);
+//     }
+//     return l;
+// }
+
+
+// void demo_split_string()
+// {
+//     printf("\n\n");
+//     printf("Split String Demo\n");
+//     printf("-----------------------\n");
+
+//     char text[] = 
+//         "SDLK_1 play_pause_music(music) \n"
+//         "SDLK_2 stop_music(music) \n"
+//         "SDLK_3 play_sound_effect(scratch) \n"
+//         "SDLK_4 play_sound_effect(high) \n";
+
+
+//     string_array lines = split_string(text,"\n");
+//     for(int i=0;i<lines.length; i++) printf("{%s}\n", lines.data[i]);
+
+// }
+
+
+
+
+
+
+
+
+
+
+/*
+Use this if you can't print floats - in an embedded system for example.
+*/
+
+#include <stdio.h>
+#include <math.h>
+
+void sprint_float3(char* str, float arg)
+{
+
+    // sprint a float to 3 decimal places
+    // To change the number of decimal places change 1000 and %03d
+    // from https://stackoverflow.com/questions/905928/using-floats-with-sprintf-in-embedded-c
+
+    char *sign;
+    float val;
+    int integer_part, fraction_part;
+
+    if (arg < 0) { sign=(char*)"-"; val = -arg; } else { sign=(char*)""; val = arg; }
+
+    integer_part = trunc(val);
+    fraction_part = trunc((val - integer_part) * 1000);  // Get fraction then turn into integer (123).
+
+    if (fraction_part == 0){
+        sprintf (str, "%s%d", sign, integer_part);
+    } else {
+        sprintf (str, "%s%d.%03d", sign, integer_part, fraction_part);  
+    }
+
+}
+
+
+int sprint_float3_main()
+{
+
+    printf("\n\n");
+    printf("sprint_float3_main\n");
+    printf("-----------------------\n");
+
+    char str[100];
+
+    sprint_float3(str, 0.01234);
+    puts(str);
+    sprint_float3(str, -3.1415926535);
+    puts(str);
+    sprint_float3(str, 3234);
+    puts(str);
+
+  return 0;
+}
+
+
+
+
+
+
+
+char *myprintf_convert(unsigned int num, int base)
+{ 
+    static char Representation[]= "0123456789ABCDEF";
+    static char buffer[50]; 
+    char *ptr; 
+
+    ptr = &buffer[49]; 
+    *ptr = '\0'; 
+
+    do 
+    { 
+        *--ptr = Representation[num%base]; 
+        num /= base; 
+    }while(num != 0); 
+
+    return(ptr); 
+}
+
+
+void myprintf(const char* format,...)
+{ 
+
+    const char *traverse; 
+    int i; 
+    char *s; 
+    char escape_char[2];
+    escape_char[0] = '\\';
+    escape_char[0] = '0';
+
+    //Module 1: Initializing Myprintf's arguments 
+    va_list arg; 
+    va_start(arg, format); 
+
+    for(traverse = format; *traverse != '\0'; traverse++) 
+    { 
+        if( *traverse != '%' && *traverse != '\\' ) { 
+            putchar(*traverse);
+        } 
+        if( *traverse == '\\' ) {
+            traverse += 1;
+
+            if ( *traverse == 'n' )      putchar('\n');
+            else if ( *traverse == 't' ) putchar('\t');
+            else if ( *traverse == 'r' ) putchar('\r');
+            else {
+                printf("ERROR %s %d Unknown escape character\n", __FILE__, __LINE__ );
+                putchar('\\');
+                putchar( *traverse );
+            }
+        }
+        if( *traverse == '%' ) {
+            traverse++;
+            switch(*traverse) 
+            { 
+            case 'c' : i = va_arg(arg,int);     //Fetch char argument
+                        putchar(i);
+                        break; 
+
+            case 'd' : i = va_arg(arg,int);         //Fetch Decimal/Integer argument
+                        if(i<0) 
+                        { 
+                            i = -i;
+                            putchar('-'); 
+                        } 
+                        fputs(myprintf_convert(i,10), stdout);
+                        break; 
+
+            case 'o': i = va_arg(arg,unsigned int); //Fetch Octal representation
+                        fputs(myprintf_convert(i,8), stdout);
+                        break; 
+
+            case 's': s = va_arg(arg,char *);       //Fetch string
+                        fputs(s, stdout);
+                        break; 
+
+            case 'x': i = va_arg(arg,unsigned int); //Fetch Hexadecimal representation
+                        fputs(myprintf_convert(i,16), stdout);
+                        break; 
+            }
+        }
+    } 
+
+    //Module 3: Closing argument list to necessary clean-up
+    va_end(arg); 
+} 
+
+
+void myprintf_demo()
+{
+    
+    printf("\n\n");
+    printf("myprintf_demo\n");
+    printf("-----------------------\n");
+
+    myprintf("This is an int: %d another int: %d\nomg ints: %d\n...and finally a string: {%s}\n", 23, 43, 1, "omg");
+
+}
+
+
+
+
+
+
+
+#include <stdio.h>
+
+int snprintf_demo()
+{
+
+    printf("\n\n");
+    printf("snprintf_demo\n");
+    printf("-----------------------\n");
+
+  char buffer [100];
+  int cx;
+
+  cx = snprintf ( buffer, 100, "The half of %d is %d", 60, 60/2 );
+
+  if (cx>=0 && cx<100)      // check returned value
+
+    snprintf ( buffer+cx, 100-cx, ", and the half of that is %d.", 60/2/2 );
+
+  puts (buffer);
+
+  return 0;
+}
+
+
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+char* vigenere_cipher(char *plaintext, const char *key)
+{
+
+    char table[27][27] = {
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "BCDEFGHIJKLMNOPQRSTUVWXYZA",
+    "CDEFGHIJKLMNOPQRSTUVWXYZAB",
+    "DEFGHIJKLMNOPQRSTUVWXYZABC",
+    "EFGHIJKLMNOPQRSTUVWXYZABCD",
+    "FGHIJKLMNOPQRSTUVWXYZABCDE",
+    "GHIJKLMNOPQRSTUVWXYZABCDEF",
+    "HIJKLMNOPQRSTUVWXYZABCDEFG",
+    "IJKLMNOPQRSTUVWXYZABCDEFGH",
+    "JKLMNOPQRSTUVWXYZABCDEFGHI",
+    "KLMNOPQRSTUVWXYZABCDEFGHIJ",
+    "LMNOPQRSTUVWXYZABCDEFGHIJK",
+    "MNOPQRSTUVWXYZABCDEFGHIJKL",
+    "NOPQRSTUVWXYZABCDEFGHIJKLM",
+    "OPQRSTUVWXYZABCDEFGHIJKLMN",
+    "PQRSTUVWXYZABCDEFGHIJKLMNO",
+    "QRSTUVWXYZABCDEFGHIJKLMNOP",
+    "RSTUVWXYZABCDEFGHIJKLMNOPQ",
+    "STUVWXYZABCDEFGHIJKLMNOPQR",
+    "TUVWXYZABCDEFGHIJKLMNOPQRS",
+    "UVWXYZABCDEFGHIJKLMNOPQRST",
+    "VWXYZABCDEFGHIJKLMNOPQRSTU",
+    "WXYZABCDEFGHIJKLMNOPQRSTUV",
+    "XYZABCDEFGHIJKLMNOPQRSTUVW",
+    "YZABCDEFGHIJKLMNOPQRSTUVWX",
+    "ZABCDEFGHIJKLMNOPQRSTUVWXY",
+    };
+
+    int key_length = strlen(key);
+
+    char *ciphertext = (char*)calloc( strlen(plaintext)+1, sizeof(char) );
+    if (!ciphertext) { 
+        printf("ERROR %s %d %s\n", __FILE__, __LINE__, "Couldn't allocate memory"); // Don't look at me like that.  It could happen.
+        exit(1);
+    }
+    int ciphertext_length = 0;
+
+    for ( int i=0; plaintext[i] != '\0'; i+=1 ) {
+        int y = toupper( plaintext[i] ) - 65;
+        int x = toupper( key[i % key_length] ) - 65;
+        ciphertext[ciphertext_length++] = table[y][x];
+    }
+    ciphertext[ciphertext_length] = '\0';
+
+
+    return ciphertext;
+}
+
+void demo_vigenere_cipher()
+{
+
+    printf("\n\n");
+    printf("demo_vigenere_cipher\n");
+    printf("-----------------------\n");
+
+    char plaintext[] = "attackatdawn";
+    char key[] = "LEMON";
+    char *ciphertext = vigenere_cipher(plaintext, key);
+    
+    if ( strcmp(ciphertext, "LXFOPVEFRNHR") ) printf("ERROR");
+    
+    printf("%s\n%s\n", plaintext, ciphertext);
+
+}
+
+
+
+
+
 int main()
 {
-    caesar_cipher_main();
+    caesar_cipher_demo();
     demo_strtok();
     demo_variadic_sum();
-    eulers_method_main();
-    newtons_method_main();
-    // demo_print_stuff_on_one_line();
-    read_file_main();
-    sprint_float3_main();
-    thread_race_main();
-    demo_cpp_vectors();
+    eulers_method_demo();
+    newtons_method_demo();
+
+    print_stuff_on_one_line_demo();
+    read_file_demo();
+    thread_race_demo();
+    cpp_vector_demo();
     // print_this_file();
 
+    // header file demos
     float_header_demo();  // print float limits
     limits_header_demo(); // print integral limits
     stdarg_header_demo(); // va_arg
     stddef_header_demo(); // offsetof
 
     demo_2d_arrays();
-    demo_make_primes();
+    demo_is_prime();
 
     // sdl_use_surfaces();
     // sdl_use_renderer();
 
-    demo_errno ();
-    demo_read_file2();
-    demo_split_string();
+    errno_demo();
+    read_file2_demo();
+    // demo_split_string();
 
     union_of_structs_demo();
+
+    myprintf_demo();
+    sprint_float3_main();
+
+    snprintf_demo();
+
+    demo_vigenere_cipher();
 
     return 0;
 }

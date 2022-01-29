@@ -13,14 +13,14 @@
 
 */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_ttf.h"
+
+// #include <stdio.h>
+// #include <stdlib.h>
 #include <vector>
 #include <string>
 #include <map>
-
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_ttf.h"
 
 void render_text(SDL_Window *window, TTF_Font *font, const char *text, int y_offset, std::map<char, SDL_Texture*> *text_textures )
 {
