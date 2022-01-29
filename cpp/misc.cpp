@@ -1200,7 +1200,6 @@ int sprint_float3_main()
 
 
 
-
 char *myprintf_convert(unsigned int num, int base)
 { 
     static char Representation[]= "0123456789ABCDEF";
@@ -1210,11 +1209,11 @@ char *myprintf_convert(unsigned int num, int base)
     ptr = &buffer[49]; 
     *ptr = '\0'; 
 
-    do 
-    { 
+    do { 
         *--ptr = Representation[num%base]; 
         num /= base; 
-    }while(num != 0); 
+        
+    } while(num != 0); 
 
     return(ptr); 
 }
@@ -1226,64 +1225,87 @@ void myprintf(const char* format,...)
     const char *traverse; 
     int i; 
     char *s; 
-    char escape_char[2];
-    escape_char[0] = '\\';
-    escape_char[0] = '0';
 
-    //Module 1: Initializing Myprintf's arguments 
+    double float_value;
+    int float_decimal_places  = 6;
+    int float_fraction_scaler = 1000000;
+    
     va_list arg; 
     va_start(arg, format); 
 
     for(traverse = format; *traverse != '\0'; traverse++) 
     { 
+        // print regular
         if( *traverse != '%' && *traverse != '\\' ) { 
             putchar(*traverse);
         } 
+        // print escape chars
         if( *traverse == '\\' ) {
             traverse += 1;
 
-            if ( *traverse == 'n' )      putchar('\n');
-            else if ( *traverse == 't' ) putchar('\t');
-            else if ( *traverse == 'r' ) putchar('\r');
+            if      ( *traverse == 'n' ) { putchar('\n'); }
+            else if ( *traverse == 't' ) { putchar('\t'); }
+            else if ( *traverse == 'r' ) { putchar('\r'); }
             else {
                 printf("ERROR %s %d Unknown escape character\n", __FILE__, __LINE__ );
                 putchar('\\');
                 putchar( *traverse );
             }
         }
+        // print numbers in various formats
         if( *traverse == '%' ) {
             traverse++;
-            switch(*traverse) 
-            { 
-            case 'c' : i = va_arg(arg,int);     //Fetch char argument
+            switch (*traverse) { 
+
+            case 'c' : i = va_arg(arg, int);
                         putchar(i);
                         break; 
 
-            case 'd' : i = va_arg(arg,int);         //Fetch Decimal/Integer argument
-                        if(i<0) 
-                        { 
+            case 'd' : i = va_arg(arg, int);
+                        if(i<0){ 
                             i = -i;
                             putchar('-'); 
                         } 
-                        fputs(myprintf_convert(i,10), stdout);
+                        fputs(myprintf_convert(i, 10), stdout);
                         break; 
 
-            case 'o': i = va_arg(arg,unsigned int); //Fetch Octal representation
-                        fputs(myprintf_convert(i,8), stdout);
+            case 'o': i = va_arg(arg, unsigned int);
+                        fputs(myprintf_convert(i, 8), stdout);
                         break; 
 
-            case 's': s = va_arg(arg,char *);       //Fetch string
+            case 's': s = va_arg(arg, char *);
                         fputs(s, stdout);
                         break; 
 
-            case 'x': i = va_arg(arg,unsigned int); //Fetch Hexadecimal representation
-                        fputs(myprintf_convert(i,16), stdout);
+            case 'x': i = va_arg(arg, unsigned int);
+                        fputs(myprintf_convert(i, 16), stdout);
                         break; 
+
+            case 'f': 
+                        float_value = va_arg(arg, double);
+
+                        char sign = '\0';
+                        if (float_value < 0) { sign='-'; float_value = -float_value; } 
+                        int integer_part = trunc(float_value);
+                        int fraction_part = trunc((float_value - integer_part) * float_fraction_scaler);
+
+
+                        if (sign) fputc(sign, stdout);
+                        fputs(myprintf_convert(integer_part, 10), stdout);
+
+                        if (fraction_part != 0){
+                            char *fraction_string = myprintf_convert(fraction_part, 10);
+                            fputc('.', stdout);
+                            for(int i=0; i < ( float_decimal_places - strlen(fraction_string) ); i+=1 ) fputc('0', stdout);
+                            fputs(fraction_string, stdout);
+                        }
+                        break;
             }
+
         }
     } 
 
-    //Module 3: Closing argument list to necessary clean-up
+
     va_end(arg); 
 } 
 
@@ -1295,7 +1317,7 @@ void myprintf_demo()
     printf("myprintf_demo\n");
     printf("-----------------------\n");
 
-    myprintf("This is an int: %d another int: %d\nomg ints: %d\n...and finally a string: {%s}\n", 23, 43, 1, "omg");
+    myprintf("char \t %c\ninteger \t %d\noctal \t %o\nstring \t {%s}\nhex \t %x\nfloat \t %f\n", 'c', 999, 999, "omg", 999, 999.4323423423234 );
 
 }
 
@@ -1416,7 +1438,7 @@ int main()
     eulers_method_demo();
     newtons_method_demo();
 
-    print_stuff_on_one_line_demo();
+    // print_stuff_on_one_line_demo();
     read_file_demo();
     thread_race_demo();
     cpp_vector_demo();
@@ -1439,13 +1461,11 @@ int main()
     // demo_split_string();
 
     union_of_structs_demo();
+    sprint_float3_main();
+    snprintf_demo();
+    demo_vigenere_cipher();
 
     myprintf_demo();
-    sprint_float3_main();
-
-    snprintf_demo();
-
-    demo_vigenere_cipher();
 
     return 0;
 }
