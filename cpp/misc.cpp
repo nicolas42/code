@@ -1,5 +1,10 @@
-// g++ misc.cpp -Iinclude -framework SDL2 -framework SDL2_image -Wfatal-errors -Wall && ./a.out 
+// g++ misc.cpp -Iinclude -Ofast -Weverything -Wno-missing-prototypes -Wno-old-style-cast -Wno-double-promotion
 
+// g++ misc.cpp -Iinclude -Ofast -fPIC -Wall -Wpedantic -Wextra -Wvla -Wshadow -Wfatal-errors -Werror
+
+// clang++ -std=c++11 misc.cpp -Iinclude -Ofast -Weverything -Wno-missing-prototypes -Wno-old-style-cast -Wno-double-promotion -Wfatal-errors
+
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -7,11 +12,10 @@
 char* caesar_cipher(char* text, int shift)
 {
     char* code = (char*)calloc(strlen(text)+1, sizeof(char));
-    int i;
 
     shift %= 26;
 
-    for (i = 0; i < strlen(text); i++) {
+    for (size_t i = 0; i < strlen(text); i++) {
 
         if (text[i] >= 'a' && text[i] <= 'z') {
 
@@ -61,16 +65,96 @@ int caesar_cipher_demo()
 
 
 
+
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+char* vigenere_cipher(char *plaintext, const char *key)
+{
+
+    char table[27][27] = {
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "BCDEFGHIJKLMNOPQRSTUVWXYZA",
+    "CDEFGHIJKLMNOPQRSTUVWXYZAB",
+    "DEFGHIJKLMNOPQRSTUVWXYZABC",
+    "EFGHIJKLMNOPQRSTUVWXYZABCD",
+    "FGHIJKLMNOPQRSTUVWXYZABCDE",
+    "GHIJKLMNOPQRSTUVWXYZABCDEF",
+    "HIJKLMNOPQRSTUVWXYZABCDEFG",
+    "IJKLMNOPQRSTUVWXYZABCDEFGH",
+    "JKLMNOPQRSTUVWXYZABCDEFGHI",
+    "KLMNOPQRSTUVWXYZABCDEFGHIJ",
+    "LMNOPQRSTUVWXYZABCDEFGHIJK",
+    "MNOPQRSTUVWXYZABCDEFGHIJKL",
+    "NOPQRSTUVWXYZABCDEFGHIJKLM",
+    "OPQRSTUVWXYZABCDEFGHIJKLMN",
+    "PQRSTUVWXYZABCDEFGHIJKLMNO",
+    "QRSTUVWXYZABCDEFGHIJKLMNOP",
+    "RSTUVWXYZABCDEFGHIJKLMNOPQ",
+    "STUVWXYZABCDEFGHIJKLMNOPQR",
+    "TUVWXYZABCDEFGHIJKLMNOPQRS",
+    "UVWXYZABCDEFGHIJKLMNOPQRST",
+    "VWXYZABCDEFGHIJKLMNOPQRSTU",
+    "WXYZABCDEFGHIJKLMNOPQRSTUV",
+    "XYZABCDEFGHIJKLMNOPQRSTUVW",
+    "YZABCDEFGHIJKLMNOPQRSTUVWX",
+    "ZABCDEFGHIJKLMNOPQRSTUVWXY",
+    };
+
+    size_t key_length = strlen(key);
+
+    char *ciphertext = (char*)calloc( strlen(plaintext)+1, sizeof(char) );
+    if (!ciphertext) { 
+        printf("ERROR %s %d %s\n", __FILE__, __LINE__, "Couldn't allocate memory"); // Don't look at me like that.  It could happen.
+        exit(1);
+    }
+    int ciphertext_length = 0;
+
+    for ( size_t i=0; plaintext[i] != '\0'; i+=1 ) {
+        int y = toupper( plaintext[i] ) - 65;
+        int x = toupper( key[i % key_length] ) - 65;
+        ciphertext[ciphertext_length++] = table[y][x];
+    }
+    ciphertext[ciphertext_length] = '\0';
+
+
+    return ciphertext;
+}
+
+void vigenere_cipher_demo()
+{
+
+    printf("\n\n");
+    printf("vigenere_cipher_demo\n");
+    printf("-----------------------\n");
+
+    char plaintext[] = "attackatdawn";
+    char key[] = "LEMON";
+    char *ciphertext = vigenere_cipher(plaintext, key);
+    
+    if ( strcmp(ciphertext, "LXFOPVEFRNHR") ) printf("ERROR");
+    
+    printf("%s\n%s\n", plaintext, ciphertext);
+
+}
+
+
+
+
+
+
 #include <stdio.h>
 #include <string.h>
 
-void demo_strtok(void)
+void strtok_demo(void)
 {
 
-    printf(
-        "\n\nSTRTOK DEMO\n"
-        "--------------------------\n"
-    );
+    printf("\n\n");
+    printf("strtok_demo\n");
+    printf("-----------------------\n");
 
     char str[] = 
     "Return Value\n"
@@ -108,10 +192,10 @@ int variadic_sum(int num_args, ...)
    return val;
 }
 
-int demo_variadic_sum(void)
+int variadic_sum_demo(void)
 {
     printf("\n\n");
-    printf("demo_variadic_sum\n");
+    printf("variadic_sum_demo\n");
     printf("-----------------------\n");
 
    printf("Sum of 10, 20 and 30 = %d\n",  variadic_sum(3, 10, 20, 30) );
@@ -148,39 +232,39 @@ int eulers_method_demo()
 
 
 
-    if (0) {
-        // Example: Draw the line y = e^x from its vector field 
-        // dy_dx = y, y(0) = 1
+    //  {
+    //     // Example: Draw the line y = e^x from its vector field 
+    //     // dy_dx = y, y(0) = 1
 
-        float x = 0;
-        float y = 1;
-        float slope = y; 
-        float delta_x = 0.0001;
+    //     double x = 0;
+    //     double y = 1;
+    //     double slope = y; 
+    //     double delta_x = 0.0001;
 
-        for (int i = 0; i < 1.0/delta_x; i += 1)
-        {
+    //     for (int i = 0; i < 1.0/delta_x; i += 1)
+    //     {
 
-            slope = y;
-            y = y + slope * delta_x;
-            x = x + delta_x;
-            printf("x, y, slope: [ %f %f %f ]\n", x, y, slope);
-        }
-        // output 
-        // x, y, slope: [ 1.0000 2.7181 2.7179 ]
-        // yahoo!!
-    }
+    //         slope = y;
+    //         y = y + slope * delta_x;
+    //         x = x + delta_x;
+    //         printf("x, y, slope: [ %f %f %f ]\n", x, y, slope);
+    //     }
+    //     // output 
+    //     // x, y, slope: [ 1.0000 2.7181 2.7179 ]
+    //     // yahoo!!
+    // }
 
 
 
     {   
         // Example: Draw a circle using the vector field < -y, x >
 
-        float x = 1;
-        float y = 0;
-        float dx = -y;
-        float dy = x;
-        float step = 0.0001;
-        #define TWOPI 6.28318530718
+        double x = 1;
+        double y = 0;
+        double dx = -y;
+        double dy = x;
+        double step = 0.0001;
+        const double TWOPI = 6.28318530718;
 
         printf("Drawing a circle using the vector field < -y, x >\n");
         printf("Starting point\n");
@@ -290,7 +374,7 @@ int newtons_method_demo()
 
     // set x to some value, say 0.
     // x = x - ( f(x) / f'(x) )
-    float x = 0;
+    double x = 0;
     for (int i=0; i<10; ++i) {
         x = x - ( (x*x + 5*x -20) / (2*x + 5) );
     }
@@ -329,12 +413,12 @@ void print_stuff_on_one_line_demo()
 #include <stdlib.h>
 
 
-void read_file (char *filename, char **ret_char_array, int *ret_char_length)
+void read_file (char *filename, char **ret_char_array, size_t *ret_char_length)
 {
 	// string
     char *char_array = (char*)malloc(1000);
-	int chars_allocated = 1000;
-	int char_length = 0;
+	size_t chars_allocated = 1000;
+	size_t char_length = 0;
 	
     // open file for reading
 	FILE *f = fopen(filename, "r");
@@ -373,7 +457,7 @@ void read_file (char *filename, char **ret_char_array, int *ret_char_length)
 
 
 
-static void print_escape_char(unsigned char the_char)
+static void print_escape_char( char the_char)
 {
 
     switch (the_char) {
@@ -412,7 +496,7 @@ int read_file_demo()
 	// or "alskjdf""alksjdflka" => "alskjdfalksjdflka"
 
     char *data = NULL; 
-	int length = -1;
+	size_t length;
 	char *filename = (char*)__FILE__; // the filename of this file
 
 	printf("reading %s\n", filename);
@@ -437,6 +521,67 @@ int read_file_demo()
 
 
 
+
+
+extern int errno;
+
+int read_file2 ( const char *filename, char **ret_str, size_t *ret_length)
+{
+	size_t allocated = 1024;
+	size_t length = 0;
+    char *str = (char*)malloc(allocated);
+	
+	FILE *file = fopen(filename, "r");
+    if (!file) { 
+        printf( "ERROR %s:%d %s\n", __FILE__,__LINE__, strerror(errno) ); 
+        exit(0);
+    }
+
+	while (1) {
+		int character = fgetc(file);
+		if (feof(file)) { 
+			str[length++] = '\0'; 
+			break; 
+		}
+        if (length == allocated){
+            allocated *= 2;
+            str = (char*)realloc(str, allocated);
+        }
+		str[length++] = (char)character;
+
+	}
+	fclose(file);
+	
+    *ret_str = str;
+    *ret_length = length;
+
+    return 0;
+}
+
+
+
+void read_file2_demo()
+{
+    printf("\n\n");
+    printf("read_file2_demo\n");
+    printf("-----------------------\n");
+
+    const char *filename = "misc.cpp";
+    char *str;
+    size_t len = 0;
+    read_file2(filename, &str, &len);
+
+    printf("{");
+    for(int i=0;i<100;i+=1) putc( str[i], stdout );
+    printf("}\n");
+}
+
+
+
+
+
+
+
 // Operating on the same data using different threads
 //
 // The intended behaviour of this program is to add 1 to a global variable 
@@ -455,7 +600,7 @@ int read_file_demo()
 static int thread_race_global = 0;
 // static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void* add1_to_global(void* arg)
+void* add1_to_global(void*)
 {
 	// pthread_mutex_lock(&mutex);
 	thread_race_global += 1; // read and then write back it+1 to the same location
@@ -472,24 +617,25 @@ void thread_race_demo()
     printf("-----------------------------------\n");
 
     printf("\n\n");
-	printf("1000 threads adding 1 to a global. Who will win the race?\n");
+	printf("1000 threads are adding 1 to a global.  \n");
+    printf("A result less than 1000 indicates a race condition.\n");
 
-	for (int i = 0; i < 10; i++){
+	for (int thread_race = 0; thread_race < 10; thread_race++){
 		
-		printf("Thread Race %d: ", i);
+		printf("Thread Race %d: ", thread_race);
 
 		thread_race_global = 0;
 		// Launch threads
-		pthread_t tids[1000];
+		pthread_t threads[1000];
 		for (int i = 0; i < 1000; i++) {
 			pthread_attr_t attr;
 			pthread_attr_init(&attr);
-			pthread_create(&tids[i], &attr, add1_to_global, NULL);
+			pthread_create(&threads[i], &attr, add1_to_global, NULL);
 		}
 
 		// Wait for threads
 		for (int i = 0; i < 1000; i++) {
-			pthread_join(tids[i], NULL);
+			pthread_join(threads[i], NULL);
 		}
 
 		printf("Result is %d\n", thread_race_global);
@@ -528,7 +674,7 @@ int cpp_vector_demo()
     integers.push_back(13);
  
     cout << "integers" << endl;
-    for(int i=0;i<integers.size();++i) { cout << integers[i] << '\n'; }
+    for(uint32_t i=0;i<integers.size();++i) { cout << integers[i] << '\n'; }
 
     cout << "\nStrings\n";
 	vector<string> fruits;
@@ -536,7 +682,7 @@ int cpp_vector_demo()
     fruits.push_back("apple");
     fruits.push_back("raspberry");
 
-    for(int i=0;i<fruits.size();++i) { cout << fruits[i] << '\n'; }
+    for(uint32_t i=0;i<fruits.size();++i) { cout << fruits[i] << '\n'; }
 
     cout << "\ndemo for loop, count, other things like this\n";
     cout << "size " << fruits.size() << endl;
@@ -561,6 +707,11 @@ int print_this_file()
         rewind(file);
     }
 }
+
+
+
+
+
 
 
 
@@ -692,6 +843,12 @@ void stddef_header_demo ()
 
 
 
+
+
+
+
+
+
 #include <stdio.h>
 
 void demo_2d_arrays(void)
@@ -743,8 +900,13 @@ void demo_2d_arrays(void)
 #include <stdint.h>
 #include <stdio.h>
 
-int demo_is_prime()
+int is_prime_demo()
 {
+
+    printf("\n\n");
+    printf("is_prime_demo\n");
+    printf("-----------------------\n");
+
   int candidate = 887;
   
   int is_prime = 1;
@@ -765,6 +927,11 @@ int demo_is_prime()
 extern int errno ;
 
 int errno_demo () {
+
+    printf("\n\n");
+    printf("errno_demo\n");
+    printf("-----------------------\n");
+
    FILE *fp;
 
    fp = fopen("file.txt", "r");
@@ -777,59 +944,6 @@ int errno_demo () {
    
    return(0);
 }
-
-
-
-int read_file2 ( const char *filename, char **ret_str, int *ret_length)
-{
-	int allocated = 1024;
-    char *str = (char*)malloc(allocated);
-	int length = 0;
-	
-	FILE *file = fopen(filename, "r");
-    if (!file) { 
-        printf( "ERROR %s %d %s\n", __FILE__,__LINE__, strerror(errno) ); 
-        return errno;
-    }
-
-	while (1) {
-		int character = fgetc(file);
-		if (feof(file)) { 
-			str[length++] = '\0'; 
-			break; 
-		}
-        if (length == allocated){
-            allocated *= 2;
-            str = (char*)realloc(str, allocated);
-        }
-		str[length++] = (char)character;
-
-	}
-	fclose(file);
-	
-    *ret_str = str;
-    *ret_length = length;
-
-    return 0;
-}
-
-
-
-void read_file2_demo()
-{
-    const char *filename = "misc.cpp";
-    char *str;
-    int len = 0;
-    int err = read_file2(filename, &str, &len);
-    if (err) { 
-        printf("%s %d couldn't read file\n", __FILE__,__LINE__);
-        exit(errno);
-    }
-
-    int i;
-    for(i=0;i<100;i+=1) putc( str[i], stdout );
-}
-
 
 
 
@@ -859,15 +973,15 @@ int union_of_structs_demo( )
 
 
     printf("\n\n");
-    printf("Unions Demo\n");
+    printf("union_of_structs_demo\n");
     printf("-----------------------\n");
-
 
     enum { RECTANGLE, CIRCLE, TRIANGLE };
 
-    typedef struct { uint32_t type; float w; float h; }  rectangle_t;
-    typedef struct { uint32_t type; float r; }  circle_t;
-    typedef struct { uint32_t type; float base; float height; }  triangle_t;
+    //               uint32_t type;
+    typedef struct { uint32_t type; double w; double h; }  rectangle_t;
+    typedef struct { uint32_t type; double r; }  circle_t;
+    typedef struct { uint32_t type; double base; double height; }  triangle_t;
 
     // Union of Structs with type
     // The event type is shared with all events
@@ -895,10 +1009,10 @@ int union_of_structs_demo( )
     shapes[2].triangle.height = 5;
 
     for (int i=0;i<shapes_length;i+=1) {
-        float area = 0;
-
+        double area = 0;
+        const double PI = 3.14159;
         if (shapes[i].type == RECTANGLE)    area = shapes[i].rectangle.w * shapes[i].rectangle.h;
-        else if (shapes[i].type == CIRCLE)  area = 3.14159 * shapes[i].circle.r * shapes[i].circle.r;
+        else if (shapes[i].type == CIRCLE)  area = PI * shapes[i].circle.r * shapes[i].circle.r;
         else if (shapes[i].type == TRIANGLE)  area = 0.5 * shapes[i].triangle.base * shapes[i].triangle.height;
 
         printf("shape type %d shape area %f\n", shapes[i].type, area );
@@ -962,7 +1076,7 @@ int union_of_structs_demo( )
 
 
 //     string_array lines = split_string(text,"\n");
-//     for(int i=0;i<lines.length; i++) printf("{%s}\n", lines.data[i]);
+//     for(uint32_t i=0;i<lines.length; i++) printf("{%s}\n", lines.data[i]);
 
 // }
 
@@ -982,7 +1096,7 @@ Use this if you can't print floats - in an embedded system for example.
 #include <stdio.h>
 #include <math.h>
 
-void sprint_float3(char* str, float arg)
+void sprint_float3(char* str, double arg)
 {
 
     // sprint a float to 3 decimal places
@@ -990,13 +1104,13 @@ void sprint_float3(char* str, float arg)
     // from https://stackoverflow.com/questions/905928/using-floats-with-sprintf-in-embedded-c
 
     char *sign;
-    float val;
+    double val;
     int integer_part, fraction_part;
 
     if (arg < 0) { sign=(char*)"-"; val = -arg; } else { sign=(char*)""; val = arg; }
 
-    integer_part = trunc(val);
-    fraction_part = trunc((val - integer_part) * 1000);  // Get fraction then turn into integer (123).
+    integer_part = (int)(val);
+    fraction_part = (int)((val - integer_part) * 1000);  // Get fraction then turn into integer (123).
 
     if (fraction_part == 0){
         sprintf (str, "%s%d", sign, integer_part);
@@ -1034,100 +1148,364 @@ int sprint_float3_main()
 
 int snprintf_demo()
 {
+    // int snprintf ( char * s, size_t n, const char * format, ... );
+    // returns the number of characters written.
+    // returns negative if there's an error.
+    // the output string is not guaranteed to be null terminated.
+    // source: https://www.cplusplus.com/reference/cstdio/snprintf/
+
 
     printf("\n\n");
     printf("snprintf_demo\n");
     printf("-----------------------\n");
 
-  char buffer [100];
-  int cx;
+    char buffer [100];
+    int cx;
 
-  cx = snprintf ( buffer, 100, "The half of %d is %d", 60, 60/2 );
+    cx = snprintf ( buffer, 100, "The half of %d is %d", 60, 60/2 );
 
-  if (cx>=0 && cx<100)      // check returned value
+    if (cx>=0 && cx<100) {
+        size_t remaining_size = (size_t)(100-cx);
+        snprintf ( buffer+cx, remaining_size, ", and the half of that is %d.", 60/2/2 );
+    }
 
-    snprintf ( buffer+cx, 100-cx, ", and the half of that is %d.", 60/2/2 );
-
-  puts (buffer);
+    puts (buffer);
 
   return 0;
 }
 
 
 
+
+
+
+
+
+/*
+** showip.c -- show IP addresses for a host
+** from beej
+*/
+
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
 
-char* vigenere_cipher(char *plaintext, const char *key)
+int showip( const char* hostname )
 {
+    struct addrinfo hints, *res, *p;
+    int status;
+    char ipstr[INET6_ADDRSTRLEN];
 
-    char table[27][27] = {
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-    "BCDEFGHIJKLMNOPQRSTUVWXYZA",
-    "CDEFGHIJKLMNOPQRSTUVWXYZAB",
-    "DEFGHIJKLMNOPQRSTUVWXYZABC",
-    "EFGHIJKLMNOPQRSTUVWXYZABCD",
-    "FGHIJKLMNOPQRSTUVWXYZABCDE",
-    "GHIJKLMNOPQRSTUVWXYZABCDEF",
-    "HIJKLMNOPQRSTUVWXYZABCDEFG",
-    "IJKLMNOPQRSTUVWXYZABCDEFGH",
-    "JKLMNOPQRSTUVWXYZABCDEFGHI",
-    "KLMNOPQRSTUVWXYZABCDEFGHIJ",
-    "LMNOPQRSTUVWXYZABCDEFGHIJK",
-    "MNOPQRSTUVWXYZABCDEFGHIJKL",
-    "NOPQRSTUVWXYZABCDEFGHIJKLM",
-    "OPQRSTUVWXYZABCDEFGHIJKLMN",
-    "PQRSTUVWXYZABCDEFGHIJKLMNO",
-    "QRSTUVWXYZABCDEFGHIJKLMNOP",
-    "RSTUVWXYZABCDEFGHIJKLMNOPQ",
-    "STUVWXYZABCDEFGHIJKLMNOPQR",
-    "TUVWXYZABCDEFGHIJKLMNOPQRS",
-    "UVWXYZABCDEFGHIJKLMNOPQRST",
-    "VWXYZABCDEFGHIJKLMNOPQRSTU",
-    "WXYZABCDEFGHIJKLMNOPQRSTUV",
-    "XYZABCDEFGHIJKLMNOPQRSTUVW",
-    "YZABCDEFGHIJKLMNOPQRSTUVWX",
-    "ZABCDEFGHIJKLMNOPQRSTUVWXY",
-    };
+    // if (argc != 2) {
+    //     fprintf(stderr,"usage: showip hostname\n");
+    //     return 1;
+    // }
+    // char *hostname = argv[1];
+    
 
-    int key_length = strlen(key);
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC; // AF_INET or AF_INET6 to force version
+    hints.ai_socktype = SOCK_STREAM;
 
-    char *ciphertext = (char*)calloc( strlen(plaintext)+1, sizeof(char) );
-    if (!ciphertext) { 
-        printf("ERROR %s %d %s\n", __FILE__, __LINE__, "Couldn't allocate memory"); // Don't look at me like that.  It could happen.
-        exit(1);
+    if ((status = getaddrinfo(hostname, NULL, &hints, &res)) != 0) {
+        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(status));
+        return 2;
     }
-    int ciphertext_length = 0;
 
-    for ( int i=0; plaintext[i] != '\0'; i+=1 ) {
-        int y = toupper( plaintext[i] ) - 65;
-        int x = toupper( key[i % key_length] ) - 65;
-        ciphertext[ciphertext_length++] = table[y][x];
+    printf("IP addresses for %s:\n\n", hostname);
+
+    for(p = res;p != NULL; p = p->ai_next) {
+        void *addr;
+        char ipver[] = "0000";
+
+        // get the pointer to the address itself,
+        // different fields in IPv4 and IPv6:
+        if (p->ai_family == AF_INET) { // IPv4
+            struct sockaddr_in *ipv4 = (struct sockaddr_in *)p->ai_addr;
+            addr = &(ipv4->sin_addr);
+            strcpy(ipver, "IPv4");
+        } else { // IPv6
+            struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)p->ai_addr;
+            addr = &(ipv6->sin6_addr);
+            strcpy(ipver, "IPv6");
+        }
+
+        // convert the IP to a string and print it:
+        inet_ntop(p->ai_family, addr, ipstr, sizeof ipstr);
+        printf("%s: %s\n", ipver, ipstr);
     }
-    ciphertext[ciphertext_length] = '\0';
 
+    freeaddrinfo(res); // free the linked list
 
-    return ciphertext;
+    return 0;
 }
 
-void demo_vigenere_cipher()
+void showip_demo()
 {
 
     printf("\n\n");
-    printf("demo_vigenere_cipher\n");
+    printf("showip_demo\n");
     printf("-----------------------\n");
 
-    char plaintext[] = "attackatdawn";
-    char key[] = "LEMON";
-    char *ciphertext = vigenere_cipher(plaintext, key);
-    
-    if ( strcmp(ciphertext, "LXFOPVEFRNHR") ) printf("ERROR");
-    
-    printf("%s\n%s\n", plaintext, ciphertext);
+    showip("www.google.com");
+}
+
+
+
+
+
+
+
+void reverse_string(char *str)
+{
+  size_t len = strlen(str);
+  size_t i;
+
+  for ( i = 0; i < len / 2; i += 1 ){
+    char c = str[len-1-i]; 
+    str[len-1-i] = str[0+i]; 
+    str[0+i] = c;
+  }
 
 }
+    
+int reverse_string_demo()
+{
+    printf("\n\n");
+    printf("reverse_string_demo\n");
+    printf("-----------------------\n");
+
+    char s[] = "Hannah";
+    reverse_string(s);
+    printf("%s\n", s);
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <stdint.h>
+
+
+typedef struct {
+	uint64_t input;
+	uint64_t output;
+} thread_arg_t;
+
+void* factorial_thread(void* voidptr_arg)
+{
+    thread_arg_t *arg = (thread_arg_t*) voidptr_arg;
+    uint64_t accumulator = 1;
+    uint64_t i;
+
+    for ( i = 1; i <= arg->input; i++) {
+        accumulator *= i;
+    }
+    arg->output = accumulator;
+    
+	pthread_exit(0);
+}
+
+
+void pthreads_demo()
+{
+
+    printf("\n\n");
+    printf("pthreads_demo\n");
+    printf("-----------------------\n");
+
+   time_t t;
+   srand( (uint32_t) time(&t));
+
+
+    #define NUM_THREADS 10
+    uint64_t i;
+	pthread_t threads[NUM_THREADS];
+	thread_arg_t thread_args[NUM_THREADS];
+
+	for ( i = 0; i < NUM_THREADS; i+=1 ) {
+
+		thread_args[i].input = rand() % 30;
+		thread_args[i].output = 0;
+		pthread_attr_t attr;
+		pthread_attr_init(&attr);
+
+		pthread_create(&threads[i], &attr, factorial_thread, &thread_args[i]);
+	}
+
+	// wait for threads to exit, pthread_join blocks
+	for ( i = 0; i < NUM_THREADS; i++) {
+        pthread_join(threads[i], NULL); 
+    }
+
+    for ( i = 0; i < NUM_THREADS; i++) {
+        printf("thread %llu. factorial %llu = %llu\n", i, thread_args[i].input, thread_args[i].output);
+    }
+
+}
+
+
+
+
+
+// Memory Speed Demo 
+
+// It's fastest to write memory 32 bits at a time.
+// Writing individual bytes on my machine is really slow.
+
+// gcc -Iinclude -Ofast memory_allocation_demo.c -Weverything -Wno-missing-prototypes -Wno-cast-align && ./a.out
+
+// Writing 4gb in 8,16,32,64 bytes
+// duration: 1.977829
+// duration: 0.612975
+// duration: 0.515521
+// duration: 0.631118
+
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+double diffclock( clock_t t2, clock_t t1 )
+{
+    return ( (double)(t2 - t1) ) / ( (double)(CLOCKS_PER_SEC) );
+}
+
+
+
+int memory_write_speed_demo()
+{
+
+    printf("\n\n");
+    printf("memory write speed demo\n");
+    printf("-----------------------\n");
+
+    printf("Writing 1gb of memory 8,16,32, and 64 bits at a time on a 64 bit machine. \n");
+    printf("It's fastest to write memory 32 bits at a time.\n\n");
+
+    const uint64_t memory_size = (uint64_t)(1.0*1024.0*1024.0*1024.0); // there's can be an integer overflow here floats aren't used.
+    uint8_t *memory = (uint8_t*)malloc( memory_size * sizeof(uint8_t) );
+
+    clock_t t[10] = {0};
+    uint64_t tl = 0;
+
+    t[tl++] = clock();
+
+    // for(i=0;i<memory_size;i++) memory[i] = (uint8_t)(i % 99);
+    // t[tl++] = clock();
+
+    for(uint64_t i=0;i<memory_size;i++) ((uint8_t*)memory)[i] = (uint8_t)i;
+    for(int i=0;i<100;++i) printf("%02x ", memory[i]);
+    printf("\n\n");
+    t[tl++] = clock();
+
+    for(uint64_t i=0;i<memory_size / 2;i++) ((uint16_t*)memory)[i] = (uint16_t)i;
+    for(int i=0;i<100;++i) printf("%02x ", memory[i]);
+    printf("\n\n");
+    t[tl++] = clock();
+
+    for(uint64_t i=0;i<memory_size / 4;i++) ((uint32_t*)memory)[i] = (uint32_t)i;
+    for(int i=0;i<100;++i) printf("%02x ", memory[i]);
+    printf("\n\n");
+    t[tl++] = clock();
+
+    for(uint64_t i=0;i<memory_size / 8;i++) ((uint64_t*)memory)[i] = (uint64_t)i;
+    for(int i=0;i<100;++i) printf("%02x ", memory[i]);
+    printf("\n\n");
+    t[tl++] = clock();
+
+    for (uint64_t i=1; i<tl; ++i) printf("duration: %f\n",  diffclock( t[i], t[i-1] ) );
+
+
+    return 0;
+}
+
+
+
+
+
+
+
+// gcc demo_endianness.c && ./a.out
+
+#include <stdio.h>
+#include <stdint.h>
+
+int endianness_demo()
+{
+
+    printf("\n\n");
+    printf("endianness_demo\n");
+    printf("-----------------------\n");
+
+    {
+        uint32_t a[2] = {0x01020304, 0x01020304 };
+        uint8_t *b = (uint8_t*)a;
+        int i;
+        // printf("The pointer points to the first byte in the array, independent of the data, apparently. address = %u, %u", a,b);
+
+        printf("The two integers ");
+        for(i=0;i<2;++i){ printf("%08x ", a[i]); }
+        printf("\n");
+
+        printf("are represented in memory as ");
+        for(i=0;i<2*4;++i){ printf("%02x ", b[i]); }
+        printf("\n\n");
+
+        printf("If we declare two integers in an array and then print them out we get the top result.\n");
+        printf("If the memory is cast to an uint8_t*, we get the second result.\n");
+        printf("In most systems x86 systems, multi-byte data is flipped around in memory.\n");
+        printf("Registers are not byte addressable.  So it doesn't make sense comment on their endianness.\n");
+    }
+
+
+    // let's do the same thing again why not?
+    if((0)){
+        uint8_t bytes[8] = {0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+        uint32_t* integers = (uint32_t*)bytes;
+        int i;
+
+        printf("Put some bytes in memory\n");
+        for(i=0;i<2*4;++i){ printf("%02x ", bytes[i]); }
+        printf("\n");
+
+        printf("Retype them as integers and print the array again\n");
+        for(i=0;i<2;++i){ printf("%08x ", integers[i]); }
+        printf("\n");
+
+
+        // why not do it again with laborious bitwise operations
+        printf("Do it again with laborious bitwise operations\n");
+        for(i=0;i<2;++i){ 
+            printf("%02x %02x %02x %02x ", 
+                (uint8_t)((integers[i] & 0xff000000)>>24), 
+                (uint8_t)((integers[i] & 0x00ff0000)>>16),
+                (uint8_t)((integers[i] & 0x0000ff00)>>8), 
+                (uint8_t)((integers[i] & 0x000000ff)>>0) 
+            ); 
+        }
+        printf("\n");
+    }
+
+
+    return 0;
+}
+
 
 
 
@@ -1135,16 +1513,15 @@ void demo_vigenere_cipher()
 int main()
 {
     caesar_cipher_demo();
-    demo_strtok();
-    demo_variadic_sum();
+    strtok_demo();
+    variadic_sum_demo();
     eulers_method_demo();
     newtons_method_demo();
 
-    // print_stuff_on_one_line_demo();
     read_file_demo();
-    thread_race_demo();
+    read_file2_demo();
+
     cpp_vector_demo();
-    // print_this_file();
 
     // header file demos
     float_header_demo();  // print float limits
@@ -1153,16 +1530,28 @@ int main()
     stddef_header_demo(); // offsetof
 
     demo_2d_arrays();
-    demo_is_prime();
+    is_prime_demo();
 
     errno_demo();
-    read_file2_demo();
     // demo_split_string();
+    // print_this_file();
 
     union_of_structs_demo();
     sprint_float3_main();
     snprintf_demo();
-    demo_vigenere_cipher();
+    vigenere_cipher_demo();
+
+    reverse_string_demo();
+    pthreads_demo();
+
+    // // these take a little time
+    // showip_demo();
+    // print_stuff_on_one_line_demo();
+    // thread_race_demo();
+    // memory_write_speed_demo();
+
+
+    endianness_demo();
 
     return 0;
 }

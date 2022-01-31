@@ -3,11 +3,11 @@
 Getting started 
 -------------------
 
-1. Use make 
-2. run the interpreter (a.out)
+1. Run make 
+2. run the sql interpreter (a.out)
 3. copy/past sample.sql into the terminal
-4. sample.png shows the fields that are common to the different tables
-5. Try some structured queries.
+4. look at sample.png. It shows the fields that are common to the different tables
+5. Try some structured queries
 
 
 

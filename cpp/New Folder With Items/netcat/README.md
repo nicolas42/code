@@ -1,6 +1,12 @@
 # netcat
 Simple netcat written in C. Supports ip4, ip6 and hostnames. Client and server mode, tpc and udp available.
 
+# Quickstart instant messenger
+
+./a.out -l 127.0.0.1 3490
+./a.out 127.0.0.1 3490
+
+
 ## Compilation
 ```bash
 git clone https://github.com/guzlewski/netcat
@@ -23,3 +29,4 @@ make
 
 ## License
 Copyright (c) Michał Guźlewski. All rights reserved.
+
