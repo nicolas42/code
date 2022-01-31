@@ -2,7 +2,7 @@ Wow html markup can be inserted directly into markdown files, I think.  Time to 
 
 <img src="cpp/data/lenna.jpg">
 
-<a href="www.google.com">hello</a>
+<a href="http://www.google.com">hello</a>
 
 
 To Do List
