@@ -1,32 +1,4 @@
 
-How to make stuff in #windows redux
-------------------------------------
-
-    call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
-    cl /Zi /I "win64\include" "%1" /link "win64\SDL2.lib" "win64\SDL2main.lib" "win64\SDL2_image.lib" "win64\SDL2_mixer.lib" "win64\SDL2_ttf.lib" "kernel32.lib" "user32.lib" "shell32.lib" /SUBSYSTEM:WINDOWS /OUT:"win64\%1.exe"
-
-
-See imgui example makefiles for more info
-
-
-
-Cross platform defines can be used to make portable code using the c preprocessor.
-
-    #ifdef _SUNOS
-    //code
-    #elseif _LINUX
-    //code
-    #elseif _HPUX
-    //code
-    #elseif _WIN32
-    //code
-    #else
-    #error OS not supported
-    #endif
-
-
-
-
 file descriptors
 
 Input-output system calls in C | Create, Open, Close, Read, Write
@@ -119,14 +91,15 @@ What are these libraries?  I'm pretty sure this came from pkg-config --static
 
 
 
+
+
+
+
+
+
 -------------------------------------------------------------------
-#C/C++ Programming
+#C/C++ Programming, #GCC #Clang #C 
 -------------------------------------------------------------------
-
-
-
-GCC 
--------------------------------------
 
 The details of a c compiler can be found like this 
 
@@ -205,7 +178,7 @@ provide <float.h>, <limits.h>, <stdarg.h>, and <stddef.h>. If you limit yourself
 your code will be portable to any C89 compiler.
 
 
-AR 
+#AR 
 -----------------------------------------------
 
 The 'ar' archive? tool can be used to combine object files.
@@ -220,7 +193,7 @@ Afterwards the single .a file can be linked to the project like this
 
 
 
-XCode doesn't allow pointers to be cast to smaller values
+#XCode doesn't allow pointers to be cast to smaller values
 ---------------------------------------------------------------
 
 This is annoying since void pointers are used to represent all types. :(
@@ -241,7 +214,7 @@ https://stackoverflow.com/questions/22419063/error-cast-from-pointer-to-smaller-
 
 
 
-Joining strings in a macro 
+Joining strings in a #macro 
 ------------------------------
 
 The token ## joins two strings in a macro
@@ -249,20 +222,29 @@ The token ## joins two strings in a macro
 TYPENAME ## _array => TYPENAME_array
 
 
-std::vector is slow
+#std::vector is slow
 ----------------------------------------------
 
 std::vector was almost 3 times slower than a 10 line expanding array implementation. Optimising with -Ofast didn't make any difference.
 
 
-Endianness
+#Endianness
 --------------------------------------
 
-In little endian systems, the *INTEGER* rgba is stored in memory as abgr. 
-If the same things is declared as a four byte array then the order will be the reverse.
 
-For example, the SDL functions operate on images as a series of integers whereas 
-stb image functions operate on the data as a series of bytes 
+Pointers point to the first byte of a 'type'. A 'type' occupies that byte and possibly bytes to the right of it.
+Most modern systems are little endian, meaning that the bytes are stored in the reverse order to how numbers are 
+usually written.  
+
+    The two integers 01020304 01020304 
+    are represented in memory as 04 03 02 01 04 03 02 01 
+
+Little endianness has the benefit that a value is independent of its type size.  That is to say 
+because bytes are stored from left to right, its value doesn't change if the type size is
+increased.
+
+https://uynguyen.github.io/2018/04/30/Big-Endian-vs-Little-Endian/
+https://stackoverflow.com/questions/57154009/how-do-pointers-reference-multi-byte-variables
 
 
 
@@ -318,7 +300,7 @@ source: https://github.com/nothings/stb/blob/master/docs/stb_howto.txt
 
 
 
-#Visual Studio  #msvc
+#Windows and #Visual Studio
 ----------------------------------------------------------------------------------------
 
 Calling visual studio from the command line (cl) requires a script be run beforehand.
@@ -333,13 +315,14 @@ Here are the commands from the last time that I used them.
 
 source: https://hero.handmade.network/forums/code-discussion/t/2691-day_001_with_visual_studio_2017
 
+An example with linking 
 
-The imgui repo has a bunch of examples of how to use visual studio.  Here's one
+    cl /Zi /I "win64\include" "%1" /link "win64\SDL2.lib" "win64\SDL2main.lib" "win64\SDL2_image.lib" "win64\SDL2_mixer.lib" "win64\SDL2_ttf.lib" "kernel32.lib" "user32.lib" "shell32.lib" /SUBSYSTEM:WINDOWS /OUT:"win64\%1.exe"
+
+Example from imgui
 
     mkdir Debug
-
     cl /nologo /Zi /MD /I .. /I ..\.. /I "%WindowsSdkDir%Include\um" /I "%WindowsSdkDir%Include\shared" /I "%DXSDK_DIR%Include" /D UNICODE /D _UNICODE *.cpp ..\imgui_impl_win32.cpp ..\imgui_impl_dx10.cpp ..\..\imgui*.cpp /FeDebug/example_win32_directx10.exe /FoDebug/ /link /LIBPATH:"%DXSDK_DIR%/Lib/x86" d3d10.lib d3dcompiler.lib
-
     del *.pdb *.ilk *.obj 
 
 
@@ -347,6 +330,27 @@ The imgui repo has a bunch of examples of how to use visual studio.  Here's one
 Setting the PATH environmental variable in windows
 -------------------------------------------------------
 SET PATH=%PATH%;c:\users\nick\bin
+
+
+
+Cross platform defines
+---------------------------------------------------
+
+Cross platform defines can be used to make portable code using the c preprocessor.
+
+    #ifdef _SUNOS
+    //code
+    #elseif _LINUX
+    //code
+    #elseif _HPUX
+    //code
+    #elseif _WIN32
+    //code
+    #else
+    #error OS not supported
+    #endif
+
+
 
 
 
@@ -359,7 +363,7 @@ Macos uses -framework
    g++ main.cpp -framework SDL2 -framework SDL2_image -framework SDL2_mixer -framework SDL2_net -framework SDL2_ttf
 
 
-Libraries in linux use -l<lib name> where the library name is the filename without its "lib" prefix 
+Linux uses -l<lib name> where the library name is the filename without its "lib" prefix 
 and without its file extension.  
 
     g++ main.cpp -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_net -lSDL2_ttf
@@ -374,85 +378,7 @@ It can also output the flags necessary to statically link libraries, which is co
 
 
 
-
-Building and Linking C/C++ Repositories in Linux / macos
--------------------------------------------------------------------
-
-To link libraries in macos use the -framework flag, e.g.
-
-   g++ main.cpp -framework SDL2 -framework SDL2_image -framework SDL2_mixer -framework SDL2_net -framework SDL2_ttf
-
-
-To link libraries in Linux use -l<lib name>.  The library name is the filename without its "lib" prefix and without the file extension.  
-
-    g++ main.cpp -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_net -lSDL2_ttf
-
-
-
-
-ctype.h
---------------------------------
-
-This library checks whether characters are in particular sets including 
-whitespace, alphanumeric, numeric, alpha (a-z), printable, punctuation, hexidecimal,
-upper or lowercase, and printable.  It also converts uppercase and lowercase letters
-into one another.
-
-#include <ctype.h>
-
-isalpha isalphanum isdigit islower isupper isspace tolower toupper isxdigit, and others
-
-all take an integer 
-
-
-
-
-VSCode sane ctrl+tab functionality
--------------------------------------
-    // ctrl+` pulls up terminal
-    // Place your key bindings in this file to override the defaults
-    [
-        // ...
-        {
-            "key": "ctrl+tab",
-            "command": "workbench.action.nextEditor"
-        },
-        {
-            "key": "ctrl+shift+tab",
-            "command": "workbench.action.previousEditor"
-        },
-    ]
-
-
-
-
-
-Emacs
---------------------
-in file explorer
-   g refreshes page
-   d selects files for deletion, 
-   x deletes files
-   undo deletion marks with the regular undo
-   ~ selects ~ files for deletion
-   The token # selects # files for deletion
-   
-m-x (un)comment-region
-
-
-
-
-What is a "block device"
-------------------------------
-It appears the main distinction is between a "character device" where a single character can be read
-versus a "block device" where only a block of information can be read, comprising multiple bytes,
-like a 512 byte sector.
-https://unix.stackexchange.com/questions/259193/what-is-a-block-device
-
-
-
--------------------------------------------------------------------
-# Beej's Guide to C Programming 
+#Beej's Guide to C Programming 
 -------------------------------------------------------------------
 
 from https://beej.us/guide/bgc/html/
@@ -505,8 +431,6 @@ Multiple levels of indirection
 
 
 
-
-
 C Operator Precedence
 -------------------------------------------------------------------------
 
@@ -515,24 +439,84 @@ from https://en.cppreference.com/w/c/language/operator_precedence
 
 
 
-Endianness
-----------------------------------------------
 
-Pointers point to the first byte. A "type" occupies that byte and the bytes to the right of it.
-A byte in little-endian will have the same value whether the type is 8,16,32,or 64 bits long.
-A big endian system needs to know the type to write the right value.  
 
-Little endian is the more popular system, except in networking.
 
-https://uynguyen.github.io/2018/04/30/Big-Endian-vs-Little-Endian/
-https://stackoverflow.com/questions/57154009/how-do-pointers-reference-multi-byte-variables
+ctype.h
+--------------------------------
+
+This library checks whether characters are in particular sets including 
+whitespace, alphanumeric, numeric, alpha (a-z), printable, punctuation, hexidecimal,
+upper or lowercase, and printable.  It also converts uppercase and lowercase letters
+into one another.
+
+#include <ctype.h>
+
+isalpha isalphanum isdigit islower isupper isspace tolower toupper isxdigit, and others
+
+all take an integer 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#VSCode sane ctrl+tab functionality
+-------------------------------------
+    // ctrl+` pulls up terminal
+    // Place your key bindings in this file to override the defaults
+    [
+        // ...
+        {
+            "key": "ctrl+tab",
+            "command": "workbench.action.nextEditor"
+        },
+        {
+            "key": "ctrl+shift+tab",
+            "command": "workbench.action.previousEditor"
+        },
+    ]
+
+
+
+
+
+#Emacs
+--------------------
+in file explorer
+   g refreshes page
+   d selects files for deletion, 
+   x deletes files
+   undo deletion marks with the regular undo
+   ~ selects ~ files for deletion
+   The token # selects # files for deletion
+   
+m-x (un)comment-region
+
+
+
+
+What is a "block device"
+------------------------------
+It appears the main distinction is between a "character device" where a single character can be read
+versus a "block device" where only a block of information can be read, comprising multiple bytes,
+like a 512 byte sector.
+https://unix.stackexchange.com/questions/259193/what-is-a-block-device
 
 
 
 
 
 #Python
-----------------------------------------------
+---------------------------------------------------------------
 
 make an executable
 
@@ -544,23 +528,6 @@ datetime filenames in format 20200101_240000
 
     datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-
-
-
-
-Flexbox
------------------------------------------------------------
-#Flexbox actually lays out elements reasonably on the #web.
-
-The flex-grow attribute can be used on child elements
-to make them take up the remaining space in a box.
-
-parent { display: flex; flex-direction: column; } 
-parent > child { flex-grow: 1; /* default 0 */ }
-
-For all my playing with box-sizing: border-box and the like, I haven't found 
-a way to layout html elements in a sane way using CSS.  The only thing that appears 
-to work properly is flexbox.  
 
 
 
@@ -595,8 +562,11 @@ and wait for an incoming connection.
 
 
 
+
+
+------------------------------------------------------------------
 #MacOS
------------------------------------------
+------------------------------------------------------------------
 
 Making a macos .app application
 ----------------------------------------
@@ -627,7 +597,10 @@ source: https://stackoverflow.com/questions/5588064/how-do-i-make-a-mac-terminal
 
 
 
-#Awesome Stuff
+
+
+
+#Awesome
 -------------------------------------------
 
 
@@ -698,6 +671,21 @@ Clone a repo with ssh
 
 
 
+
+Resize and center an image
+-----------------------------
+
+To fit an image box inside another box while maintaining its aspect ratio it can be scaled (multiplied)
+by the minimum ratio of the (max_width / image_width) or the (max_height / image_height).
+
+    var scaler = Math.min(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight);
+    img_size = { width: img.naturalWidth*scaler, height: img.naturalHeight*scaler };
+
+    offset_y = (canvas.height - img_size.height)/2;
+    offset_x = (canvas.width - img_size.width)/2;
+
+
+
 Regular Expressions #regex
 ----------------------------
 
@@ -742,8 +730,35 @@ This will make the subsequent rule takes precedence over the current one. For in
 reference: https://regexone.com/
 
 
+
+
+
+
+
+
+
+
+
+
 #HTML
 --------------------------------------------------------------
+
+
+#Flexbox
+-----------------------------------------------------------
+Flexbox actually lays out elements reasonably on the #web.
+
+The flex-grow attribute can be used on child elements
+to make them take up the remaining space in a box.
+
+parent { display: flex; flex-direction: column; } 
+parent > child { flex-grow: 1; /* default 0 */ }
+
+For all my playing with box-sizing: border-box and the like, I haven't found 
+a way to layout html elements in a sane way using CSS.  The only thing that appears 
+to work properly is flexbox.  
+
+
 
 HTML Forms
 ------------------
@@ -786,17 +801,6 @@ https://stackoverflow.com/questions/3434278/do-dom-tree-elements-with-ids-become
 
 
 
-Resize and center an image
------------------------------
-
-To fit an image box inside another box while maintaining its aspect ratio it can be scaled (multiplied)
-by the minimum ratio of the (max_width / image_width) or the (max_height / image_height).
-
-    var scaler = Math.min(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight);
-    img_size = { width: img.naturalWidth*scaler, height: img.naturalHeight*scaler };
-
-    offset_y = (canvas.height - img_size.height)/2;
-    offset_x = (canvas.width - img_size.width)/2;
 
 
 
@@ -885,6 +889,22 @@ https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key
 
 
 
+-------------------------------------------------------------------
+#Misc
+-------------------------------------------------------------------
+
+I think finaly, the key here is just to define the interfaces to the operating system so they can be redefined later
+
+musl libc can't install on macos it only works on linux distros. 
+tcc appeared to have a standard library, that worked some of the time?
+maybe it was just using the standard one though.
+
+I'm basically just looking for the most basic file IO that can be built upon.
+
+
+https://suckless.org/
+Unix Specification https://pubs.opengroup.org/onlinepubs/7908799/
+
 
 
 
@@ -918,29 +938,6 @@ It appears that atomic things are more efficient than mutexes
 Locks actually suspend thread execution, freeing up cpu resources for other tasks, but incurring in obvious context-switching overhead when stopping/restarting the thread. On the contrary, threads attempting atomic operations don't wait and keep trying until success (so-called busy-waiting), so they don't incur in context-switching overhead, but neither free up cpu resources.
 Summing up, in general atomic operations are faster if contention between threads is sufficiently low. You should definitely do benchmarking as there's no other reliable method of knowing what's the lowest overhead between context-switching and busy-waiting."
 https://stackoverflow.com/questions/15056237/which-is-more-efficient-basic-mutex-lock-or-atomic-integer
-
-
-
-
-
-
-
-
--------------------------------------------------------------------
-#Misc
--------------------------------------------------------------------
-
-I think finaly, the key here is just to define the interfaces to the operating system so they can be redefined later
-
-musl libc can't install on macos it only works on linux distros. 
-tcc appeared to have a standard library, that worked some of the time?
-maybe it was just using the standard one though.
-
-I'm basically just looking for the most basic file IO that can be built upon.
-
-
-https://suckless.org/
-Unix Specification https://pubs.opengroup.org/onlinepubs/7908799/
 
 
 
