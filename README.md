@@ -1,16 +1,61 @@
-Wow html markup can be inserted directly into markdown files, I think.  Time to test.
 
-<img src="cpp/data/lenna.jpg">
+How to make stuff in #windows redux
+------------------------------------
 
-<a href="http://www.google.com">hello</a>
+    call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+    cl /Zi /I "win64\include" "%1" /link "win64\SDL2.lib" "win64\SDL2main.lib" "win64\SDL2_image.lib" "win64\SDL2_mixer.lib" "win64\SDL2_ttf.lib" "kernel32.lib" "user32.lib" "shell32.lib" /SUBSYSTEM:WINDOWS /OUT:"win64\%1.exe"
 
 
-To Do List
+See imgui example makefiles for more info
+
+
+
+Cross platform defines can be used to make portable code using the c preprocessor.
+
+    #ifdef _SUNOS
+    //code
+    #elseif _LINUX
+    //code
+    #elseif _HPUX
+    //code
+    #elseif _WIN32
+    //code
+    #else
+    #error OS not supported
+    #endif
+
+
+
+
+file descriptors
+
+Input-output system calls in C | Create, Open, Close, Read, Write
+* https://www.geeksforgeeks.org/input-output-system-calls-c-create-open-close-read-write/
+* https://en.wikipedia.org/wiki/File_descriptor
+* https://beej.us/guide/bgipc/html/multi/mmap.html
+
+
+Wow html markup can be inserted directly into markdown files, though it's pretty limited.
+
+links
+
+* https://github.com/veandco/go-sdl2
+* https://github.com/felix-pb/cpu_caches
+* https://beej.us/guide/bgipc/html/multi/mmap.html
+
+
+Ideas
 -------------
 
-* learn about compare and swap for concurrency
+Learn about
+
+* file descriptors, memory mapped files
+* how to use emscripten to generate webassembly
+* compare and swap for concurrency
+
+
+* batch rename program
 * n-body simulation in SDL.
-* learn how to use emscripten to generate webassembly
 * render a triangle in openGL
 
 OS 
@@ -23,12 +68,6 @@ implement payment processing system using stripe
 https://github.com/stripe-samples/accept-a-payment/tree/main/prebuilt-checkout-page
 
 
-learn about file descriptors, memory mapped files
-
-Input-output system calls in C | Create, Open, Close, Read, Write
-* https://www.geeksforgeeks.org/input-output-system-calls-c-create-open-close-read-write/
-* https://en.wikipedia.org/wiki/File_descriptor
-* https://beej.us/guide/bgipc/html/multi/mmap.html
 
 
 file system
@@ -57,16 +96,11 @@ like https://wormhole.app/
 
 
 
-
-# Misc
-
-
-Netcat instant messanger
-
-I should see whether this can work over the internet.
+Netcat can be used as an instant messenger.
 
     ./a.out -l 127.0.0.1 3490
     ./a.out 127.0.0.1 3490
+
 
 pl_mpeg
 -----------------------------------
@@ -85,15 +119,9 @@ What are these libraries?  I'm pretty sure this came from pkg-config --static
 
 
 
-
-
-
-Typical stack size in c
---------------------------
-
-Assume cross platform stack size to be 1MB.  It's 8MiB on my laptop.
-
-source: https://softwareengineering.stackexchange.com/questions/310658/how-much-stack-usage-is-too-much
+-------------------------------------------------------------------
+#C/C++ Programming
+-------------------------------------------------------------------
 
 
 
@@ -105,56 +133,13 @@ The details of a c compiler can be found like this
 g++ -dM -E -x c++  /dev/null
 
 This works for clang, gcc, and g++
+
 source: https://stackoverflow.com/questions/44734397/which-c-standard-is-the-default-when-compiling-with-g
 
 
 
-Lessons learnt from turning on all compiler warnings
-----------------------------------------------------
-
-There was one legitimate bug found where a nested for loop was using the same variable 'i'.
-I'm surprised I didn't notice it.  The -Wshadow warning finds this kind of thing.
-
-There were a lot of type and sign type warnings, particularly comparing integers and size_t.
-On my system size_t is basically uint64_t.  I often do a for loop over an array of some particular size.  This compares a signed int32_t with a uin64_t.
-
-Amusing overflows:
-In c, integer literals are assumed to be integers and decimal numbers are assumed to be doubles.
-So using floats with number literals combines floats and doubles.  And doing mathematics with integer literals
-suffers overflows over about 2 billion.
-
-
-Perhaps -Wconversion is a good idea.  C doesn't make a fuss when a 64 bit number is assigned to an 8 bit number without a cast.
-o_o 
-
-
-
-
-
-C89 can be specified basically without a standard library.
--------------------------------------------------------------
-
-C89 allows two types of compilers: hosted and freestanding. The basic difference is that a 
-hosted compiler provides all of the C89 library, while a freestanding compiler need only 
-provide <float.h>, <limits.h>, <stdarg.h>, and <stddef.h>. If you limit yourself to these headers, 
-your code will be portable to any C89 compiler.
-
-
-Electron quick start 
-----------------------------
-
-* Clone the repository
-git clone https://github.com/electron/electron-quick-start
-* Go into the repository
-cd electron-quick-start
-* Install dependencies
-npm install
-* Run the app
-npm start
-
-
-GCC, Clang Options
---------------------------
+Notable compiler options
+---------------------------------
 
     -Wall               more errors 
     -Wpedantic          more errors 
@@ -178,10 +163,46 @@ GCC, Clang Options
 
 
 
-Clang's -Weverything is kind of awesome.  This isn't a bad combination.
+Clang's -Weverything is kind of awesome.  
 
     -Weverything -Wno-missing-prototypes -Wno-old-style-cast -Wno-double-promotion
 
+
+
+
+Stack size limitations:
+
+I'm going to assume that a reasonably cross platform stack size is 1MB.  Apparently this is how much it is on windows.  Incidentally it's 8MiB on my laptop.  source: https://softwareengineering.stackexchange.com/questions/310658/how-much-stack-usage-is-too-much
+
+
+
+Lessons learnt from turning on all compiler warnings
+----------------------------------------------------
+
+There was one legitimate bug found where a nested for loop was using the same variable 'i'.
+I'm surprised I didn't notice it.  The -Wshadow warning finds this kind of thing.
+
+There were a lot of type and sign type warnings, particularly comparing integers and size_t.
+On my system size_t is basically uint64_t.  I often do a for loop over an array of some particular size.  This compares a signed int32_t with a uin64_t.
+
+Amusing overflows:
+In c, integer literals are assumed to be integers and decimal numbers are assumed to be doubles.
+So using floats with number literals combines floats and doubles.  And doing mathematics with integer literals
+suffers overflows over about 2 billion.
+
+
+Perhaps -Wconversion is a good idea.  C doesn't make a fuss when a 64 bit number is assigned to an 8 bit number without a cast.
+o_o 
+
+
+
+#C89 can be specified basically without a standard library.
+-------------------------------------------------------------
+
+C89 allows two types of compilers: hosted and freestanding. The basic difference is that a 
+hosted compiler provides all of the C89 library, while a freestanding compiler need only 
+provide <float.h>, <limits.h>, <stdarg.h>, and <stddef.h>. If you limit yourself to these headers, 
+your code will be portable to any C89 compiler.
 
 
 AR 
@@ -196,17 +217,6 @@ Afterwards the single .a file can be linked to the project like this
     gcc main.c lib.a 
 
 
-
-
-
-
-How to use stb_image with the SDL library
---------------------------------------------
-
-
-This single header file allows stb_image.h to be used easily with SDL code.
-
-https://github.com/DanielGibson/Snippets/blob/master/SDL_stbimage.h
 
 
 
@@ -231,17 +241,6 @@ https://stackoverflow.com/questions/22419063/error-cast-from-pointer-to-smaller-
 
 
 
-How to make stuff in #windows redux
-------------------------------------
-
-    call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
-    cl /Zi /I "win64\include" "%1" /link "win64\SDL2.lib" "win64\SDL2main.lib" "win64\SDL2_image.lib" "win64\SDL2_mixer.lib" "win64\SDL2_ttf.lib" "kernel32.lib" "user32.lib" "shell32.lib" /SUBSYSTEM:WINDOWS /OUT:"win64\%1.exe"
-
-
-See imgui example makefiles for more info
-
-
-
 Joining strings in a macro 
 ------------------------------
 
@@ -256,30 +255,14 @@ std::vector is slow
 std::vector was almost 3 times slower than a 10 line expanding array implementation. Optimising with -Ofast didn't make any difference.
 
 
-Endianness in SDL and stb
+Endianness
 --------------------------------------
 
-The *INTEGER* rgba is stored in memory as abgr in little-endian systems, which is most of them including x86.
-If the same things is declared as a four byte array then the order is exactly as it is defined in the program.
+In little endian systems, the *INTEGER* rgba is stored in memory as abgr. 
+If the same things is declared as a four byte array then the order will be the reverse.
 
-SDL functions operate on images as a series of integers whereas 
+For example, the SDL functions operate on images as a series of integers whereas 
 stb image functions operate on the data as a series of bytes 
-
-
-Cross platform defines 
--------------------------------------
-
-    #ifdef _SUNOS
-    //code
-    #elseif _LINUX
-    //code
-    #elseif _HPUX
-    //code
-    #elseif _WIN32
-    //code
-    #else
-    #error OS not supported
-    #endif
 
 
 
@@ -335,7 +318,7 @@ source: https://github.com/nothings/stb/blob/master/docs/stb_howto.txt
 
 
 
-Compiling Stuff on Windows Using Visual Studio on the command line   #visualstudio 
+#Visual Studio  #msvc
 ----------------------------------------------------------------------------------------
 
 Calling visual studio from the command line (cl) requires a script be run beforehand.
@@ -361,16 +344,39 @@ The imgui repo has a bunch of examples of how to use visual studio.  Here's one
 
 
 
-
-
 Setting the PATH environmental variable in windows
 -------------------------------------------------------
 SET PATH=%PATH%;c:\users\nick\bin
 
 
 
-Building and Linking C/C++ Repositories in Linux / macos
+
+#Linking
 -------------------------------------------------------------------------
+
+Macos uses -framework
+
+   g++ main.cpp -framework SDL2 -framework SDL2_image -framework SDL2_mixer -framework SDL2_net -framework SDL2_ttf
+
+
+Libraries in linux use -l<lib name> where the library name is the filename without its "lib" prefix 
+and without its file extension.  
+
+    g++ main.cpp -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_net -lSDL2_ttf
+
+
+pkg-config is a useful utility that gives the linking flags that are required for different libraries, if they're more complicated.
+It can also output the flags necessary to statically link libraries, which is cool.
+
+    pkg-config --libs sdl2 opengl
+
+
+
+
+
+
+Building and Linking C/C++ Repositories in Linux / macos
+-------------------------------------------------------------------
 
 To link libraries in macos use the -framework flag, e.g.
 
@@ -381,26 +387,6 @@ To link libraries in Linux use -l<lib name>.  The library name is the filename w
 
     g++ main.cpp -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_net -lSDL2_ttf
 
-
-
-
-pkg-config is a useful utility that gives the linking flags that are required for different libraries, if they're more complicated.
-It can also output the flags necessary to statically link libraries, which is cool.
-
-   pkg-config --libs sdl2 opengl
-
-
-
-.A libraries (archive)
-
-.a libraries are a bunch of .o objects stuck together.  They can easily be linked on the command line by just putting in their name like a .c or a .o file.
-
-   g++ main.c lib.a
-
-
-.a libraries can be produced with the ar tool.
-
-   ar rcs lib.a  sth.o sthelse.o
 
 
 
@@ -423,28 +409,20 @@ all take an integer
 
 VSCode sane ctrl+tab functionality
 -------------------------------------
-// ctrl+` pulls up terminal
-// Place your key bindings in this file to override the defaults
-[
-    // ...
-    {
-        "key": "ctrl+tab",
-        "command": "workbench.action.nextEditor"
-    },
-    {
-        "key": "ctrl+shift+tab",
-        "command": "workbench.action.previousEditor"
-    },
-]
+    // ctrl+` pulls up terminal
+    // Place your key bindings in this file to override the defaults
+    [
+        // ...
+        {
+            "key": "ctrl+tab",
+            "command": "workbench.action.nextEditor"
+        },
+        {
+            "key": "ctrl+shift+tab",
+            "command": "workbench.action.previousEditor"
+        },
+    ]
 
-
-
-
-
-
-* version control system 
-* notepad  scrolling text and editing 
-* opengl draw shapes 
 
 
 
@@ -473,9 +451,9 @@ https://unix.stackexchange.com/questions/259193/what-is-a-block-device
 
 
 
------------------------------------------------------------------------------------------
+-------------------------------------------------------------------
 # Beej's Guide to C Programming 
------------------------------------------------------------------------------------------
+-------------------------------------------------------------------
 
 from https://beej.us/guide/bgc/html/
 
@@ -498,6 +476,9 @@ Attempting to change an immutable string will result in the program crashing, wh
 
 16.1.1.1 const and Pointers
 ---------------------------------
+
+Const makes things unmodifiable but it's a little confusing how the keyword actually works.  The general rule appears to be that const applies to the operator to its left.
+But, if it's the leftmost token then it applies to the type on the right (this is the most common way that it's used actually).
 
 Both of these examples result in the content itself being unmodifiable.
 
@@ -524,93 +505,13 @@ Multiple levels of indirection
 
 
 
----------------------------------------------------------------------------------------
-# System calls and standard libraries
----------------------------------------------------------------------------------------
-
-I think finaly, the key here is just to define the interfaces to the operating system so they can be redefined later
-
-musl libc can't install on macos it only works on linux distros. 
-tcc appeared to have a standard library, that worked some of the time?
-maybe it was just using the standard one though.
-
-I'm basically just looking for the most basic file IO that can be built upon.
-
-
-https://suckless.org/
-Unix Specification https://pubs.opengroup.org/onlinepubs/7908799/
-
-
-
-
-
-
-Plan 9
--------------------------------------------
-from https://aiju.de/plan_9/plan9-syscalls
-plan 9 was what unix wanted to be.  
-it takes the metaphor of devices as being represented as a heirarchical system of files 
-to its extreme 
-networking is done through a file like interface
-proceedures have their own filespace
-some of these ideas have been picked up by other systems, like the proc directory 
-for proceedure information 
-It also had a low number of system calls.
-
-
-Input-output system calls in C | Create, Open, Close, Read, Write
-https://www.geeksforgeeks.org/input-output-system-calls-c-create-open-close-read-write/
-
-https://en.wikipedia.org/wiki/C_POSIX_library
-fcnt
-
-https://en.wikipedia.org/wiki/File_descriptor
-
-https://en.wikipedia.org/wiki/Unistd.h
-In the C and C++ programming languages, unistd.h is the name of the header file that provides access to the POSIX operating system API. It is defined by the POSIX.1 standard, the base of the Single Unix Specification, and should therefore be available in any POSIX-compliant operating system and compiler. For instance, this includes Unix and Unix-like operating systems, such as GNU variants, distributions of Linux and BSD, and macOS, and compilers such as GCC and LLVM.
-
-On Unix-like systems, the interface defined by unistd.h is typically made up largely of system call wrapper functions such as fork, pipe and I/O primitives (read, write, close, etc.).
-
-
-Jonathan Blow on how an operating system should work
-https://www.youtube.com/watch?v=k0uE_chSnV8
-programs are sandboxed by default 
-can't look at hte file system 
-basic communication mechanism between processes 
-processes communicat by direct memory mapping 
-map a mutual buffer 
-memcpy data into 
-
-
-standard library in macos?
-
-there's also a libc.a under a gcc subdirectory.
-/usr/include/c++/4.2.1/cstdio
-
-
-
-
-
-
-
-
-
-Nuklear GUI single header file library
------------------------------------------------------
-
-Nuklear is a single header library GUI toolkit written in C89 with no dependencies.
-https://github.com/Immediate-Mode-UI/Nuklear
-
-The demo section works well but the large example requires glew which I couldn't install.
-
-
 
 
 C Operator Precedence
-----------------------------------------------------------------------------------
+-------------------------------------------------------------------------
+
 How am I supposed to remember this?  It's better just to use parentheses.
 from https://en.cppreference.com/w/c/language/operator_precedence
-
 
 
 
@@ -630,7 +531,7 @@ https://stackoverflow.com/questions/57154009/how-do-pointers-reference-multi-byt
 
 
 
-# Python
+#Python
 ----------------------------------------------
 
 make an executable
@@ -647,9 +548,9 @@ datetime filenames in format 20200101_240000
 
 
 
-Flexbox #web
+Flexbox
 -----------------------------------------------------------
-Flexbox actually lays out elements reasonably on the web.
+#Flexbox actually lays out elements reasonably on the #web.
 
 The flex-grow attribute can be used on child elements
 to make them take up the remaining space in a box.
@@ -663,20 +564,8 @@ to work properly is flexbox.
 
 
 
-#CSS link tag  #web
-----------------------
-I always forget this
 
-    <LINK rel="stylesheet" href="../css/reset.css">
-
-
-HTML element ids automatically become global variables in javascript. !!!!!!!!!!
-https://stackoverflow.com/questions/3434278/do-dom-tree-elements-with-ids-become-global-variables
-
-
-
-
-Cryptography  #crypto
+#Cryptography
 -----------------------
 
 RSA (Rivest–Shamir–Adleman) is a public-key cryptosystem that is widely used for secure data transmission. 
@@ -706,9 +595,246 @@ and wait for an incoming connection.
 
 
 
+#MacOS
+-----------------------------------------
 
-Netcat (nc)  #bash
----------------------
+Making a macos .app application
+----------------------------------------
+Create a folder named "YourApplication.app". 
+Put your script file directly in this folder.  Its name must be the same name as the application folder 
+but without extension. In the case described here the script file must be named "YourApplication".
+https://apple.stackexchange.com/questions/224394/how-to-make-a-mac-os-x-app-with-a-shell-script
+
+My script didn't run when it attempted to access terminal input like argc or argv.
+
+
+Show/hide hidden files in macos
+-------------------------------------------
+In Finder, open up your Macintosh HD folder. Press Command+Shift+Dot. Your hidden files will become visible. Repeat step 2 to hide them again
+
+
+
+Alert from macos terminal 
+--------------------------
+
+Put this after a long command to be alerted when it's done.
+
+osascript -e 'tell app "System Events" to display dialog "Hello World"'
+
+source: https://stackoverflow.com/questions/5588064/how-do-i-make-a-mac-terminal-pop-up-alert-applescript
+
+
+
+
+
+#Awesome Stuff
+-------------------------------------------
+
+
+https://github.com/DanielGibson/Snippets/blob/master/SDL_stbimage.h
+This single header file allows stb_image.h to be used easily with SDL code.
+
+* handmade hero
+* imgui   small c++ GUI library
+* stb
+* darknet
+* uwimg
+* nanogui-sdl
+* wyoos
+* mkernel
+* exfat
+* fasm - good community
+
+* pl_mpeg mpeg1 player in SDL and opengl https://github.com/phoboslab/pl_mpeg
+* suckless http://dwm.suckless.org/
+* fabrice bellard - made FFmpeg, QEMU, and the Tiny C Compiler
+* aes https://github.com/kokke/tiny-AES-c
+* netcat https://github.com/guzlewski/netcat
+* beej's guide to network sockets http://beej.us/guide/bgnet/html/
+* single file libraries in C/C++  https://github.com/nothings/single_file_libs
+* sqlite https://sqlite.org/ is an SQL engine that is released as an amalgamated (single) c file.  I love them so much.
+* busybox https://github.com/mirror/busybox/
+* lemoda.net https://www.lemoda.net/  lots of C and other code
+
+* How 3D video games do graphics - Jonathan Blow https://youtu.be/bGe-d09Nc_M?t=3600
+* Mr P Solver https://www.youtube.com/c/MrPSolver/videos
+* Tired Amateur https://www.youtube.com/channel/UCeT6NdimLKHXlkQgrbcg6XQ
+* jdh - made bootable tetris https://www.youtube.com/channel/UCUzQJ3JBuQ9w-po4TXRJHiA
+
+* ganga.js
+* three.js
+* http://underscorejs.org/  seems like a good javascript library
+* electron quick start https://github.com/electron/electron-quick-start
+
+
+
+
+
+
+
+
+#Lorem Ipsum 
+----------------------
+
+This passage is commonly used so text content doesn't distract from design.
+
+"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+
+source https://www.lipsum.com/
+
+
+
+#Git tricks
+-------------------
+
+Remove all files from staging area 
+
+    git reset
+
+Clone a repo with ssh 
+
+    git clone git@github.com:username/repo
+
+
+
+
+Regular Expressions #regex
+----------------------------
+
+    abc…	Letters
+    123…	Digits
+    \d	Any Digit
+    \D	Any Non-digit character
+    .	Any Character
+    \.	Period
+    [abc]	Only a, b, or c
+    [^abc]	Not a, b, nor c
+    [a-z]	Characters a to z
+    [0-9]	Numbers 0 to 9
+    \w	Any Alphanumeric character
+    \W	Any Non-alphanumeric character
+    {m}	m Repetitions
+    {m,n}	m to n Repetitions
+    *	Zero or more repetitions
+    +	One or more repetitions
+    ?	Optional character
+    \s	Any Whitespace
+    \S	Any Non-whitespace character
+    ^…$	Starts and ends
+    (…)	Capture Group
+    (a(bc))	Capture Sub-group
+    (.*)	Capture all
+    (abc|def)	Matches abc or def
+
+refer to a match using \1 \2...
+
+Laziness and greediness:
+
+To make a matching sequence non-greedy (lazy?), put '?' after it.
+
+This will make the subsequent rule takes precedence over the current one. For instance in 
+
+    ".*?\d*"
+
+(\d*) will take precedence over the lazy wildcard characters (.*?).
+
+
+reference: https://regexone.com/
+
+
+#HTML
+--------------------------------------------------------------
+
+HTML Forms
+------------------
+
+HTML forms make GET and POST requests.  
+
+A server can be made to respond appropriately to this information.
+The information itself is encoded as name=value pairs that come from the form.
+
+The html tags in the form must have name attribute and value attributes.
+
+The action is just a string which the server determines how to use along with the name=value information. 
+
+    <form action="/action_page.php" method="get">
+    <label for="fname">First name:</label>
+    <input type="text" id="fname" name="fname"><br><br>
+    <label for="lname">Last name:</label>
+    <input type="text" id="lname" name="lname"><br><br>
+    <input type="submit" value="Submit">
+    </form>
+
+
+POST requests have no limitations on data length https://www.w3schools.com/tags/ref_httpmethods.asp.
+
+https://www.w3schools.com/tags/att_form_method.asp
+
+
+CSS link tag
+----------------------
+I always forget how to add a css file in html.
+
+    <LINK rel="stylesheet" href="../css/reset.css">
+
+
+HTML element ids automatically become global variables in javascript. !!!!!!!!!!
+https://stackoverflow.com/questions/3434278/do-dom-tree-elements-with-ids-become-global-variables
+
+
+
+
+
+
+Resize and center an image
+-----------------------------
+
+To fit an image box inside another box while maintaining its aspect ratio it can be scaled (multiplied)
+by the minimum ratio of the (max_width / image_width) or the (max_height / image_height).
+
+    var scaler = Math.min(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight);
+    img_size = { width: img.naturalWidth*scaler, height: img.naturalHeight*scaler };
+
+    offset_y = (canvas.height - img_size.height)/2;
+    offset_x = (canvas.width - img_size.width)/2;
+
+
+
+
+#Bash 
+-------------------------------
+
+time a process
+
+    time ./a.out
+
+Screen
+
+The command "screen" makes a new process with a new terminal screen. 
+* detatch using ctrl+a d. 
+* exit using exit.
+* list the screens (with their ids) with "screen -ls". 
+* reattach with "screen -r <id>". 
+* a partial id can be used in place of the full id.
+
+    screen
+    screen -ls
+    screen -r <screen id>
+
+
+Nohup
+
+Nohup runs a processes in the background
+
+    nohup <command> & 
+
+Its stdout is redirected to a file called nohup.out.  
+The process should be killed when the nohup.out file is deleted.
+
+
+
+#Netcat (nc)
+---------------------------
 Net cat is a handy utility for tcp and udp stuff.
 The examples below were tested on macos 10.12
 
@@ -742,234 +868,11 @@ and waits for someone else to connect.
     Host: www.rssweather.com
 
 
-# MacOS
-
-#macos
-
-Making a macos .app application
--------------------------------
-Create a folder named "YourApplication.app". 
-Put your script file directly in this folder.  Its name must be the same name as the application folder 
-but without extension. In the case described here the script file must be named "YourApplication".
-https://apple.stackexchange.com/questions/224394/how-to-make-a-mac-os-x-app-with-a-shell-script
-
-My script didn't run when it attempted to access terminal input like argc or argv.
-
-
-Show/hide hidden files in macos
--------------------------------------------
-In Finder, open up your Macintosh HD folder. Press Command+Shift+Dot. Your hidden files will become visible. Repeat step 2 to hide them again
-
-
-
-
-
-#Awesome
--------------------------------
-
-https://github.com/mirror/busybox/
-
-http://underscorejs.org/  seems like a good javascript library
-
-* https://www.lemoda.net/  lots of C and other code
-
-How 3D video games do graphics - Jonathan Blow https://youtu.be/bGe-d09Nc_M?t=3600
-
-Mr P Solver https://www.youtube.com/c/MrPSolver/videos
-
-Tired Amateur https://www.youtube.com/channel/UCeT6NdimLKHXlkQgrbcg6XQ
-
-handmade hero
-imgui   Imgui is a small c++ GUI library
-stb
-darknet
-uwimg
-nanogui-sdl
-wyoos
-mkernel
-ganga.js
-three.js
-exfat
-fasm - good community
-
-pl_mpeg mpeg1 player in SDL and opengl https://github.com/phoboslab/pl_mpeg
-
-suckless http://dwm.suckless.org/
-
-fabrice bellard - made FFmpeg, QEMU, and the Tiny C Compiler
-
-aes https://github.com/kokke/tiny-AES-c
-
-netcat https://github.com/guzlewski/netcat
-
-beej's guide to network sockets http://beej.us/guide/bgnet/html/
-
-jdh - made bootable tetris https://www.youtube.com/channel/UCUzQJ3JBuQ9w-po4TXRJHiA
-
-single file libraries in C/C++  https://github.com/nothings/single_file_libs
-
-
-
-
-#SQLite 
-----------------
-omg sqlite https://sqlite.org/ is encapsulated in a single c file.  I love them so much.
-
-
-
-#Lorem Ipsum 
-----------------------
-This is a passage that is commonly used in design so the text itself doesn't distract the user.
-
-"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-
-source https://www.lipsum.com/
-
-
-
-#Git tricks
--------------------
-
-remove all files from staging area 
-
-    git reset
-
-clone a repo with ssh 
-
-    git clone git@github.com:username/repo
-
-
-
-
-Regular Expressions #regex
-----------------------------
-abc…	Letters
-123…	Digits
-\d	Any Digit
-\D	Any Non-digit character
-.	Any Character
-\.	Period
-[abc]	Only a, b, or c
-[^abc]	Not a, b, nor c
-[a-z]	Characters a to z
-[0-9]	Numbers 0 to 9
-\w	Any Alphanumeric character
-\W	Any Non-alphanumeric character
-{m}	m Repetitions
-{m,n}	m to n Repetitions
-*	Zero or more repetitions
-+	One or more repetitions
-?	Optional character
-\s	Any Whitespace
-\S	Any Non-whitespace character
-^…$	Starts and ends
-(…)	Capture Group
-(a(bc))	Capture Sub-group
-(.*)	Capture all
-(abc|def)	Matches abc or def
-
-refer to a match \1 \2...
-
-reference: https://regexone.com/
-
-Greediness: 
-Putting ? after a quantifier makes it non-greedy (or lazy?).  This means that 
-the subsequent rule takes precedence. For instance
-
-".*?\d*"
-
-The digits (\d*) will take precedence over the lazy wildcard characters (.*?).
-
-
-
-
-HTML Forms  #web
-------------------
-https://www.w3schools.com/tags/att_form_method.asp
-
-
-HTML forms make GET and POST requests.  A server can be made to respond appropriately to this information.
-The information itself is encoded as name=value pairs that come from the form.
-
-The html tags in the form must have name attribute and value attributes.
-
-The action is just a string.  The server determines how to use it along with the name=value information. 
-
-    <form action="/action_page.php" method="get">
-    <label for="fname">First name:</label>
-    <input type="text" id="fname" name="fname"><br><br>
-    <label for="lname">Last name:</label>
-    <input type="text" id="lname" name="lname"><br><br>
-    <input type="submit" value="Submit">
-    </form>
-
-
-POST requests have no limitations on data length https://www.w3schools.com/tags/ref_httpmethods.asp.
-
-
-
-
-Alert from macos terminal 
---------------------------
-
-Put this after a long command to be alerted when it's done.
-
-osascript -e 'tell app "System Events" to display dialog "Hello World"'
-
-source: https://stackoverflow.com/questions/5588064/how-do-i-make-a-mac-terminal-pop-up-alert-applescript
-
-
-
-Resize and center an image
------------------------------
-
-To fit an image box inside another box while maintaining its aspect ratio it can be scaled (multiplied)
-by the minimum ratio of the (max_width / image_width) or the (max_height / image_height).
-
-    var scaler = Math.min(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight);
-    img_size = { width: img.naturalWidth*scaler, height: img.naturalHeight*scaler };
-
-    offset_y = (canvas.height - img_size.height)/2;
-    offset_x = (canvas.width - img_size.width)/2;
-
-
-
-Bash
--------------------------------
-
-time a process
-
-    time ./a.out
-
-Screen
-
-The command "screen" makes a new process with a new terminal screen. 
-* detatch using ctrl+a d. 
-* exit using exit.
-* list the screens (with their ids) with "screen -ls". 
-* reattach with "screen -r <id>". 
-* a partial id can be used in place of the full id.
-
-    screen
-    screen -ls
-    screen -r <screen id>
-
-
-Nohup
-
-Nohup runs a processes in the background
-
-    nohup <command> & 
-
-Its stdout is redirected to a file called nohup.out.  
-The process should be killed when the nohup.out file is deleted.
-
-
 
 Make an #SSH key 
 --------------------------------------------
 
-ssh-keygen -o
+    ssh-keygen -o
 
 follow the prompts
 give the public ssh key to the other party
@@ -980,59 +883,6 @@ https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key
 
 
 
-Compiling Stuff on Windows Using Visual Studio on the command line   #visualstudio 
-----------------------------------------------------------------------------------------
-
-Calling visual studio from the command line (cl) requires a script be run beforehand.
-It's called vcvarsall.bat and it moves around every new version so you'll have to find it.
-It's buried somewhere in the visual studio folder, which itself will change. yay :)
-
-Here are the commands from the last time that I used them.
-
-     call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
-
-     cl /nologo /Zi /MD main.c
-
-
-source: https://hero.handmade.network/forums/code-discussion/t/2691-day_001_with_visual_studio_2017
-
-
-The imgui repo has a bunch of examples of how to use visual studio.  Here's one
-
-    mkdir Debug
-
-    cl /nologo /Zi /MD /I .. /I ..\.. /I "%WindowsSdkDir%Include\um" /I "%WindowsSdkDir%Include\shared" /I "%DXSDK_DIR%Include" /D UNICODE /D _UNICODE *.cpp ..\imgui_impl_win32.cpp ..\imgui_impl_dx10.cpp ..\..\imgui*.cpp /FeDebug/example_win32_directx10.exe /FoDebug/ /link /LIBPATH:"%DXSDK_DIR%/Lib/x86" d3d10.lib d3dcompiler.lib
-
-    del *.pdb *.ilk *.obj 
-
-
-
-
-
-Setting the PATH environmental variable in windows
--------------------------------------------------------
-SET PATH=%PATH%;c:\users\nick\bin
-
-
-
-Building and Linking C/C++ Repositories in Linux / macos   #pkg-config
--------------------------------------------------------------------------
-
-Libraries in macos use the -framework option e.g.
-
-   g++ main.cpp -framework SDL2 -framework SDL2_image -framework SDL2_mixer -framework SDL2_net -framework SDL2_ttf
-
-
-Libraries in linux use -l<lib name> where the library name is the filename without its "lib" prefix 
-and without its file extension.  
-
-    g++ main.cpp -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_net -lSDL2_ttf
-
-
-pkg-config is a useful utility that gives the linking flags that are required for different libraries, if they're more complicated.
-It can also output the flags necessary to statically link libraries, which is cool.
-
-    pkg-config --libs sdl2 opengl
 
 
 
@@ -1071,4 +921,78 @@ https://stackoverflow.com/questions/15056237/which-is-more-efficient-basic-mutex
 
 
 
+
+
+
+
+
+-------------------------------------------------------------------
+#Misc
+-------------------------------------------------------------------
+
+I think finaly, the key here is just to define the interfaces to the operating system so they can be redefined later
+
+musl libc can't install on macos it only works on linux distros. 
+tcc appeared to have a standard library, that worked some of the time?
+maybe it was just using the standard one though.
+
+I'm basically just looking for the most basic file IO that can be built upon.
+
+
+https://suckless.org/
+Unix Specification https://pubs.opengroup.org/onlinepubs/7908799/
+
+
+
+
+Plan 9
+-------------------------------------------
+from https://aiju.de/plan_9/plan9-syscalls
+
+plan 9 was what unix wanted to be.  
+it took the metaphor of devices as being represented as a heirarchical system of files 
+to its extreme 
+networking is done through a file like interface
+proceedures have their own filespace
+some of these ideas have been picked up by other systems, like the proc directory 
+for proceedure information 
+It also had a low number of system calls.
+
+
+https://en.wikipedia.org/wiki/C_POSIX_library
+fcnt
+
+https://en.wikipedia.org/wiki/File_descriptor
+
+https://en.wikipedia.org/wiki/Unistd.h
+In the C and C++ programming languages, unistd.h is the name of the header file that provides access to the POSIX operating system API. It is defined by the POSIX.1 standard, the base of the Single Unix Specification, and should therefore be available in any POSIX-compliant operating system and compiler. For instance, this includes Unix and Unix-like operating systems, such as GNU variants, distributions of Linux and BSD, and macOS, and compilers such as GCC and LLVM.
+
+On Unix-like systems, the interface defined by unistd.h is typically made up largely of system call wrapper functions such as fork, pipe and I/O primitives (read, write, close, etc.).
+
+
+Jonathan Blow on how an operating system should work
+https://www.youtube.com/watch?v=k0uE_chSnV8
+programs are sandboxed by default 
+can't look at hte file system 
+basic communication mechanism between processes 
+processes communicat by direct memory mapping 
+map a mutual buffer 
+memcpy data into 
+
+
+Where's the standard library in macos?
+
+there's also a libc.a under a gcc subdirectory.
+/usr/include/c++/4.2.1/cstdio
+
+
+
+
+Nuklear GUI single header file library
+-----------------------------------------------------
+
+Nuklear is a single header library GUI toolkit written in C89 with no dependencies.
+https://github.com/Immediate-Mode-UI/Nuklear
+
+The demo section works well but the large example requires glew which I couldn't install.
 

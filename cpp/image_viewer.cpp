@@ -506,12 +506,11 @@ int main( int argc, char* argv[] )
                 }
                 
                 if ( event.key.keysym.sym == SDLK_f ) {
-                    if (is_fullscreen) {
-                        SDL_SetWindowFullscreen(window, 0);
-                    } else {
-                        SDL_SetWindowFullscreen( window, SDL_WINDOW_FULLSCREEN_DESKTOP );
-                    }
-                    is_fullscreen = !is_fullscreen;
+                    SDL_SetWindowFullscreen( window, SDL_WINDOW_FULLSCREEN_DESKTOP );
+                }
+
+                if ( event.key.keysym.sym == SDLK_ESCAPE ) {
+                    SDL_SetWindowFullscreen(window, 0);
                 }
             }
         }
