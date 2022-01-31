@@ -1,7 +1,5 @@
 // g++ misc.cpp -Iinclude -framework SDL2 -framework SDL2_image -Wfatal-errors -Wall && ./a.out 
 
-
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -121,6 +119,8 @@ int demo_variadic_sum(void)
 
    return 0;
 }
+
+
 
 
 #include <stdio.h>
@@ -758,174 +758,6 @@ int demo_is_prime()
 }
 
 
-
-
-
-
-
-#include <stdio.h>
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
-
-// #define PRINT_ERROR(ERR) printf("ERROR %s %d %s\n", __FILE__, __LINE__, ERR)
-
-void print_event(SDL_Event event)
-{
-    if ( event.type == SDL_AUDIODEVICEADDED ) printf("SDL_AUDIODEVICEADDED\n");
-    if ( event.type == SDL_AUDIODEVICEREMOVED ) printf("SDL_AUDIODEVICEREMOVED\n");
-    if ( event.type == SDL_CONTROLLERAXISMOTION ) printf("SDL_CONTROLLERAXISMOTION\n");
-    if ( event.type == SDL_CONTROLLERBUTTONDOWN ) printf("SDL_CONTROLLERBUTTONDOWN\n");
-    if ( event.type == SDL_CONTROLLERBUTTONUP ) printf("SDL_CONTROLLERBUTTONUP\n");
-    if ( event.type == SDL_CONTROLLERDEVICEADDED ) printf("SDL_CONTROLLERDEVICEADDED\n");
-    if ( event.type == SDL_CONTROLLERDEVICEREMOVED ) printf("SDL_CONTROLLERDEVICEREMOVED\n");
-    if ( event.type == SDL_CONTROLLERDEVICEREMAPPED ) printf("SDL_CONTROLLERDEVICEREMAPPED\n");
-    if ( event.type == SDL_DOLLARGESTURE ) printf("SDL_DOLLARGESTURE\n");
-    if ( event.type == SDL_DOLLARRECORD ) printf("SDL_DOLLARRECORD\n");
-    if ( event.type == SDL_DROPFILE ) printf("SDL_DROPFILE\n");
-    if ( event.type == SDL_DROPTEXT ) printf("SDL_DROPTEXT\n");
-    if ( event.type == SDL_DROPBEGIN ) printf("SDL_DROPBEGIN\n");
-    if ( event.type == SDL_DROPCOMPLETE ) printf("SDL_DROPCOMPLETE\n");
-    if ( event.type == SDL_FINGERMOTION ) printf("SDL_FINGERMOTION\n");
-    if ( event.type == SDL_FINGERDOWN ) printf("SDL_FINGERDOWN\n");
-    if ( event.type == SDL_FINGERUP ) printf("SDL_FINGERUP\n");
-    if ( event.type == SDL_KEYDOWN ) printf("SDL_KEYDOWN\n");
-    if ( event.type == SDL_KEYUP ) printf("SDL_KEYUP\n");
-    if ( event.type == SDL_JOYAXISMOTION ) printf("SDL_JOYAXISMOTION\n");
-    if ( event.type == SDL_JOYBALLMOTION ) printf("SDL_JOYBALLMOTION\n");
-    if ( event.type == SDL_JOYHATMOTION ) printf("SDL_JOYHATMOTION\n");
-    if ( event.type == SDL_JOYBUTTONDOWN ) printf("SDL_JOYBUTTONDOWN\n");
-    if ( event.type == SDL_JOYBUTTONUP ) printf("SDL_JOYBUTTONUP\n");
-    if ( event.type == SDL_JOYDEVICEADDED ) printf("SDL_JOYDEVICEADDED\n");
-    if ( event.type == SDL_JOYDEVICEREMOVED ) printf("SDL_JOYDEVICEREMOVED\n");
-    if ( event.type == SDL_MOUSEMOTION ) printf("SDL_MOUSEMOTION ");
-    if ( event.type == SDL_MOUSEBUTTONDOWN ) printf("SDL_MOUSEBUTTONDOWN\n");
-    if ( event.type == SDL_MOUSEBUTTONUP ) printf("SDL_MOUSEBUTTONUP\n");
-    if ( event.type == SDL_MOUSEWHEEL ) printf("SDL_MOUSEWHEEL\n");
-    if ( event.type == SDL_MULTIGESTURE ) printf("SDL_MULTIGESTURE\n");
-    if ( event.type == SDL_QUIT ) printf("SDL_QUIT\n");
-    if ( event.type == SDL_SYSWMEVENT ) printf("SDL_SYSWMEVENT\n");
-    if ( event.type == SDL_TEXTEDITING ) printf("SDL_TEXTEDITING\n");
-    if ( event.type == SDL_TEXTINPUT ) printf("SDL_TEXTINPUT\n");
-    if ( event.type == SDL_USEREVENT ) printf("SDL_USEREVENT\n");
-    if ( event.type == SDL_WINDOWEVENT ) printf("SDL_WINDOWEVENT\n");
-
-    if ( event.type == SDL_KEYDOWN || event.type == SDL_KEYUP ) printf("%s\n", SDL_GetKeyName(event.key.keysym.sym));
-
-    fflush(stdout);
-}
-
-SDL_Rect make_rect(int x, int y, int w, int h)
-{
-    SDL_Rect dest;
-    dest.x = x;
-    dest.y = y;
-    dest.w = w;
-    dest.h = h;
-    return dest;
-}
-
-int sdl_use_surfaces( )
-{
-    SDL_Init( SDL_INIT_VIDEO );
-    IMG_Init( IMG_INIT_PNG );
-
-    const int window_width = 800;
-    const int window_height = 600;
-    SDL_Window *window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_width, window_height, SDL_WINDOW_SHOWN );
-
-    SDL_Surface *surface, *lenna, *lenna_native, *nyan_cat;
-    int err;
-    SDL_Rect destination;
-    float scaler;
-
-    surface = SDL_GetWindowSurface( window );
-    SDL_FillRect( surface, NULL, SDL_MapRGB( surface->format, 0x55,0x55,0xAA ) );
-
-    lenna = SDL_LoadBMP( "data/lenna.bmp" );
-    SDL_BlitSurface( lenna, NULL, surface, NULL );
-
-    // blit scaled
-    scaler = 300.0 / (float)lenna->h;
-    destination = make_rect(lenna->w, 0, scaler*lenna->w, scaler*lenna->h);
-    lenna_native = SDL_ConvertSurface( lenna, surface->format, 0 ); // requires native format
-    err = SDL_BlitScaled( lenna_native, NULL, surface, &destination );
-    if (err) printf("ERROR %s %d %s\n", __FILE__, __LINE__, SDL_GetError() );
-
-    // load png
-    nyan_cat = IMG_Load( "data/nyan_cat.png" ); 
-    scaler = 300.0 / (float)nyan_cat->h;
-    destination = make_rect(0,300, scaler*nyan_cat->w, scaler*nyan_cat->h);
-    err = SDL_BlitScaled( nyan_cat, NULL, surface, &destination );
-    if (err) printf("ERROR %s %d %s\n", __FILE__, __LINE__, SDL_GetError() );
-
-
-    SDL_UpdateWindowSurface( window );
-
-
-    SDL_Event event; 
-    int quit = 0;
-    while ( !quit ) {
-        SDL_WaitEvent(&event);
-        if ( event.type == SDL_QUIT ) quit = 1;
-        print_event(event);
-    }
-
-
-    SDL_FreeSurface(lenna);
-    SDL_FreeSurface(lenna_native);
-    SDL_FreeSurface(nyan_cat);
-    SDL_DestroyWindow( window ); // frees surface
-    SDL_Quit();
-    return 0;
-}
-
-
-
-int sdl_use_renderer( )
-{
-    const int WINDOW_WIDTH  = 800;
-    const int WINDOW_HEIGHT = 600;
-    
-    SDL_Init( SDL_INIT_VIDEO );
-    IMG_Init( IMG_INIT_PNG );
-
-    SDL_Window *window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN );
-    
-    SDL_Renderer *renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED );
-    // SDL_SetRenderDrawColor( renderer, 255,255,255,255);
-    // SDL_RenderClear( renderer );
-
-    SDL_Surface* nyan_cat = IMG_Load( "data/nyan_cat.png" ); 
-	SDL_Texture *texture = SDL_CreateTextureFromSurface( renderer, nyan_cat );
-    if (!texture) printf("ERROR %s %d %s\n", __FILE__, __LINE__, SDL_GetError() );
-
-    float scaler = 300.0 / (float)nyan_cat->h;
-    SDL_Rect destination = make_rect(0,300, scaler*nyan_cat->w, scaler*nyan_cat->h);
-
-    SDL_RenderCopy( renderer, texture, NULL, &destination );
-    SDL_RenderPresent( renderer );
-
-    SDL_Event event;
-    int quit = 0;
-    while ( !quit ) {
-        SDL_WaitEvent(&event);
-        if ( event.type == SDL_QUIT ) quit = 1;
-
-    }
-
-
-    SDL_FreeSurface(nyan_cat);
-    SDL_DestroyWindow( window );
-    SDL_DestroyTexture( texture );
-    SDL_DestroyRenderer( renderer );
-
-    IMG_Quit();
-    SDL_Quit();
-    return 0;
-}
-
-
-
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
@@ -1300,137 +1132,6 @@ void demo_vigenere_cipher()
 
 
 
-
-
-char *myprintf_convert(unsigned int num, int base)
-{ 
-    static char Representation[]= "0123456789ABCDEF";
-    static char buffer[50]; 
-    char *ptr; 
-
-    ptr = &buffer[49]; 
-    *ptr = '\0'; 
-
-    do { 
-        *--ptr = Representation[num%base]; 
-        num /= base; 
-        
-    } while(num != 0); 
-
-    return(ptr); 
-}
-
-
-void myprintf(const char* format,...)
-{ 
-
-    const char *traverse; 
-    int i; 
-    char *s; 
-
-    double float_value;
-    int float_decimal_places  = 6;
-    int float_fraction_scaler = 1000000;
-    
-    va_list arg; 
-    va_start(arg, format); 
-
-    for(traverse = format; *traverse != '\0'; traverse++) 
-    { 
-        // print regular
-        if( *traverse != '%' && *traverse != '\\' ) { 
-            putchar(*traverse);
-        } 
-        // print escape chars
-        if( *traverse == '\\' ) {
-            traverse += 1;
-
-            if      ( *traverse == 'n' ) { putchar('\n'); }
-            else if ( *traverse == 't' ) { putchar('\t'); }
-            else if ( *traverse == 'r' ) { putchar('\r'); }
-            else {
-                printf("ERROR %s %d Unknown escape character\n", __FILE__, __LINE__ );
-                putchar('\\');
-                putchar( *traverse );
-            }
-        }
-        // print numbers in various formats
-        if( *traverse == '%' ) {
-            traverse++;
-            switch (*traverse) { 
-
-            case 'c' : i = va_arg(arg, int);
-                        putchar(i);
-                        break; 
-
-            case 'd' : i = va_arg(arg, int);
-                        if(i<0){ 
-                            i = -i;
-                            putchar('-'); 
-                        } 
-                        fputs(myprintf_convert(i, 10), stdout);
-                        break; 
-
-            case 'o': i = va_arg(arg, unsigned int);
-                        fputs(myprintf_convert(i, 8), stdout);
-                        break; 
-
-            case 's': s = va_arg(arg, char *);
-                        fputs(s, stdout);
-                        break; 
-
-            case 'x': i = va_arg(arg, unsigned int);
-                        fputs(myprintf_convert(i, 16), stdout);
-                        break; 
-
-            case 'f': 
-                        float_value = va_arg(arg, double);
-
-                        char sign = '\0';
-                        if (float_value < 0) { sign='-'; float_value = -float_value; } 
-                        int integer_part = (int)(float_value);
-                        int fraction_part = (int)((float_value - integer_part) * float_fraction_scaler);
-
-
-                        if (sign) fputc(sign, stdout);
-                        fputs(myprintf_convert(integer_part, 10), stdout);
-
-                        if (fraction_part != 0){
-                            char *fraction_string = myprintf_convert(fraction_part, 10);
-                            fputc('.', stdout);
-                            for(int i=0; i < ( float_decimal_places - strlen(fraction_string) ); i+=1 ) fputc('0', stdout);
-                            fputs(fraction_string, stdout);
-                        }
-                        break;
-            }
-
-        }
-    } 
-
-
-    va_end(arg); 
-} 
-
-
-void myprintf_demo()
-{
-    
-    printf("\n\n");
-    printf("myprintf_demo\n");
-    printf("-----------------------\n");
-
-    float a_float = 99.234234234234234234234;
-    double a_double = 999.4323423423234234234;
-    myprintf("char \t %c\ninteger \t %d\noctal \t %o\nstring \t {%s}\nhex \t %x\ndouble \t %f\nfloat \t %f\n", 
-            'c', 999, 999, "omg", 999, a_double, a_float );
-
-}
-
-
-
-
-
-
 int main()
 {
     caesar_cipher_demo();
@@ -1454,9 +1155,6 @@ int main()
     demo_2d_arrays();
     demo_is_prime();
 
-    // sdl_use_surfaces();
-    // sdl_use_renderer();
-
     errno_demo();
     read_file2_demo();
     // demo_split_string();
@@ -1465,9 +1163,6 @@ int main()
     sprint_float3_main();
     snprintf_demo();
     demo_vigenere_cipher();
-
-    myprintf_demo();
-    printf("%e\n", 23.234e98);
 
     return 0;
 }

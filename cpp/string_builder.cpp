@@ -1,6 +1,7 @@
-// g++ string_builder.c -Iinclude -Wfatal-errors -Wall && ./a.out 
+// gcc string_builder.c -Iinclude -Wfatal-errors -Wall && ./a.out 
 
 #include "libc.h"
+#include "stb_sprintf.h"
 
 struct string { 
     char* data; 
@@ -85,6 +86,10 @@ int main()
 
     const char os_sep[2] = "/";
     string_add( &s, 5, "\nfile: some_folder", os_sep, "another_folder", os_sep, "filename.extension\n" );
+
+    string_add( &s, str2 );
+
+
     string_add(&s, '\0');
 
     printf("%s\n", s.data);

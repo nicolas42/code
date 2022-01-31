@@ -1,5 +1,5 @@
-#ifndef BASIC_HEADER_GUARD
-#define BASIC_HEADER_GUARD
+#ifndef LIBC_HEADER_GUARD
+#define LIBC_HEADER_GUARD
 
 #include <assert.h>
 #include <ctype.h>
@@ -18,11 +18,6 @@
 #include <time.h>
 
 
-// #define PRINT_ERROR(msg) fprintf( stderr, "ERROR %s %d %s\n", __FILE__, __LINE__, msg );
-
-// #define PRINT_ERROR_EXIT(msg) { fprintf( stderr, "ERROR %s %d %s\n", __FILE__, __LINE__, msg ); exit(1); } 
-
-
-#endif // BASIC_HEADER_GUARD
+#endif // LIBC_HEADER_GUARD
 
 

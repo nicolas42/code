@@ -1,3 +1,32 @@
+
+
+SDL_stbimage.h allows stb_image.h to be used like SDL_image
+One less library :)
+https://github.com/DanielGibson/Snippets/blob/master/SDL_stbimage.h
+https://github.com/DanielGibson/Snippets
+
+
+XCode doesn't allow pointers to be case to smaller values
+---------------------------------------------------------------
+
+error: cast from pointer to smaller type 'int' loses
+      information
+    for(i=0;i<100;++i) printf("%d ", (int)arr4.data[i]);
+                                     ^~~~~~~~~~~~~~~~~
+
+The solution is to do two casts like this.  
+
+(int)(u64)arr4.data[i]
+
+This behaviour is only seen in the c++ compiler.  sigh...
+
+Maybe I should just make all integers 64 bit.
+
+more info here
+https://stackoverflow.com/questions/22419063/error-cast-from-pointer-to-smaller-type-int-loses-information-in-eaglview-mm/28987357
+
+
+
 Making Stuff 
 --------------------------
 
@@ -85,6 +114,8 @@ prevent multiple includes, there is an ifdef on BASIC_IMPLEMENTATION.
 There's also a header guard for the implementation, because why not.
 
 
+Header only file should look like this 
+-------------------------------------------------
 
 
 #ifndef BASIC_HEADER_GUARD
