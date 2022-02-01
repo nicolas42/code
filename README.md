@@ -1,3 +1,7 @@
+SDL_Window *window = SDL_CreateWindow("Triangle Example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, 0);
+SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+
 
 file descriptors
 
@@ -16,8 +20,6 @@ links
 * https://beej.us/guide/bgipc/html/multi/mmap.html
 
 
-Ideas
--------------
 
 Learn about
 
@@ -30,6 +32,12 @@ Learn about
 * n-body simulation in SDL.
 * render a triangle in openGL
 
+
+
+
+
+To Do / Ideas
+--------------------------------
 OS 
 
 Extend the OS so that it can use more memory.  Currently the bootloader can only read three pages of 512 bytes of code.  Why?  Plus there are truly weird things that happen if I try to allocate more than 300*300 pixels.  I guess because the data is displacing code???
@@ -38,8 +46,6 @@ stripe
 
 implement payment processing system using stripe
 https://github.com/stripe-samples/accept-a-payment/tree/main/prebuilt-checkout-page
-
-
 
 
 file system
@@ -56,6 +62,10 @@ SDL GUI
 Make networked chat program
 * modify netcat so it automatically listens if an initial connection attempt fails
 
+Netcat can currently be used as an instant messenger like this
+
+    ./a.out -l 127.0.0.1 3490
+    ./a.out 127.0.0.1 3490
 
 
 html wiki  
@@ -68,28 +78,48 @@ like https://wormhole.app/
 
 
 
-Netcat can be used as an instant messenger.
 
-    ./a.out -l 127.0.0.1 3490
-    ./a.out 127.0.0.1 3490
-
-
-pl_mpeg
------------------------------------
-pl_mpeg is an mpeg_1 video player that uses SDL and opengl.  
-
-File sizes seem to be 2-3 times bigger than usual.
+#Awesome
+-------------------------------------------
 
 
-The SDL renderer has a VSYNC option which I should try
-gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+* SDL_stbimage.h  This single header file allows stb_image.h to be used easily with SDL code.
+        https://github.com/DanielGibson/Snippets/blob/master/SDL_stbimage.h
 
+* pl_mpeg mpeg1 player https://github.com/phoboslab/pl_mpeg
+    pl_mpeg is an mpeg_1 video player that uses SDL and opengl.  
+    File sizes seem to be 2-3 times bigger than usual.
+* netcat https://github.com/guzlewski/netcat
+* suckless http://dwm.suckless.org/
+* aes https://github.com/kokke/tiny-AES-c
+* beej's guide to network sockets http://beej.us/guide/bgnet/html/
+* single file libraries in C/C++  https://github.com/nothings/single_file_libs
+* sqlite https://sqlite.org/ is an SQL engine that is released as an amalgamated (single) c file.  I love them so much.
+* busybox https://github.com/mirror/busybox/
+* lemoda.net https://www.lemoda.net/  lots of C and other code
 
-What are these libraries?  I'm pretty sure this came from pkg-config --static 
+* How 3D video games do graphics - Jonathan Blow https://youtu.be/bGe-d09Nc_M?t=3600
+* Mr P Solver https://www.youtube.com/c/MrPSolver/videos
+* Tired Amateur https://www.youtube.com/channel/UCeT6NdimLKHXlkQgrbcg6XQ
+* jdh - made bootable tetris https://www.youtube.com/channel/UCUzQJ3JBuQ9w-po4TXRJHiA
 
-    gcc 1_open_a_window.c ~/lib/libSDL2.a -ldl -lm -ldl -lpthread -lrt
+* ganga.js  geometric algebra in javascript and other languages
+* three.js  javascript 3d graphics
+* http://underscorejs.org/  seems like a good javascript library
 
+* electron quick start https://github.com/electron/electron-quick-start
 
+* handmade hero
+* imgui   small c++ GUI library
+* stb
+* darknet
+* uwimg
+* nanogui-sdl
+* wyoos
+* mkernel
+* exfat
+* fasm - good community
+* fabrice bellard - made FFmpeg, QEMU, and the Tiny C Compiler
 
 
 
@@ -600,52 +630,6 @@ source: https://stackoverflow.com/questions/5588064/how-do-i-make-a-mac-terminal
 
 
 
-#Awesome
--------------------------------------------
-
-
-https://github.com/DanielGibson/Snippets/blob/master/SDL_stbimage.h
-This single header file allows stb_image.h to be used easily with SDL code.
-
-* handmade hero
-* imgui   small c++ GUI library
-* stb
-* darknet
-* uwimg
-* nanogui-sdl
-* wyoos
-* mkernel
-* exfat
-* fasm - good community
-
-* pl_mpeg mpeg1 player in SDL and opengl https://github.com/phoboslab/pl_mpeg
-* suckless http://dwm.suckless.org/
-* fabrice bellard - made FFmpeg, QEMU, and the Tiny C Compiler
-* aes https://github.com/kokke/tiny-AES-c
-* netcat https://github.com/guzlewski/netcat
-* beej's guide to network sockets http://beej.us/guide/bgnet/html/
-* single file libraries in C/C++  https://github.com/nothings/single_file_libs
-* sqlite https://sqlite.org/ is an SQL engine that is released as an amalgamated (single) c file.  I love them so much.
-* busybox https://github.com/mirror/busybox/
-* lemoda.net https://www.lemoda.net/  lots of C and other code
-
-* How 3D video games do graphics - Jonathan Blow https://youtu.be/bGe-d09Nc_M?t=3600
-* Mr P Solver https://www.youtube.com/c/MrPSolver/videos
-* Tired Amateur https://www.youtube.com/channel/UCeT6NdimLKHXlkQgrbcg6XQ
-* jdh - made bootable tetris https://www.youtube.com/channel/UCUzQJ3JBuQ9w-po4TXRJHiA
-
-* ganga.js
-* three.js
-* http://underscorejs.org/  seems like a good javascript library
-* electron quick start https://github.com/electron/electron-quick-start
-
-
-
-
-
-
-
-
 #Lorem Ipsum 
 ----------------------
 
@@ -992,4 +976,21 @@ Nuklear is a single header library GUI toolkit written in C89 with no dependenci
 https://github.com/Immediate-Mode-UI/Nuklear
 
 The demo section works well but the large example requires glew which I couldn't install.
+
+
+
+
+Misc 
+--------------
+
+
+The SDL renderer has a VSYNC option which I should try
+gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+
+
+What are these libraries?  I'm pretty sure this came from pkg-config --static 
+
+    gcc 1_open_a_window.c ~/lib/libSDL2.a -ldl -lm -ldl -lpthread -lrt
+
+
 
