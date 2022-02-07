@@ -113,29 +113,6 @@ def demo_matplotlib():
 
 
 
-import re
-import sys
-
-def read_file(filename):
-    file = open(filename,'r')
-    input_string = file.read()
-    file.close()
-    return input_string
-
-
-
-def demo_split_at_regex():
-    filename = 'GH010013.txt';
-    output_filename = 'output.txt'
-    regex_pattern = r'\nFPS:\d*\.\d*\s*AVG_FPS:\d*\.\d*\n\n\s*cvWriteFrame\s*\nObjects:\s*\n';
-
-    input_string = read_file(filename)
-    output_list = re.split(regex_pattern, input_string)
-
-    # print items in output_list
-    for _,v in enumerate(output_list):
-        print('{' + v + '}')
-
 
 
 
@@ -333,15 +310,8 @@ def estimate_pi_with_monte_carlo():
 
 
 
-# regular expressions matches
-# ----------------------------
-# >>> m.group(0)       # The entire match
-# >>> m.group(1)       # The first parenthesized subgroup.
-# >>> m.group(2)       # The second parenthesized subgroup.
-# >>> m.group(1, 2)    # Multiple arguments give us a tuple.
-# m[0] is a shortcut for m.group(0)
-# https://docs.python.org/3/library/re.html
 
+# https://docs.python.org/3/library/re.html
 
 import re
 import sys
@@ -373,6 +343,32 @@ def bash_grep_demo():
     for match in matches: print(match)
 
 
+
+
+
+
+import re
+import sys
+
+def read_file(filename):
+    file = open(filename,'r')
+    input_string = file.read()
+    file.close()
+    return input_string
+
+
+
+def demo_split_at_regex():
+    filename = 'GH010013.txt';
+    output_filename = 'output.txt'
+    regex_pattern = r'\nFPS:\d*\.\d*\s*AVG_FPS:\d*\.\d*\n\n\s*cvWriteFrame\s*\nObjects:\s*\n';
+
+    input_string = read_file(filename)
+    output_list = re.split(regex_pattern, input_string)
+
+    # print items in output_list
+    for _,v in enumerate(output_list):
+        print('{' + v + '}')
 
 
 
@@ -771,6 +767,78 @@ def sdl_pareto_demo():
 
 
 
+import os 
+import os.path
+
+def index_files( dir, out ):
+    # alternative to os.walk, recursive
+
+    files = os.listdir(dir)
+
+    for file in files: 
+        out.append( os.sep.join([ dir, file ]) )
+
+    for file in files:
+        full_path = os.sep.join([dir, file])
+        if os.path.isdir(full_path):
+            # print(full_path)
+            index_files( full_path, out )
+
+    return out 
+
+
+def index_files_demo():
+
+    print("\n")
+    print("index_files_demo")
+    print("---------------------")
+
+    out = []
+    dir = os.path.realpath("..")
+    index_files(dir, out)
+    for i in out[:10]: 
+        print(i)
+
+
+
+
+
+
+import os 
+import os.path
+import re
+import sys
+
+def print_columns(row, column_size = 40):
+
+    for elem in row:
+
+        column = ""
+        column += str(elem)
+        while len(column) < column_size:
+            column = " " + column 
+
+        print( "{",column,"}", end="")
+
+    print("")
+
+
+def print_columns_demo():
+
+    print("\n")
+    print("print_columns_demo")
+    print("---------------------")
+
+    for filename in os.listdir():
+        m = re.search("(.*?)(\.py)", filename)
+        if m: 
+            # print(m.groups(), m.lastindex)
+            # for i in range(1, m.lastindex+1):
+            #     print(m[i])
+            print_columns([filename, m[1]+".txt"], column_size = 50)
+
+
+
 
 
 if __name__ == "__main__":
@@ -791,6 +859,9 @@ if __name__ == "__main__":
 
     # tkinter_gui_with_large_font_demo() # tkinter has bugs in macos
 
-    matplotlib_pareto_demo()
-    sdl_pareto_demo()
+    # # gui
+    # matplotlib_pareto_demo()
+    # sdl_pareto_demo()
     
+    index_files_demo()
+    print_columns_demo()
