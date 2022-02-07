@@ -1,6 +1,8 @@
+SDL_SetRenderTarget(renderer, content);
 
 
 Disable crash dialog in macos
+-----------------------------------
 
 To disable the dialog, enter the following command in the Terminal:
 

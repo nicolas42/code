@@ -5,7 +5,7 @@
 #include "SDL2/SDL.h"
 
 void print_event(SDL_Event event);
-SDL_Rect set_rect(int x, int y, int w, int h);
+SDL_Rect make_rect(int x, int y, int w, int h);
 
 #endif // SDL_STUFF_HEADER_GUARD
 
@@ -63,7 +63,7 @@ void print_event(SDL_Event event)
     fflush(stdout);
 }
 
-SDL_Rect set_rect(int x, int y, int w, int h)
+SDL_Rect make_rect(int x, int y, int w, int h)
 {
     SDL_Rect dest;
     dest.x = x;
@@ -72,6 +72,7 @@ SDL_Rect set_rect(int x, int y, int w, int h)
     dest.h = h;
     return dest;
 }
+
 
 
 

@@ -37,7 +37,7 @@ int sdl_use_surfaces( )
 
     // blit scaled
     scaler = 300.0 / (float)lenna->h;
-    destination = set_rect(lenna->w, 0, scaler*lenna->w, scaler*lenna->h);
+    destination = make_rect(lenna->w, 0, scaler*lenna->w, scaler*lenna->h);
     lenna_native = SDL_ConvertSurface( lenna, surface->format, 0 ); // requires native format
     err = SDL_BlitScaled( lenna_native, NULL, surface, &destination );
     if (err) printf("ERROR %s %d %s\n", __FILE__, __LINE__, SDL_GetError() );
@@ -47,7 +47,7 @@ int sdl_use_surfaces( )
     if (!nyan_cat) PRINT_ERROR_EXIT("Couldn't load file\n");
 
     scaler = 300.0 / (float)nyan_cat->h;
-    destination = set_rect(0,300, scaler*nyan_cat->w, scaler*nyan_cat->h);
+    destination = make_rect(0,300, scaler*nyan_cat->w, scaler*nyan_cat->h);
     err = SDL_BlitScaled( nyan_cat, NULL, surface, &destination );
     if (err) printf("ERROR %s %d %s\n", __FILE__, __LINE__, SDL_GetError() );
 
@@ -95,7 +95,7 @@ int sdl_use_renderer( )
     if (!texture) printf("ERROR %s %d %s\n", __FILE__, __LINE__, SDL_GetError() );
 
     float scaler = 300.0 / (float)nyan_cat->h;
-    SDL_Rect destination = set_rect(0,300, scaler*nyan_cat->w, scaler*nyan_cat->h);
+    SDL_Rect destination = make_rect(0,300, scaler*nyan_cat->w, scaler*nyan_cat->h);
 
     SDL_RenderCopy( renderer, texture, NULL, &destination );
     SDL_RenderPresent( renderer );
