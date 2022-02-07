@@ -1,3 +1,4 @@
+// g++ png2jpg.cpp -I../include && ./a.out
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -8,36 +9,28 @@
 
 int main( int argc, char* argv[] )
 {
-    if (argc != 4) {
+    if (argc != 3) {
         printf("usage: png2jpg input_filename output_filename\n");
         exit(1);
     }
 
-    const char *format = argv[1]; // jpg
-    const char *input_filename = argv[2]; // "lenna.png";
-    const char *output_filename = argv[3]; // "converted_lenna.jpg";
-    FILE *file = fopen(output_filename,"r");
-    if (file) { 
-        printf("ERROR %s %d output file already exists.\n", __FILE__, __LINE__ );
-        return 1;
-    }
+    const char *input_filename = argv[1];
+    const char *output_filename = argv[2];
 
     int w, h, c;
     int channels = 0;
     unsigned char *data = stbi_load(input_filename, &w, &h, &c, channels);
     if (!data) {
-        fprintf(stderr, "Cannot load image \"%s\"\nSTB Reason: %s\n",
-            input_filename, stbi_failure_reason());
-        exit(0);
+        printf("ERROR %s:%d %s\n", __FILE__,__LINE__,stbi_failure_reason());
+        exit(1);
     }
 
 
     int quality = 90;
     int success = stbi_write_jpg(output_filename, w, h, c, data, quality);
     if (!success) {
-        fprintf(stderr, "Cannot load image \"%s\"\nSTB Reason: %s\n",
-            input_filename, stbi_failure_reason());
-        exit(0);
+        printf("ERROR %s:%d %s\n", __FILE__,__LINE__,stbi_failure_reason());
+        exit(1);
     }
 
 

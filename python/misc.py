@@ -1,6 +1,11 @@
 import numpy as np
 
-def demo_natural_sort():
+def natural_sort_demo():
+
+    print("\n")
+    print("natural_sort_demo")
+    print("---------------------")
+
     import natsort 
     a = ['Picture 13.jpg', 'Picture 14.jpg', 'Picture 15.jpg','Picture 0.jpg', 'Picture 1.jpg', 'Picture 10.jpg', 'Picture 11.jpg', 'Picture 12.jpg',  'Picture 16.jpg', 'Picture 17.jpg', 'Picture 18.jpg', 'Picture 19.jpg', 'Picture 2.jpg', 'Picture 20.jpg', 'Picture 21.jpg', 'Picture 22.jpg', 'Picture 23.jpg', 'Picture 24.jpg', 'Picture 25.jpg', 'Picture 26.jpg', 'Picture 27.jpg', 'Picture 28.jpg', 'Picture 29.jpg', 'Picture 3.jpg', 'Picture 30.jpg', 'Picture 31.jpg', 'Picture 32.jpg', 'Picture 33.jpg', 'Picture 34.jpg', 'Picture 35.jpg', 'Picture 36.jpg', 'Picture 37.jpg']         
     print(natsort.natsorted(a))
@@ -215,11 +220,11 @@ def ls():
 def cd(a):
     return os.chdir(a)
 
-def read(filename):
-    f = open(filename, "rb")
-    d=f.read()
-    f.close()
-    return d
+# def read(filename):
+#     f = open(filename, "rb")
+#     d=f.read()
+#     f.close()
+#     return d
 
 
 # os.getenv("PATH")
@@ -356,6 +361,11 @@ def bash_grep(filename, expression):
 
 
 def bash_grep_demo():
+
+    print("\n")
+    print("bash_grep_demo")
+    print("---------------------")
+
     # get all function lines
     filename   = "misc.py"
     expression = "def .*?\(.*?\):"
@@ -407,7 +417,7 @@ def find_files_demo():
     print("find_files_demo")
     print("---------------------")
 
-    for ext in [ ".txt", ".py", ".c", ".md", ".jpg", ".png" ]:
+    for ext in [ ".txt" ]: # , ".py", ".c", ".md", ".jpg", ".png" ]:
         find_files( "..", ext )
 
 
@@ -545,7 +555,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 # window.open('data:text/csv;charset=utf-8,' + escape(urls.join('\n')));
 
 
-def download_url_process(args):
+def wget_process(args):
     url = args[0]
     output_dir = args[1]
     try:
@@ -554,18 +564,10 @@ def download_url_process(args):
     except Exception as e:
         return (str(e), url )
 
-def download_in_parallel(args, nprocs=10):
-    
-    with multiprocessing.Pool(nprocs) as pool:
-        # imap_unordered allows for results to be returned in the order in which they are generated
-        for result in pool.imap_unordered(download_url_process, args):
-            print(' '.join(result))
-
-
-def download_in_parallel_demo():
+def parallel_wget_demo():
 
     print("\n")
-    print("download_in_parallel_demo")
+    print("parallel_wget_demo")
     print("---------------------")
 
     output_dir = "Downloads_gitignore"
@@ -580,12 +582,94 @@ def download_in_parallel_demo():
         [ "https://www.sciencenewsforstudents.org/wp-content/uploads/2021/04/1440_bb_brown_black_bear_explainer_feat-1030x580.jpg" , output_dir ], 
     ]
 
-    download_in_parallel(args)
+    with multiprocessing.Pool(10) as pool:
+        # imap_unordered allows for results to be returned in the order in which they are generated
+        for result in pool.imap_unordered(wget_process, args):
+            print(' '.join(result))
 
 
 
 
-def show_pareto_distribution_derived_from_random_process():
+
+
+
+def tkinter_gui_with_large_font_demo():
+
+    # There's a bug on macos when this is run after other gui code - "libc++abi.dylib: terminating with uncaught exception of type NSException"
+    # Apparently this is a problem with tkinter on macos
+    # "If you are using macOS 10.6 or later, the Apple-supplied Tcl/Tk 8.5 has serious bugs that can cause application crashes. If you wish to use IDLE or Tkinter, do not use the Apple-supplied Pythons. Instead, install and use a newer version of Python from python.org or a third-party distributor that supplies or links with a newer version of Tcl/Tk."
+    # source: https://stackoverflow.com/questions/30031063/nsexception-with-tkinter-on-mac
+
+    # the following code is based on https://tkdocs.com/tutorial/firstexample.html
+
+    print("\n")
+    print("tkinter_gui_with_large_font_demo")
+    print("---------------------")
+
+    # from tkinter import *
+    import tkinter as tk 
+    from tkinter import ttk
+    from tkinter import font
+
+    def calculate(*args):
+        print(args)
+        try:
+            value = float(feet.get())
+            meters.set(int(0.3048 * value * 10000.0 + 0.5)/10000.0)
+        except ValueError:
+            pass
+
+    window = tk.Tk()
+    window.title("OMG It's a Title")
+
+    mainframe = ttk.Frame(window) # , padding="3 3 12 12")
+    mainframe.grid_configure(padx=12, pady=12)
+    mainframe.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
+    window.columnconfigure(0, weight=1)
+    window.rowconfigure(0, weight=1)
+
+    feet = tk.StringVar()
+    meters = tk.StringVar()
+
+    # row 1
+    ttk.Button(mainframe, text="OMG A Button", command=calculate).grid(column=1, row=1, sticky=tk.W)
+    input_field = ttk.Entry(mainframe, width=7, textvariable=feet); input_field.grid(column=2, row=1, sticky=(tk.W, tk.E))
+    ttk.Label(mainframe, text="feet").grid(column=3, row=1, sticky=tk.W)
+
+    # row 2
+    ttk.Label(mainframe, text="is equivalent to").grid(column=1, row=2, sticky=tk.E)
+    ttk.Label(mainframe, textvariable=meters).grid(column=2, row=2, sticky=(tk.W, tk.E))
+    ttk.Label(mainframe, text="meters").grid(column=3, row=2, sticky=tk.W)
+
+    # row 3
+    ttk.Button(mainframe, text="Calculate", command=calculate).grid(column=3, row=3, sticky=tk.W)
+
+    # keyboard shortcuts
+    input_field.bind("<Return>", calculate)
+    window.bind("<Escape>", quit)
+
+    # resize fonts
+    for font_name in [ "TkDefaultFont", "TkTextFont", "TkFixedFont", "TkMenuFont", "TkHeadingFont", "TkCaptionFont", "TkSmallCaptionFont", "TkIconFont", "TkTooltipFont" ]:
+        that_font = tk.font.nametofont(font_name)
+        that_font.configure(size=20)
+
+    # put padding around all elements
+    for child in mainframe.winfo_children(): 
+        child.grid_configure(padx=5, pady=5)
+
+
+    input_field.focus()
+    window.mainloop()
+
+
+
+
+
+def matplotlib_pareto_demo():
+
+    print("\n")
+    print("matplotlib_pareto_demo")
+    print("---------------------")
 
     # Income is normally distributed and proportional to current wealth
 
@@ -619,12 +703,72 @@ def show_pareto_distribution_derived_from_random_process():
         subplot.set_ylim(0, np.amax(y1))
         subplot.set_title("Pareto distribution from stochastic process " + str(i))
 
-
         subplot.plot(x1,y1)
-
         
     anim = FuncAnimation(fig, animate, interval=100)
     plt.show()
+
+
+
+
+
+from sdl2 import *
+import ctypes
+import numpy as np
+
+def sdl_pareto_demo():
+    window_width = 800
+    window_height = 600
+    SDL_Init(SDL_INIT_VIDEO)
+    window = SDL_CreateWindow(b"Hello World", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_width, window_height, SDL_WINDOW_SHOWN)
+    renderer = SDL_CreateRenderer(window, -1, 0)
+
+    SDL_SetRenderDrawColor(renderer, 242, 242, 242, 255)
+    SDL_RenderClear(renderer)
+    SDL_SetRenderDrawColor(renderer, 0,0,0,255)
+    SDL_RenderDrawLine(renderer, 100,100,200,200)
+    SDL_RenderPresent(renderer)
+
+    xscale = 1
+    yscale = window_height
+    x1 = [ x for x in range(0,window_width) ]
+    y1 = [ 1 for y in range(0,window_width) ]
+
+    running = True
+    event = SDL_Event()
+    while running:
+        while SDL_PollEvent(ctypes.byref(event)) != 0:
+            if event.type == SDL_QUIT:
+                running = False
+                break
+
+        # calculate updated values
+        y1 = [ y + np.random.normal(0, y/10) for y in y1 ] 
+        y1 = [ y / np.amax(y1) for y in y1 ]  # normalize
+
+        y1.sort(reverse = True)
+        # print(y1)
+
+        # render with scaling
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255)
+        SDL_RenderClear(renderer)
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255)
+        for i in range(1, len(y1)):
+            SDL_RenderDrawLine(renderer, 
+                int(x1[i-1] * xscale), 
+                int( window_height - (y1[i-1] * yscale) ), 
+                int(x1[i] * xscale), 
+                int( window_height - (y1[i] * yscale) ) 
+            )
+
+        SDL_RenderPresent(renderer)
+        SDL_Delay(100)
+
+
+    SDL_DestroyWindow(window)
+    SDL_Quit()
+    return 0
+
 
 
 
@@ -637,15 +781,16 @@ if __name__ == "__main__":
     named_tuple_demo()
     demo_newtons_method()
     print_on_one_line_demo()
-    demo_natural_sort()
+    natural_sort_demo()
     bash_grep_demo()
 
     find_files_demo()
     demo_vigenere_cipher()
 
-    # download_in_parallel_demo()
+    # parallel_wget_demo()
 
-    show_pareto_distribution_derived_from_random_process()
+    # tkinter_gui_with_large_font_demo() # tkinter has bugs in macos
 
-
-
+    matplotlib_pareto_demo()
+    sdl_pareto_demo()
+    
