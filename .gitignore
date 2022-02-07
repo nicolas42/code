@@ -12,7 +12,6 @@ node_modules/
 *.dSYM
 *.so.dSYM
 *.exe
-*.dat
 *.gch
 *.lib
 *.dll
@@ -24,9 +23,12 @@ node_modules/
 *.idb 
 *.pdb
 
-# binary
+# data
 *.iso
 *.bin
+*.tmp
+*.dat
+
 
 # python
 *.pyc
