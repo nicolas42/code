@@ -27,11 +27,9 @@ class Application(tk.Frame):
         print("hi there, everyone!")
 
 
-root = tk.Tk()
-app = Application(master=root)
+if __name__ == "__main__":
 
-
-
-
-app.mainloop()
+    root = tk.Tk()
+    app = Application(master=root)
+    app.mainloop()
 

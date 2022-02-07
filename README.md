@@ -1,5 +1,67 @@
-SDL_Window *window = SDL_CreateWindow("Triangle Example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, 0);
-SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+
+Disable crash dialog in macos
+
+To disable the dialog, enter the following command in the Terminal:
+
+    defaults write com.apple.CrashReporter DialogType none
+
+Enable crash dialog
+
+defa    ults write com.apple.CrashReporter DialogType prompt
+
+https://www.loekvandenouweland.com/content/disable-python-quit-unexpectedly.html
+
+
+
+
+Building SDL faster
+-----------------------------
+
+SDL is a pretty good cross platform base with its own standard library implementations for things like malloc and qsort and the math library.
+
+// rm *.o 
+
+// for f in src src/atomic src/audio/coreaudio src/core src/core/unix src/cpuinfo src/dynapi src/events src/file src/file/cocoa src/filesystem src/filesystem/cocoa src/filesystem/unix src/haptic src/hidapi src/joystick src/joystick/darwin src/libm src/loadso src/locale/macosx src/main src/misc src/misc/macosx src/power src/power/macosx src/render src/render/opengl src/sensor src/stdlib src/test src/thread src/timer src/timer/unix src/video src/video/cocoa src/video/x11 src/video/khronos/EGL 
+// do 
+//     if [ ! -z "$(ls $f/*.c 2>/dev/null)" ] 
+//     then 
+//         echo $f
+//         gcc -c $f/*.c -Isrc/include -Iinclude  -Isrc -Isrc/hidapi/hidapi -Isrc/video -Isrc/video/cocoa 
+//     fi
+// done 
+
+// ar rcs lib.a *.o 
+// gcc src/mystuff/main.c lib.a -Iinclude -Isrc/include && ./a.out
+
+
+
+#include <stdio.h>
+
+double SDL_uclibc_atan(double x);
+double SDL_uclibc_atan2(double y, double x);    
+double SDL_uclibc_copysign(double x, double y);       
+double SDL_uclibc_cos(double x);         
+double SDL_uclibc_exp(double x);
+double SDL_uclibc_fabs(double x);        
+double SDL_uclibc_floor(double x);
+double SDL_uclibc_fmod(double x, double y);
+double SDL_uclibc_log(double x);
+double SDL_uclibc_log10(double x);
+double SDL_uclibc_pow(double x, double y);    
+double SDL_uclibc_scalbn(double x, int n);
+double SDL_uclibc_sin(double x);
+double SDL_uclibc_sqrt(double x);
+double SDL_uclibc_tan(double x);
+
+
+int main()
+{
+    printf("omgomg %f\n", SDL_uclibc_sqrt(0.234) );
+    return 0;
+}
+
+
 
 
 
@@ -31,8 +93,6 @@ Learn about
 * batch rename program
 * n-body simulation in SDL.
 * render a triangle in openGL
-
-
 
 
 

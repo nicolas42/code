@@ -197,7 +197,7 @@ def print_on_one_line_demo():
     import sys
 
     for i in range(100):
-        time.sleep(0.01)
+        time.sleep(0.001)
         print('\rDownloading File FooFile.txt [%d%%]' % i, end="")
         sys.stdout.flush()
     print("")
@@ -289,6 +289,11 @@ def find_roots_demo():
     print(r)
 
 
+
+
+
+
+
 import random
 import math
 
@@ -317,7 +322,315 @@ def estimate_pi_with_monte_carlo():
 
     
 
+
+
+
+
+
+
+# regular expressions matches
+# ----------------------------
+# >>> m.group(0)       # The entire match
+# >>> m.group(1)       # The first parenthesized subgroup.
+# >>> m.group(2)       # The second parenthesized subgroup.
+# >>> m.group(1, 2)    # Multiple arguments give us a tuple.
+# m[0] is a shortcut for m.group(0)
+# https://docs.python.org/3/library/re.html
+
+
+import re
+import sys
+
+def bash_grep(filename, expression):
+    f = open(filename)
+    text = f.read()
+    f.close()
+
+    out=[]
+    for line in text.split("\n"):
+        matches = re.search(expression, line)
+        if matches: 
+            out.append(matches[0])
+
+    return out 
+
+
+def bash_grep_demo():
+    # get all function lines
+    filename   = "misc.py"
+    expression = "def .*?\(.*?\):"
+    matches = bash_grep(filename, expression)
+    for match in matches: print(match)
+
+
+
+
+
+
+
+
+
+import os
+import sys
+
+def find_case_insensitive(a,b):
+    # return index or -1 if not found
+	return a.lower().find(b.lower())
+
+
+def find_files( top_dir, query ):
+
+    # usage: find_files(".", "key words separated by whitespace")
+
+    query = query.split() # split at whitespace
+
+    for root, dirs, files in os.walk(top_dir):
+        # print(root,dirs,files)
+
+        for dir in dirs:
+            files.append(dir)
+
+        for file in files:
+            full_path = os.path.join(root, file)
+            was_found = True	
+            for query_word in query:
+                if -1 == find_case_insensitive(full_path, query_word):
+                    was_found = False
+            if was_found:
+                print(full_path)
+
+
+
+def find_files_demo():
+
+    print("\n")
+    print("find_files_demo")
+    print("---------------------")
+
+    for ext in [ ".txt", ".py", ".c", ".md", ".jpg", ".png" ]:
+        find_files( "..", ext )
+
+
+def find_files_terminal():
+    import pathlib 
+
+    if ( len(sys.argv) < 2 ):
+        print("usage: python find_files.py dir query")
+        exit()
+
+
+    query = [""]
+    top_dir = os.getcwd()
+
+    script_name = sys.argv[0]
+    top_dir = sys.argv[1]
+    query = sys.argv[2:]
+    if ( top_dir == "." ): top_dir = os.getcwd()
+    if ( top_dir == "~" ): top_dir = pathlib.Path.home()
+    
+    print(script_name, top_dir, query, "\n")
+    find_files( top_dir, query )
+
+
+
+
+
+
+
+def vigenere_cipher(plaintext, key):
+
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+    table = [
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "BCDEFGHIJKLMNOPQRSTUVWXYZA",
+    "CDEFGHIJKLMNOPQRSTUVWXYZAB",
+    "DEFGHIJKLMNOPQRSTUVWXYZABC",
+    "EFGHIJKLMNOPQRSTUVWXYZABCD",
+    "FGHIJKLMNOPQRSTUVWXYZABCDE",
+    "GHIJKLMNOPQRSTUVWXYZABCDEF",
+    "HIJKLMNOPQRSTUVWXYZABCDEFG",
+    "IJKLMNOPQRSTUVWXYZABCDEFGH",
+    "JKLMNOPQRSTUVWXYZABCDEFGHI",
+    "KLMNOPQRSTUVWXYZABCDEFGHIJ",
+    "LMNOPQRSTUVWXYZABCDEFGHIJK",
+    "MNOPQRSTUVWXYZABCDEFGHIJKL",
+    "NOPQRSTUVWXYZABCDEFGHIJKLM",
+    "OPQRSTUVWXYZABCDEFGHIJKLMN",
+    "PQRSTUVWXYZABCDEFGHIJKLMNO",
+    "QRSTUVWXYZABCDEFGHIJKLMNOP",
+    "RSTUVWXYZABCDEFGHIJKLMNOPQ",
+    "STUVWXYZABCDEFGHIJKLMNOPQR",
+    "TUVWXYZABCDEFGHIJKLMNOPQRS",
+    "UVWXYZABCDEFGHIJKLMNOPQRST",
+    "VWXYZABCDEFGHIJKLMNOPQRSTU",
+    "WXYZABCDEFGHIJKLMNOPQRSTUV",
+    "XYZABCDEFGHIJKLMNOPQRSTUVW",
+    "YZABCDEFGHIJKLMNOPQRSTUVWX",
+    "ZABCDEFGHIJKLMNOPQRSTUVWXY",]
+
+    repeated_key = key
+    while len(repeated_key) < len(plaintext):
+        repeated_key += key # concatenate
+
+    ciphertext = ""
+    for i,_ in enumerate(plaintext):
+        y = ord(plaintext[i].upper())-65
+        x = ord(repeated_key[i].upper())-65
+        ciphertext += table[y][x]
+
+    return ciphertext
+
+
+def demo_vigenere_cipher():
+
+
+    print("\n")
+    print("demo_vigenere_cipher")
+    print("---------------------")
+
+    # test
+    plaintext = "attackatdawn"
+    key = "LEMON"
+    ciphertext = vigenere_cipher(plaintext, key)
+    if ciphertext != "LXFOPVEFRNHR":
+        print("ERROR")
+    
+    print(ciphertext)
+
+
+
+
+
+
+
+
+
+
+def wget_unverified(url):
+
+    # curcumvents certificate errors O_o
+
+    import wget
+    import sys
+    import ssl
+
+    ssl._create_default_https_context = ssl._create_unverified_context
+    wget.download(url)
+
+
+
+
+
+
+
+
+# Download files in parallel
+# ------------------------------
+# doesn't work if pasted into python shell
+
+import multiprocessing
+import wget
+import os
+
+# Circumvent SSL: CERTIFICATE_VERIFY_FAILED errors
+# https://stackoverflow.com/questions/50236117/scraping-ssl-certificate-verify-failed-error-for-http-en-wikipedia-org
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+
+# How to get image urls from google images
+# ------------------------------
+# Search google images and use the following javascript
+# urls = Array.from(document.querySelectorAll('.rg_di .rg_meta')).map(el=>JSON.parse(el.textContent).ou);
+# window.open('data:text/csv;charset=utf-8,' + escape(urls.join('\n')));
+
+
+def download_url_process(args):
+    url = args[0]
+    output_dir = args[1]
+    try:
+        wget.download(url, out=output_dir, bar=None)
+        return ('Downloaded', url)
+    except Exception as e:
+        return (str(e), url )
+
+def download_in_parallel(args, nprocs=10):
+    
+    with multiprocessing.Pool(nprocs) as pool:
+        # imap_unordered allows for results to be returned in the order in which they are generated
+        for result in pool.imap_unordered(download_url_process, args):
+            print(' '.join(result))
+
+
+def download_in_parallel_demo():
+
+    print("\n")
+    print("download_in_parallel_demo")
+    print("---------------------")
+
+    output_dir = "Downloads_gitignore"
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    args = [
+        [ "https://upload.wikimedia.org/wikipedia/commons/4/4b/Ursidae-01.jpg" , output_dir ], 
+        [ "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/2010-kodiak-bear-1.jpg/1200px-2010-kodiak-bear-1.jpg" , output_dir ], 
+        [ "https://media.4-paws.org/8/a/a/0/8aa007ca1ea6b56e152eaa378cac580af6fcbdc1/YAR_6487-5272x3648.jpg" , output_dir ], 
+        [ "https://image.pbs.org/video-assets/ae5wgeQ-asset-mezzanine-16x9-MqD4B29.jpg" , output_dir ], 
+        [ "https://www.sciencenewsforstudents.org/wp-content/uploads/2021/04/1440_bb_brown_black_bear_explainer_feat-1030x580.jpg" , output_dir ], 
+    ]
+
+    download_in_parallel(args)
+
+
+
+
+def show_pareto_distribution_derived_from_random_process():
+
+    # Income is normally distributed and proportional to current wealth
+
+    import random
+    import numpy as np 
+    import matplotlib.pyplot as plt
+    from matplotlib.animation import FuncAnimation
+
+    fig, subplot = plt.subplots(nrows = 1, ncols = 1, figsize = (15,5))
+    plt.style.use("ggplot")
+
+    n = 1000
+    basic_income = 0
+
+    x1 = [ x for x in range(0,n+1) ]
+    y1 = [ 1 for y in range(0,n+1) ]
+
+
+    def animate( i ):
+        nonlocal x1, y1
+
+        if i == 0:
+            subplot.plot(x1,y1)
+            return
+
+        subplot.cla() # clear figure but not axes
+        y1 = [ y + np.random.normal(0, y/10) + basic_income for y in y1 ] 
+        y1.sort(reverse = True)
+
+        subplot.set_xlim(0, n)
+        subplot.set_ylim(0, np.amax(y1))
+        subplot.set_title("Pareto distribution from stochastic process " + str(i))
+
+
+        subplot.plot(x1,y1)
+
+        
+    anim = FuncAnimation(fig, animate, interval=100)
+    plt.show()
+
+
+
+
 if __name__ == "__main__":
+
     demo_get_sign_of_multivector()
     # demo_matplotlib()
     # demo_split_at_regex()
@@ -325,3 +638,14 @@ if __name__ == "__main__":
     demo_newtons_method()
     print_on_one_line_demo()
     demo_natural_sort()
+    bash_grep_demo()
+
+    find_files_demo()
+    demo_vigenere_cipher()
+
+    # download_in_parallel_demo()
+
+    show_pareto_distribution_derived_from_random_process()
+
+
+
