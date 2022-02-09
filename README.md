@@ -1,3 +1,75 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef __cplusplus
+}
+#endif
+
+
+Graphics
+-------------------------
+
+There's a message in imgui 
+
+// !!! GLUT/FreeGLUT IS OBSOLETE PREHISTORIC SOFTWARE. Using GLUT is not recommended unless you really miss the 90's. !!!
+// !!! If someone or something is teaching you GLUT today, you are being abused. Please show some resistance. !!!
+// !!! Nowadays, prefer using GLFW or SDL instead!
+
+
+
+
+C++ classes
+-------------------------------
+
+Implementing a simple GUI with c++ methods made it a bit clearer by c++
+using classes often comes bearing so many global variables.  C++ method style
+is to replace c-style functions with loads of arguments, with C methods with 
+far fewer.
+
+Ultimately, methods seem to be a different syntax for passing a struct to a function.
+
+Constructors combine declaration and allocation, and destructors are automatically
+called at the end of scope.  But I don't want it to be less clear when 
+memory is allocated and deallocated.
+There's automatic printing using cout, but that code still needs to be written,
+so again, it's more of a semantic change.
+
+There's data hiding, which enforces the use of standard interfaces, which could be useful.
+
+
+    // C++ style requires globals
+    // now it's a little clearer why everyone uses them.
+
+    SDL_Texture *textures[4];
+    enum { MOUSEOUT, MOUSEOVER, MOUSEDOWN, MOUSEUP };
+    SDL_Renderer *renderer;
+
+    struct Face { 
+        SDL_Rect r;
+        SDL_Texture *texture;
+        void render()
+        {
+            SDL_RenderCopy(renderer, texture, NULL, &r );
+        }
+        void handle(SDL_Event event)
+        {
+            int mouse_x, mouse_y;
+            SDL_GetMouseState(&mouse_x, &mouse_y);
+            if ( !is_inside( mouse_x, mouse_y, r ) ) {
+                texture = textures[MOUSEOUT];
+            } else {
+                if ( event.type == SDL_MOUSEMOTION ) texture = textures[MOUSEOVER];
+                if ( event.type == SDL_MOUSEBUTTONUP ) texture = textures[MOUSEUP];
+                if ( event.type == SDL_MOUSEBUTTONDOWN ) texture = textures[MOUSEDOWN];
+            } 
+        }
+    };
+
+
+
+
+
 SDL_SetRenderTarget(renderer, content);
 
 
