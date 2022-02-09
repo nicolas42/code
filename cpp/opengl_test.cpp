@@ -1,5 +1,8 @@
 // g++ opengl_test.cpp -framework SDL2 -framework opengl && ./a.out 
 
+// from https://gist.github.com/jordandee/94b187bcc51df9528a2f
+
+
 
 #include <stdio.h>
 #include <stdint.h>
