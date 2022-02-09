@@ -1,3 +1,38 @@
+
+Assembly
+------------------------------
+
+It appears like the best way to use assembly is through a regular compiler like gcc or msvc.
+Trying to do it piecemeal with various assemblers makes linking a nightmare.
+However msvc and gcc use very different inline assembly syntax.  See the SDL code for details.
+
+Inline assembly in GCC docs
+https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html
+https://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html
+
+
+
+
+------------------------------------------------------------
+
+
+SDL_SetRenderTarget(renderer, content);
+
+
+Opengl 
+https://openglbook.com/
+
+
+gcc opengl3_hello.c `sdl2-config --libs --cflags` -lGL -Wall && ./a.out
+
+
+
+Dynamic linking occurs at runtime.
+
+
+In c/c++, a trailing f tells the compiler that the number is a float rather than a double as it would otherwise assume.
+0.9f
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -7,10 +42,7 @@ extern "C" {
 #endif
 
 
-Graphics
--------------------------
-
-There's a message in imgui 
+There's a message in imgui telling me not to learn glut lol
 
 // !!! GLUT/FreeGLUT IS OBSOLETE PREHISTORIC SOFTWARE. Using GLUT is not recommended unless you really miss the 90's. !!!
 // !!! If someone or something is teaching you GLUT today, you are being abused. Please show some resistance. !!!
@@ -70,11 +102,8 @@ There's data hiding, which enforces the use of standard interfaces, which could 
 
 
 
-SDL_SetRenderTarget(renderer, content);
-
-
-Disable crash dialog in macos
------------------------------------
+How to disable the crash dialog from terminal applications in macos
+-----------------------------------------------------------------------------
 
 To disable the dialog, enter the following command in the Terminal:
 
@@ -693,6 +722,14 @@ datetime filenames in format 20200101_240000
     datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 
+python SSL
+-----------------
+Okay for some reason I had to do this to make python SSL work on my old macos
+
+    /Applications/Python\ 3.9/Install\ Certificates.command
+
+https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error
+
 
 
 
@@ -1125,6 +1162,18 @@ gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_REND
 What are these libraries?  I'm pretty sure this came from pkg-config --static 
 
     gcc 1_open_a_window.c ~/lib/libSDL2.a -ldl -lm -ldl -lpthread -lrt
+
+
+
+
+__declspec(naked)
+-------------------------
+void __declspec(naked) fname()
+Placing this before a function stops the compiler from adding the usual stack code before and after a function call.
+
+"Basically the function prologue sets up a stack frame for local variables and the epilogue takes care of cleaning it up. This is usually done automatically by the compiler. If you use __declspec(naked), setting up this stack frame will be up to you so it gives you more flexibility."
+https://stackoverflow.com/questions/3021513/could-someone-explain-declspecnaked-please
+
 
 
 

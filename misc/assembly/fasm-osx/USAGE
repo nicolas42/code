@@ -10,8 +10,8 @@ file hello32
 COMPILE OSX 64bits "Hello World"
 --------------------------------
 
-./fasm hello64.asm hello64.o
-./objconv -fmacho64 -nu hello64.o hello64_m.o
+~/bin/fasm hello64.asm hello64.o
+objconv -fmacho64 -nu hello64.o hello64_m.o
 ld -arch x86_64 -macosx_version_min 10.6 -o hello64 hello64_m.o /usr/lib/crt1.o /usr/lib/libc.dylib
 file hello64
 ./hello64

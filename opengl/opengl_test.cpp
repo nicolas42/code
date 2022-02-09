@@ -11,77 +11,135 @@
 #include <SDL2/SDL_opengl.h>
 #include <OpenGL/gl.h>
 
-typedef int32_t i32;
-typedef uint32_t u32;
-typedef int32_t b32;
 
-#define WinWidth 1000
-#define WinHeight 1000
 
 int main (int ArgCount, char **Args)
 {
 
-  u32 WindowFlags = SDL_WINDOW_OPENGL;
-  SDL_Window *Window = SDL_CreateWindow("OpenGL Test", 0, 0, WinWidth, WinHeight, WindowFlags);
-  assert(Window);
-  
-  SDL_GLContext Context = SDL_GL_CreateContext(Window);
-  
-  b32 Running = 1;
-  b32 FullScreen = 0;
-  while (Running)
-  {
-    SDL_Event Event;
-    while (SDL_PollEvent(&Event))
-    {
-      if (Event.type == SDL_KEYDOWN)
-      {
-        switch (Event.key.keysym.sym)
-        {
-          case SDLK_ESCAPE:
-            Running = 0;
-            break;
-          case 'f':
-            FullScreen = !FullScreen;
-            if (FullScreen)
-            {
-              SDL_SetWindowFullscreen(Window, WindowFlags | SDL_WINDOW_FULLSCREEN_DESKTOP);
+    const int window_width = 1000;
+    const int window_height = 1000;
+
+    uint32_t WindowFlags = SDL_WINDOW_OPENGL;
+    SDL_Window *Window = SDL_CreateWindow("OpenGL Test", 0, 0, window_width, window_height, WindowFlags);
+    assert(Window);
+
+    SDL_GLContext Context = SDL_GL_CreateContext(Window);
+
+    int32_t running = 1;
+    int32_t fullscreen = 0;
+    while (running) {
+        
+        // handle events
+        SDL_Event event;
+        SDL_WaitEvent(&event);
+        if ( event.type == SDL_QUIT ) running = 0;
+        if ( event.type == SDL_KEYDOWN) {
+            char key = event.key.keysym.sym;
+            if ( key == SDLK_ESCAPE ) {
+                running = 0;
             }
-            else
-            {
-              SDL_SetWindowFullscreen(Window, WindowFlags);
+            else if ( key == 'f' ) {
+                fullscreen = !fullscreen;
+                if (fullscreen) {
+                    SDL_SetWindowFullscreen(Window, WindowFlags | SDL_WINDOW_FULLSCREEN_DESKTOP);
+                } else {
+                    SDL_SetWindowFullscreen(Window, WindowFlags);
+                }
             }
-            break;
-          default:
-            break;
         }
-      }
-      else if (Event.type == SDL_QUIT)
-      {
-        Running = 0;
-      }
+
+        
+        // render
+        glViewport(0, 0, window_width, window_height);
+
+        // draw background
+        glClearColor(0.0f,0.0f,0.0f,0.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+
+        //Render quad
+        glBegin( GL_LINE_LOOP ); // GL_QUADS );
+            glVertex2f( -0.5f, -0.5f );
+            glVertex2f(  0, -0.5f );
+            glVertex2f(  0,  0 );
+            glVertex2f( -0.5f,  0 );
+        glEnd();
+
+        // glColor3f(0.1, 0.2, 0.3);
+
+        // draw a triangle  https://stackoverflow.com/questions/43494563/draw-a-triangle-with-opengl?rq=1
+        // glBegin(GL_TRIANGLES); // fills it in
+        glBegin(GL_LINE_LOOP);
+        glVertex3f(0, 0, 0);
+        glVertex3f(0.5, 0, 0);
+        glVertex3f(0, 0.7, 0);
+        glEnd();
+
+
+        // DrawCircle(0.5, 0.5, 0.2, 100);
+        // https://stackoverflow.com/questions/22444450/drawing-circle-with-opengl
+        float cx = 0.0f; float cy = 0.0f; float r = 0.2f; int num_segments = 100;
+        {
+            glBegin(GL_LINE_LOOP);
+            for(int ii = 0; ii < num_segments; ii++)
+            {
+                float theta = 2.0f * 3.1415926f * float(ii) / float(num_segments);//get the current angle
+
+                float x = r * cosf(theta);
+                float y = r * sinf(theta);
+
+                glVertex2f(x + cx, y + cy); //output vertex
+
+            }
+            glEnd();
+        }
+
+
+
+        // https://lazyfoo.net/tutorials/OpenGL/01_hello_opengl/index2.php
+
+        
+
+        // https://lazyfoo.net/tutorials/OpenGL/02_matrices_and_coloring_polygons/index.php
+
+        // glOrtho( 0.0, window_width, window_height, 0.0, 1.0, -1.0 );
+
+        // //Solid Cyan
+        // glBegin( GL_QUADS );
+        //     glColor3f( 0.f, 1.f, 1.f );
+        //     glVertex2f( -50.f, -50.f );
+        //     glVertex2f(  50.f, -50.f );
+        //     glVertex2f(  50.f,  50.f );
+        //     glVertex2f( -50.f,  50.f );
+        // glEnd();
+
+        // //RYGB Mix
+        // glBegin( GL_QUADS );
+        //     glColor3f( 1.f, 0.f, 0.f ); glVertex2f( -50.f, -50.f );
+        //     glColor3f( 1.f, 1.f, 0.f ); glVertex2f(  50.f, -50.f );
+        //     glColor3f( 0.f, 1.f, 0.f ); glVertex2f(  50.f,  50.f );
+        //     glColor3f( 0.f, 0.f, 1.f ); glVertex2f( -50.f,  50.f );
+        // glEnd();
+
+
+        SDL_GL_SwapWindow(Window);
+
     }
 
-    glViewport(0, 0, WinWidth, WinHeight);
-    glClearColor(1.f, 0.f, 1.f, 0.f);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    SDL_GL_SwapWindow(Window);
-  }
-  return 0;
+    return 0;
 }
 
 
 
 
 // int main(int argc, char *argv[]) {
-	
+
 // 	// app_t *app = app_create(argv[1], APP_TEXTURE_MODE_YCRCB);
 // 	// while (!app->wants_to_quit) {
 // 	// 	app_update(app);
 // 	// }
 // 	// app_destroy(app);
-	
+
 // 	return EXIT_SUCCESS;
 // }
 
@@ -98,7 +156,7 @@ int main (int ArgCount, char **Args)
 // const char * const APP_VERTEX_SHADER = APP_SHADER_SOURCE(
 // 	attribute vec2 vertex;
 // 	varying vec2 tex_coord;
-	
+
 // 	void main() {
 // 		tex_coord = vertex;
 // 		gl_Position = vec4((vertex * 2.0 - 1.0) * vec2(1, -1), 0.0, 1.0);
@@ -117,7 +175,7 @@ int main (int ArgCount, char **Args)
 // 		1.16438,  2.01723,  0.00000, -1.08139,
 // 		0, 0, 0, 1
 // 	);
-	  
+
 // 	void main() {
 // 		float y = texture2D(texture_y, tex_coord).r;
 // 		float cb = texture2D(texture_cb, tex_coord).r;
@@ -145,21 +203,21 @@ int main (int ArgCount, char **Args)
 // 	plm_t *plm;
 // 	double last_time;
 // 	int wants_to_quit;
-	
+
 // 	SDL_Window *window;
 // 	SDL_AudioDeviceID audio_device;
-	
+
 // 	SDL_GLContext gl;
 
 // 	GLuint shader_program;
 // 	GLuint vertex_shader;
 // 	GLuint fragment_shader;
-	
+
 // 	int texture_mode;
 // 	GLuint texture_y;
 // 	GLuint texture_cb;
 // 	GLuint texture_cr;
-	
+
 // 	GLuint texture_rgb;
 // 	uint8_t *rgb_data;
 // } app_t;
@@ -180,9 +238,9 @@ int main (int ArgCount, char **Args)
 // app_t * app_create(const char *filename, int texture_mode) {
 // 	app_t *self = (app_t *)malloc(sizeof(app_t));
 // 	memset(self, 0, sizeof(app_t));
-	
+
 // 	self->texture_mode = texture_mode;
-	
+
 // 	// Initialize plmpeg, load the video file, install decode callbacks
 // 	self->plm = plm_create_with_filename(filename);
 // 	if (!self->plm) {
@@ -199,10 +257,10 @@ int main (int ArgCount, char **Args)
 // 		plm_get_samplerate(self->plm),
 // 		plm_get_duration(self->plm)
 // 	);
-	
+
 // 	plm_set_video_decode_callback(self->plm, app_on_video, self);
 // 	plm_set_audio_decode_callback(self->plm, app_on_audio, self);
-	
+
 // 	plm_set_loop(self->plm, TRUE);
 // 	plm_set_audio_enabled(self->plm, TRUE);
 // 	plm_set_audio_stream(self->plm, 0);
@@ -226,7 +284,7 @@ int main (int ArgCount, char **Args)
 // 		// Adjust the audio lead time according to the audio_spec buffer size
 // 		plm_set_audio_lead_time(self->plm, (double)audio_spec.samples / (double)samplerate);
 // 	}
-	
+
 // 	// Create SDL Window
 // 	self->window = SDL_CreateWindow(
 // 		"pl_mpeg",
@@ -235,7 +293,7 @@ int main (int ArgCount, char **Args)
 // 		SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
 // 	);
 // 	self->gl = SDL_GL_CreateContext(self->window);
-	
+
 // 	SDL_GL_SetSwapInterval(1);
 
 // 	#if defined(__APPLE__) && defined(__MACH__)
@@ -246,22 +304,22 @@ int main (int ArgCount, char **Args)
 // 		glewExperimental = GL_TRUE;
 // 		glewInit();
 // 	#endif
-	
-	
+
+
 // 	// Setup OpenGL shaders and textures
 // 	const char * fsh = self->texture_mode == APP_TEXTURE_MODE_YCRCB
 // 		? APP_FRAGMENT_SHADER_YCRCB
 // 		: APP_FRAGMENT_SHADER_RGB;
-	
+
 // 	self->fragment_shader = app_compile_shader(self, GL_FRAGMENT_SHADER, fsh);
 // 	self->vertex_shader = app_compile_shader(self, GL_VERTEX_SHADER, APP_VERTEX_SHADER);
-	
+
 // 	self->shader_program = glCreateProgram();
 // 	glAttachShader(self->shader_program, self->vertex_shader);
 // 	glAttachShader(self->shader_program, self->fragment_shader);
 // 	glLinkProgram(self->shader_program);
 // 	glUseProgram(self->shader_program);
-	
+
 // 	// Create textures for YCrCb or RGB rendering
 // 	if (self->texture_mode == APP_TEXTURE_MODE_YCRCB) {
 // 		self->texture_y  = app_create_texture(self, 0, "texture_y");
@@ -273,13 +331,13 @@ int main (int ArgCount, char **Args)
 // 		int num_pixels = plm_get_width(self->plm) * plm_get_height(self->plm);
 // 		self->rgb_data = (uint8_t*)malloc(num_pixels * 3);
 // 	}
-	
+
 // 	return self;
 // }
 
 // void app_destroy(app_t *self) {
 // 	plm_destroy(self->plm);
-	
+
 // 	if (self->texture_mode == APP_TEXTURE_MODE_RGB) {
 // 		free(self->rgb_data);
 // 	}
@@ -287,10 +345,10 @@ int main (int ArgCount, char **Args)
 // 	if (self->audio_device) {
 // 		SDL_CloseAudioDevice(self->audio_device);
 // 	}
-	
+
 // 	SDL_GL_DeleteContext(self->gl);
 // 	SDL_Quit();
-	
+
 // 	free(self);
 // }
 
@@ -305,7 +363,7 @@ int main (int ArgCount, char **Args)
 // 		) {
 // 			self->wants_to_quit = TRUE;
 // 		}
-		
+
 // 		if (
 // 			ev.type == SDL_WINDOWEVENT &&
 // 			ev.window.event == SDL_WINDOWEVENT_SIZE_CHANGED
@@ -338,7 +396,7 @@ int main (int ArgCount, char **Args)
 // 		SDL_GetWindowSize(self->window, &sx, &sy);
 // 		seek_to = plm_get_duration(self->plm) * ((float)mouse_x / (float)sx);
 // 	}
-	
+
 // 	// Seek or advance decode
 // 	if (seek_to != -1) {
 // 		SDL_ClearQueuedAudio(self->audio_device);
@@ -351,7 +409,7 @@ int main (int ArgCount, char **Args)
 // 	if (plm_has_ended(self->plm)) {
 // 		self->wants_to_quit = TRUE;
 // 	}
-	
+
 // 	glClear(GL_COLOR_BUFFER_BIT);
 // 	glRectf(0.0, 0.0, 1.0, 1.0);
 // 	SDL_GL_SwapWindow(self->window);
@@ -361,7 +419,7 @@ int main (int ArgCount, char **Args)
 // 	GLuint shader = glCreateShader(type);
 // 	glShaderSource(shader, 1, &source, NULL);
 // 	glCompileShader(shader);
-	
+
 // 	GLint success;
 // 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 // 	if (!success) {
@@ -376,13 +434,13 @@ int main (int ArgCount, char **Args)
 // GLuint app_create_texture(app_t *self, GLuint index, const char *name) {
 // 	GLuint texture;
 // 	glCreateTextures(GL_TEXTURE_2D, 1, &texture);
-	
+
 // 	glBindTexture(GL_TEXTURE_2D, texture);
 // 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 // 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 // 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 // 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	
+
 // 	glUniform1i(glGetUniformLocation(self->shader_program, name), index);
 // 	return texture;
 // }
@@ -398,7 +456,7 @@ int main (int ArgCount, char **Args)
 
 // void app_on_video(plm_t *mpeg, plm_frame_t *frame, void *user) {
 // 	app_t *self = (app_t *)user;
-	
+
 // 	// Hand the decoded data over to OpenGL. For the RGB texture mode, the
 // 	// YCrCb->RGB conversion is done on the CPU.
 
@@ -409,7 +467,7 @@ int main (int ArgCount, char **Args)
 // 	}
 // 	else {
 // 		plm_frame_to_rgb(frame, self->rgb_data, frame->width * 3);
-	
+
 // 		glBindTexture(GL_TEXTURE_2D, self->texture_rgb);
 // 		glTexImage2D(
 // 			GL_TEXTURE_2D, 0, GL_RGB, frame->width, frame->height, 0,
@@ -422,7 +480,7 @@ int main (int ArgCount, char **Args)
 // 	app_t *self = (app_t *)user;
 
 // 	// Hand the decoded samples over to SDL
-	
+
 // 	int size = sizeof(float) * samples->count * 2;
 // 	SDL_QueueAudio(self->audio_device, samples->interleaved, size);
 // }
