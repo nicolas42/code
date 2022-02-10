@@ -841,6 +841,78 @@ def print_columns_demo():
 
 
 
+
+import random
+import requests
+import os
+
+
+def read_thru(url):
+    # read a url or its locally cached file
+
+    cached_file = url.split('//')[-1].replace('/','-')
+
+    if os.path.exists(cached_file):
+        f = open(cached_file,'r')
+        data = f.read()
+        f.close()
+        return data
+
+    # download url
+    print('\nreading', url, '...\n')
+    response = requests.get(url)
+    response.encoding = 'utf-8'
+    data = response.text
+    f = open(cached_file,'w')
+    f.write(data)
+    f.close()
+    return data
+
+
+def make_story_with_markov_chain(data):
+    output = []
+    data = data.split() # split at whitespace
+
+    position = random.randint(0, len(data)-3) # 24158 
+
+    output.append(data[position])
+    output.append(data[position+1])
+
+    for j in range(100):
+        # print(j)
+        locations_of_matches = []
+        for i,_ in enumerate(data):
+            if data[i].lower() == output[-2].lower() and data[i+1].lower() == output[-1].lower():
+                # print(i)
+                locations_of_matches.append(i)
+
+        # print(locations_of_matches)        
+        # for l in locations_of_matches:
+        #     print(data[l], data[l+1], data[l+2])
+        random_match_location = random.choice(locations_of_matches)
+        new_word = data[random_match_location+2]
+        output.append(new_word)
+        print(new_word, end=' ', flush=True)
+
+    print()
+    # joined_result = ' '.join(output)
+    # print(joined_result)
+
+
+def make_story_with_markov_chain_demo():
+
+    print("\n")
+    print("make_story_with_markov_chain_demo")
+    print("---------------------")
+
+    # download moby dick
+    # url = 'https://www.gutenberg.org/files/2701/2701-0.txt'
+    url = 'https://nschmidt-public.s3.ap-southeast-2.amazonaws.com/2701-0.txt' # mirror
+    text = read_thru(url)
+    make_story_with_markov_chain(text)
+
+
+
 if __name__ == "__main__":
 
     demo_get_sign_of_multivector()
@@ -865,3 +937,4 @@ if __name__ == "__main__":
     
     index_files_demo()
     print_columns_demo()
+    make_story_with_markov_chain_demo()
