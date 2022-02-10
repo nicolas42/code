@@ -32,6 +32,11 @@ def kmeans_clustering_algorithm(X, K, show=True):
 
 
 def demo():
+
+    print("\n")
+    print("kmeans_clustering_algorithm demo")
+    print("------------------------------------")
+
     # generate 3 cluster data
     # data = np.genfromtxt('data1.csv', delimiter=',')
     m1, cov1 = [9, 8], [[1.5, 2], [1, 2]]

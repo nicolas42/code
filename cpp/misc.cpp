@@ -1194,6 +1194,7 @@ int snprintf_demo()
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
+// hostname_to_ip_address
 int showip( const char* hostname )
 {
     struct addrinfo hints, *res, *p;

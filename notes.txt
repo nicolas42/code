@@ -1,10 +1,100 @@
+#make 
+-----------------------------------------------------
+
+To get the terminal commands from a make file, redirect standard error to /dev/null 
+
+    make 2>/dev/null 
+
+
+make -j uses multiple processes to compile a project
+However, it causes errors when making SDL, so it might be unreliable.
+
+
+BUG: Unix terminals insert random characters in paste streams
+-----------------------------------------------------------
+Macos terminal inserts random character into terminal when pasting code.
+This has happened in linux too.
+This time it was different characters always at the same place. 
+I have a feeling that it's because the previous process somehow writes to stdin.
+
+
+
+
+Don't learn glut :)
+----------------------
+There's a message in imgui telling me not to learn glut lol
+
+// !!! GLUT/FreeGLUT IS OBSOLETE PREHISTORIC SOFTWARE. Using GLUT is not recommended unless you really miss the 90's. !!!
+// !!! If someone or something is teaching you GLUT today, you are being abused. Please show some resistance. !!!
+// !!! Nowadays, prefer using GLFW or SDL instead!
+
+
+
+
+
+BUG: AddressSanitizer causes my program to crash
+------------------------------------------------------
+
+-fsanitize=address causes the image_viewer program to crash o_o .  
+
+Reproduce:
+g++ image_viewer.cpp -Iinclude -framework SDL2 -framework SDL2_image && ./a.out  => fine 
+g++ image_viewer.cpp -Iinclude -framework SDL2 -framework SDL2_image -fsanitize=address && ./a.out   => crashes on drag and drop of folder 
+
+Perhaps it's due to this 
+
+HINT: this may be a false positive if your program uses some custom stack unwind mechanism or swapcontext
+      (longjmp and C++ exceptions *are* supported)
+
+
+Details of faddress error output 
+
+==28193==ERROR: AddressSanitizer: stack-use-after-scope on address 0x7fff5add0551 at pc 0x000105010f26 bp 0x7fff5add0370 sp 0x7fff5adcfb00
+READ of size 1 at 0x7fff5add0551 thread T0
+    #0 0x105010f25 in wrap_strcmp (libclang_rt.asan_osx_dynamic.dylib:x86_64h+0x15f25)
+    #1 0x104e3199e in get_image_filenames(char*) image_viewer.cpp:192
+    #2 0x104e34824 in main image_viewer.cpp:471
+    #3 0x7fffbba6c234 in start (libdyld.dylib:x86_64+0x5234)
+
+Address 0x7fff5add0551 is located in stack of thread T0 at offset 465 in frame
+    #0 0x104e3132f in get_image_filenames(char*) image_viewer.cpp:174
+
+  This frame has 7 object(s):
+    [32, 40) 'ref.tmp.i'
+    [64, 208) 'path_stat.i' (line 167)
+    [272, 296) 'all_filenames' (line 180)
+    [336, 360) 'ref.tmp' (line 186)
+    [400, 424) 'f7' (line 189)
+    [464, 488) 'ref.tmp9' (line 190) <== Memory access at offset 465 is inside this variable
+    [528, 552) 'i' (line 199)
+HINT: this may be a false positive if your program uses some custom stack unwind mechanism or swapcontext
+      (longjmp and C++ exceptions *are* supported)
+SUMMARY: AddressSanitizer: stack-use-after-scope (libclang_rt.asan_osx_dynamic.dylib:x86_64h+0x15f25) in wrap_strcmp
+
+
+
+
+SQLite amalgamation 
+--------------------------------
+
+SQLite is distributed as 
+
+"an amalgamation of many separate C source files from SQLite
+version 3.37.1.  By combining all the individual C code files into a
+single large file, the entire code can be compiled as a single translation
+unit.  This allows many compilers to do optimizations that would not be
+possible if the files were compiled separately.  Performance improvements
+of 5% or more are commonly seen when SQLite is compiled as a single
+translation unit."
+
+
 
 Assembly
 ------------------------------
 
 It appears like the best way to use assembly is through a regular compiler like gcc or msvc.
 Trying to do it piecemeal with various assemblers makes linking a nightmare.
-However msvc and gcc use very different inline assembly syntax.  See the SDL code for details.
+However msvc and gcc use very different inline assembly syntax.  The SDL code has examples.
 
 Inline assembly in GCC docs
 https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html
@@ -40,15 +130,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
-
-There's a message in imgui telling me not to learn glut lol
-
-// !!! GLUT/FreeGLUT IS OBSOLETE PREHISTORIC SOFTWARE. Using GLUT is not recommended unless you really miss the 90's. !!!
-// !!! If someone or something is teaching you GLUT today, you are being abused. Please show some resistance. !!!
-// !!! Nowadays, prefer using GLFW or SDL instead!
-
-
 
 
 C++ classes

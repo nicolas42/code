@@ -1,5 +1,8 @@
 import numpy as np
 
+
+
+
 def natural_sort_demo():
 
     print("\n")
@@ -9,6 +12,9 @@ def natural_sort_demo():
     import natsort 
     a = ['Picture 13.jpg', 'Picture 14.jpg', 'Picture 15.jpg','Picture 0.jpg', 'Picture 1.jpg', 'Picture 10.jpg', 'Picture 11.jpg', 'Picture 12.jpg',  'Picture 16.jpg', 'Picture 17.jpg', 'Picture 18.jpg', 'Picture 19.jpg', 'Picture 2.jpg', 'Picture 20.jpg', 'Picture 21.jpg', 'Picture 22.jpg', 'Picture 23.jpg', 'Picture 24.jpg', 'Picture 25.jpg', 'Picture 26.jpg', 'Picture 27.jpg', 'Picture 28.jpg', 'Picture 29.jpg', 'Picture 3.jpg', 'Picture 30.jpg', 'Picture 31.jpg', 'Picture 32.jpg', 'Picture 33.jpg', 'Picture 34.jpg', 'Picture 35.jpg', 'Picture 36.jpg', 'Picture 37.jpg']         
     print(natsort.natsorted(a))
+
+
+
 
 
 def blur(a):
@@ -26,6 +32,8 @@ def blur(a):
     arraylist = np.array(arraylist)
     arraylist_sum = np.sum(arraylist, axis=0)
     return arraylist_sum
+
+
 
 
 
@@ -132,6 +140,7 @@ def named_tuple_demo():
 
 
 
+
 import math
 import numpy as np
 
@@ -167,6 +176,9 @@ def demo_newtons_method():
     dfdx = lambda x : -23 + 24*x + 213*3*x**2
     solutions = newtons_method(f, dfdx)
     print(solutions)
+
+
+
 
 
 def print_on_one_line_demo():
@@ -509,23 +521,17 @@ def demo_vigenere_cipher():
 
 
 
+# def wget_unverified(url):
 
+#     # curcumvents certificate errors O_o
+#     # Install certificate instead
 
+#     import wget
+#     import sys
+#     import ssl
 
-
-def wget_unverified(url):
-
-    # curcumvents certificate errors O_o
-
-    import wget
-    import sys
-    import ssl
-
-    ssl._create_default_https_context = ssl._create_unverified_context
-    wget.download(url)
-
-
-
+#     ssl._create_default_https_context = ssl._create_unverified_context
+#     wget.download(url)
 
 
 
@@ -661,6 +667,7 @@ def tkinter_gui_with_large_font_demo():
 
 
 
+
 def matplotlib_pareto_demo():
 
     print("\n")
@@ -764,6 +771,11 @@ def sdl_pareto_demo():
     SDL_DestroyWindow(window)
     SDL_Quit()
     return 0
+
+
+
+
+
 
 
 
@@ -912,6 +924,7 @@ def make_story_with_markov_chain_demo():
     make_story_with_markov_chain(text)
 
 
+import kmeans_clustering_algorithm 
 
 if __name__ == "__main__":
 
@@ -938,3 +951,5 @@ if __name__ == "__main__":
     index_files_demo()
     print_columns_demo()
     make_story_with_markov_chain_demo()
+
+    kmeans_clustering_algorithm.demo()

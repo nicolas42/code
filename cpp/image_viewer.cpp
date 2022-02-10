@@ -2,6 +2,14 @@
 macos:
 g++ image_viewer.cpp -Iinclude -framework SDL2 -framework SDL2_image -std=c++11 && ./a.out
 
+g++ image_viewer.cpp -Iinclude -framework SDL2 -framework SDL2_image -std=c++11 -Ofast -fPIC -Wall -Wpedantic -Wextra -Wvla -Wshadow -Wfatal-errors -fsanitize=address -g && ./a.out
+
+g++ image_viewer.cpp -Iinclude -std=c++11 \
+-Ofast -Wall -Wpedantic -Wextra -Wvla -Wshadow -Wfatal-errors -fPIC -fsanitize=address -g \
+-framework SDL2 -framework SDL2_image -framework SDL2_ttf -framework SDL2_mixer \
+&& ./a.out
+
+
 linux:
 g++ -ISDL2 -lSDL2 -lSDL2_image -std=c++11 image_viewer.cpp
 
