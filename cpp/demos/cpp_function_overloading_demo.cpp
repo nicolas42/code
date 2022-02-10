@@ -79,7 +79,7 @@ int main( int argc, char* args[] )
         arr.allocated = 16;    
         arr.data = (char*)malloc( arr.allocated * sizeof(char) ); 
 
-        for(int i=0;i<num_iterations;i+=1) arr = append(arr, (char)(i%26)+65 );
+        for(int i=0;i<num_iterations;i+=1) arr = append(arr, (char)((i%26)+65) );
 
         for(int i=0;i<num_iterations;i+=1) print(arr.data[i]);
 

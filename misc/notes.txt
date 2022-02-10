@@ -1,3 +1,93 @@
+keyboard shortcuts in linux - pc file
+---------------------------------------
+
+The file named "pc" is a linux (ubuntu or mint) keyboard bindings file which has been modified to change capslock to enter.
+The file was originally found at /usr/share/X11/xkb/symbols/pc.  
+Presumably replacing the existing file with this one will achieve the desired result.
+
+    //    key <CAPS> {      [ Caps_Lock             ]       };
+        key <CAPS> {        [ Return                ]       };
+
+After this reload the keyboard map with 
+
+    setxkbmap us
+
+There's a premade pc file in this repo if you don't want to do it yourself.
+
+
+There are many sections in these files.  The top one appears to bethe default so just modify that one I suppose.
+
+To change other keys modify /usr/share/X11/xkb/symbols/us
+then again reload it with setxkbmap us
+
+
+sudo nano /usr/share/X11/xkb/symbols/pc
+check settings
+setxkbmap -query
+set keyboard map to us
+setxkbmap us
+
+
+In a bash script, to change to the directory of the script
+
+    cd $(dirname $0) 
+
+
+Miscellaneous make.sh notes 
+--------------------------------
+Perhaps I should finally learn the make language?
+
+# g++ -std=c++11  -Iinclude/  -Wall -Wno-unknown-pragmas -Wfatal-errors -fPIC -flto -Ofast -c 
+# gcc -Iinclude/  -Wall -Wno-unknown-pragmas -Wfatal-errors -fPIC -flto -Ofast -c
+
+# g++ -std=c++11  -Iinclude/  -Wall -Wno-unknown-pragmas -Wfatal-errors -fPIC -flto -Ofast -c image_opencv.cpp
+
+gcc -c src/*.c
+ar rcs lib.a *.o 
+rm *.o 
+
+
+
+cat $0
+gcc -Isrc -Wall -Wno-unknown-pragmas -Wfatal-errors -fPIC -std=c99   -c src/*.c
+gcc -Isrc -Wall -Wno-unknown-pragmas -Wfatal-errors -fPIC -std=c++14 -c src/*.cpp
+ar rcs lib.a *.o
+rm *.o 
+
+
+
+
+Run google chrome insecurely 
+--------------------------------------
+#!/bin/bash
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --allow-file-access-from-files --disable-web-security
+
+
+mount a device in linux
+--------------------------------------
+sudo mount -t ntfs-3g -o ro /dev/nvme0n1p3 /media/windows/
+
+
+
+
+
+fix linux and windows using different clocks
+--------------------------------------------------------
+timedatectl set-local-rtc 1 --adjust-system-clock
+
+Linux will no longer apply timezone adjustments to the clock on your motherboard. As a result, the clocks on your dual boot Windows 10 and Linux set up will be in perfect sync. Before you reboot though you should probably make sure it has worked. Just Enter the command below in the Terminal.
+
+timedatectl
+
+https://mashtips.com/fix-linux-windows-dual-boot-clock-different-time/#:~:text=Method%202%3A%20Make%20Windows%20use%20UTC%20Time&text=For%20this%2C%20go%20to%20Settings,toggle%20under%20Set%20time%20automatically.
+
+
+
+
+
+
+
+
 
 Interesting Sources of Software
 --------------------------------------------------------------
@@ -138,7 +228,7 @@ htons()  host to network short
 
 
  
-nginx - getting started on macos
+nginx - getting started
 --------------------------------------------------------------
 static server
 Hussein Nasser

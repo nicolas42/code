@@ -4,11 +4,6 @@ https://css-tricks.com/snippets/css/a-guide-to-flexbox/
 
 
 
-macos take screenshtos as jpgs
---------------------------------
-defaults write com.apple.screencapture type jpg;killall SystemUIServer
-
-
 Website To Do
 ---------------------
 
@@ -41,28 +36,6 @@ arcgis examples
 https://developers.arcgis.com/javascript/latest/sample-code/
 
 
-
-My terrible git usage
-------------------------
-git add . && git commit -m ":)" && git push
-
-
-
-VS code sane tab switching
--------------------------------
-
-Make ctrl+tab work properly
-[
-    // ...
-    {
-        "key": "ctrl+tab",
-        "command": "workbench.action.nextEditor"
-    },
-    {
-        "key": "ctrl+shift+tab",
-        "command": "workbench.action.previousEditor"
-    }
-]
 
 
 

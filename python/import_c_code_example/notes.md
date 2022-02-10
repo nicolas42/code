@@ -1,4 +1,7 @@
-The ctypes python package can be used to insert c code into python :).  There's some examples of how to do this in the darknet repo.
+Shared libraries that are accessible from python can be made using the -shared option from gcc or clang.  This will create a dynamic library that 
+is linkable at runtime.
+
+The python ctypes library, or ffi presumably, can be used to interface with the object code.
 
 gcc -shared -o libhello.so -fPIC hello.c
 
