@@ -1,7 +1,56 @@
-#make 
+http://www.rebol.com/docs/view-face-content.html
+
+
+More c compiler error fun
+------------------------------
+Getting string typing like in go seems to be a losing battle unless one writes all the code.
+C code just isn't written with explicity type conversions.
+
+-Wsign-conversion
+-Wconversion
+-W-float-conversion
+
+Wlots="-Weverything -Wno-missing-prototypes -Wno-old-style-cast -Wno-double-promotion -Wno-cast-align -Wno-reserved-id-macro -Wno-comma"
+
+
+STBIMG_Load
+--------------------------------
+STBIMG_Load is a dropin replacement for SDL's IMG_Load() function.
+Use it like this.
+
+
+#define SDL_STBIMAGE_IMPLEMENTATION
+#include "src/SDL_stbimage.h"
+
+SDL_Surface* surface = STBIMG_Load( "data/button.png" );
+
+
+
+
+#Make 
 -----------------------------------------------------
 
 Make seems like cleaned up shell script.
+
+
+Makefile symbols 
+
+from https://stackoverflow.com/questions/3220277/what-do-the-makefile-symbols-and-mean
+
+$@ is the name of the target being generated, and $< the first prerequisite (usually a source file). 
+You can find a list of all these special variables in the GNU Make manual.
+
+For example, consider the following declaration:
+
+all: library.cpp main.cpp
+
+In this case:
+
+    $@ evaluates to all
+    $< evaluates to library.cpp
+    $^ evaluates to library.cpp main.cpp
+
+
 
 
 To get the terminal commands from a make file, redirect standard error to /dev/null 
@@ -138,21 +187,36 @@ extern "C" {
 #endif
 
 
-C++ classes
+Notes on C++ Classes
 -------------------------------
 
-Implementing a simple GUI with c++ methods made it a bit clearer by c++
-using classes often comes bearing so many global variables.  C++ method style
-is to replace c-style functions with loads of arguments, with C methods with 
-far fewer.
+* classes are the same as structs except their data is private by default
+* function pointers are not stored within the struct, they're put somewhere else to save space.
+* methods can be defined inside or outside of the class but prototypes are always required inside the class definition
+* C++ bool is the same as an int.
+* public: and private: labels can be used to specify the visibility of elements in a class which can 
+enforce the usage of standard interfaces. 
 
-Ultimately, methods seem to be a different syntax for passing a struct to a function.
-
-Constructors combine declaration and allocation, and destructors are automatically
-called at the end of scope.  But I don't want it to be less clear when 
+* constructors combine declaration and allocation, and destructors are automatically
+called at the end of scope.  However, I typically want it to be more, not less clear when 
 memory is allocated and deallocated.
-There's automatic printing using cout, but that code still needs to be written,
-so again, it's more of a semantic change.
+
+Cout can be used with a virtual method to make printing look slightly nicer, but that's a bit weird.
+
+Ultimately serialization and deserialization is one thing that it makes sense to put as a method, really.
+
+
+
+Implementing a simple GUI with c++ methods made it a bit clearer why methods
+often comes bearing global variables.  C++ method style is to replace 
+c-style functions, usually with loads of arguments, with C methods that have few. 
+A C++ method can be made that takes many arguments like C-style but then the question 
+naturally arises as to what the benefit is of pretending like there's a function pointer 
+in the struct in the first place.
+
+If a method relies on global variables I think it's an indication that the code probably 
+wants to be an old-fashioned function instead.
+
 
 There's data hiding, which enforces the use of standard interfaces, which could be useful.
 
@@ -408,6 +472,7 @@ Notable compiler options
     -Wvla               warn about c99 variable length arrays 
     -Wshadow            warn when a local variable replaces a variable in a higher scope. 
                         This is good for catching nested for loops that use the same variable, e.g. 'i'.
+                        Programming in a c89 style avoids this error, basically.
 
     -fPIC               position independent code. relative jumps are generated rather than absolute ones.  
                         code can be loaded into memory without recalculating jump addresses
@@ -532,6 +597,22 @@ https://stackoverflow.com/questions/57154009/how-do-pointers-reference-multi-byt
 
 
 
+
+Endianness in SDL and stb
+--------------------------------------
+
+The *INTEGER* rgba is stored in memory as abgr in little-endian systems, 
+however a byte array is stored exactly as it appears in the program.
+
+So, when casting an array from bytes to integers or vice versa, one has 
+to take care.
+
+SDL functions operate on images as a series of integers whereas 
+stb image functions operate on the data as a series of bytes 
+
+
+
+
 Header only libraries
 ----------------------------------------------
 
@@ -566,16 +647,15 @@ A header only file should look like this
 
 
     #endif // BASIC_HEADER_GUARD
-
     #ifdef BASIC_IMPLEMENTATION
-
     #ifndef BASIC_IMPLEMENTATION_GUARD
     #define BASIC_IMPLEMENTATION_GUARD
 
+
     .......
 
-    #endif // BASIC_IMPLEMENTATION_GUARD 
 
+    #endif // BASIC_IMPLEMENTATION_GUARD 
     #endif // #ifdef BASIC_IMPLEMENTATION
 
 

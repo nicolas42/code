@@ -1,9 +1,9 @@
-// g++ paint.cpp -Iinclude -framework SDL2 && ./a.out
+// g++ paint.cpp -framework SDL2 && ./a.out
 
 // from https://bitbucket.org/dandago/gigilabs/src/master/Sdl2LineDrawing/Sdl2LineDrawing/main.cpp
 
 #include <list>
-#include "SDL2/SDL.h"
+#include <SDL2/SDL.h>
 
 struct Line
 {

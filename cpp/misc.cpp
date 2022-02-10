@@ -1,3 +1,6 @@
+// g++ misc.cpp -Iinclude -Ofast -Wfatal-errors
+
+
 // g++ misc.cpp -Iinclude -Ofast -Weverything -Wno-missing-prototypes -Wno-old-style-cast -Wno-double-promotion
 
 // g++ misc.cpp -Iinclude -Ofast -fPIC -Wall -Wpedantic -Wextra -Wvla -Wshadow -Wfatal-errors -Werror
@@ -1511,6 +1514,44 @@ int endianness_demo()
 
 
 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int atof()
+{
+
+    printf("\n\n");
+    printf("endianness_demo\n");
+    printf("-----------------------\n");
+
+    printf("These functions return 0 if there's an error\n\n");
+
+   double val;
+   char str[20];
+   
+    // float.h demo
+    // -----------------------
+    // The maximum value of float = 3.40282346638528859811704e+38
+    // The minimum value of float = 1.1754943508e-38
+    // The number of digits in the number = 24
+    // The maximum value of double = 1.7976931349e+308
+    // The minimum value of double = 2.2250738585e-308
+    // The number of digits in the number = 53
+
+   strcpy(str, "1234234.7976931348e+200");
+   printf("String value = %s, Float value = %.6e, int value = %d \n", str, atof(str), atoi(str) );
+
+   strcpy(str, "tutorialspoint.com");
+   printf("String value = %s, Float value = %.6e, int value = %d \n", str, atof(str), atoi(str) );
+
+
+   return(0);
+}
+
+
+
 int main()
 {
     caesar_cipher_demo();
@@ -1553,9 +1594,12 @@ int main()
 
 
     endianness_demo();
+    atof();
 
     return 0;
 }
+
+
 
 
 

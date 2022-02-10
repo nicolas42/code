@@ -1,19 +1,16 @@
+#ifndef SDL_TOOLS_HEADER_GUARD
+#define SDL_TOOLS_HEADER_GUARD
 
-#ifndef SDL_STUFF_HEADER_GUARD
-#define SDL_STUFF_HEADER_GUARD
-
-#include "SDL2/SDL.h"
+#include <SDL2/SDL.h>
 
 void print_event(SDL_Event event);
 SDL_Rect make_rect(int x, int y, int w, int h);
 
-#endif // SDL_STUFF_HEADER_GUARD
 
-#ifdef SDL_STUFF_IMPLEMENTATION
-
-#ifndef SDL_STUFF_IMPLEMENTATION_GUARD
-#define SDL_STUFF_IMPLEMENTATION_GUARD
-
+#endif // SDL_TOOLS_HEADER_GUARD
+#ifdef SDL_TOOLS_IMPLEMENTATION
+#ifndef SDL_TOOLS_IMPLEMENTATION_GUARD
+#define SDL_TOOLS_IMPLEMENTATION_GUARD
 
 
 
@@ -63,6 +60,7 @@ void print_event(SDL_Event event)
     fflush(stdout);
 }
 
+
 SDL_Rect make_rect(int x, int y, int w, int h)
 {
     SDL_Rect dest;
@@ -77,8 +75,8 @@ SDL_Rect make_rect(int x, int y, int w, int h)
 
 
 
-#endif // SDL_STUFF_IMPLEMENTATION_GUARD 
 
-#endif // #ifdef SDL_STUFF_IMPLEMENTATION
+#endif // SDL_TOOLS_IMPLEMENTATION_GUARD 
+#endif // #ifdef SDL_TOOLS_IMPLEMENTATION
 
 

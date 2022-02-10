@@ -1,6 +1,6 @@
 /*
 macos:
-g++ image_viewer.cpp -Iinclude -framework SDL2 -framework SDL2_image -std=c++11 && ./a.out
+g++ image_viewer.cpp -framework SDL2 -framework SDL2_image -std=c++11 && ./a.out
 
 g++ image_viewer.cpp -Iinclude -framework SDL2 -framework SDL2_image -std=c++11 -Ofast -fPIC -Wall -Wpedantic -Wextra -Wvla -Wshadow -Wfatal-errors -fsanitize=address -g && ./a.out
 
@@ -19,8 +19,8 @@ cl /Zi /I "win64\include\SDL2" "image_viewer.cpp" /link "win64\SDL2.lib" "win64\
 
 */
 
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 // #include <stdio.h>
 // #include <stdlib.h>
