@@ -1,6 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+int populate_array_with_junk(int *arr, int count){
+
+    for(int i=0; i<count; i+=1) arr[i] = i;
+
+    return 0;
+}
+
+
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
@@ -115,7 +124,7 @@ void draw_mandelbrot(struct image im, double x, double y, double zoom, double ma
                 im.data[pos + 0] = color[0];
                 im.data[pos + 1] = color[1];
                 im.data[pos + 2] = color[2];
-                im.data[pos + 3] = 255;
+                im.data[pos + 3] = (char)255;
             }
 
 
