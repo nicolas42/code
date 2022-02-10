@@ -1,13 +1,3 @@
-/*
-IMGUI_DIR=/Users/nick/everything/imgui
-CFLAGS="-Wfatal-errors -g -Wall -Wformat -I${IMGUI_DIR} -I${IMGUI_DIR}/backends -I/usr/local/include -I/opt/local/include"
-
-g++ -c ${CFLAGS} main.cpp ${IMGUI_DIR}/imgui.cpp ${IMGUI_DIR}/imgui_demo.cpp ${IMGUI_DIR}/imgui_draw.cpp ${IMGUI_DIR}/imgui_tables.cpp ${IMGUI_DIR}/imgui_widgets.cpp ${IMGUI_DIR}/backends/imgui_impl_glut.cpp ${IMGUI_DIR}/backends/imgui_impl_opengl2.cpp
-g++ *.o ${CFLAGS} -framework OpenGL -framework GLUT -L/usr/local/lib -L/opt/local/lib
-
-*/
-
-
 // Dear ImGui: standalone example application for GLUT/FreeGLUT + OpenGL2, using legacy fixed pipeline
 // If you are new to Dear ImGui, read documentation from the docs/ folder + read the top of imgui.cpp.
 // Read online: https://github.com/ocornut/imgui/tree/master/docs
@@ -131,8 +121,9 @@ int main(int argc, char** argv)
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 
     // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    //ImGui::StyleColorsClassic();
+    // ImGui::StyleColorsDark();
+    // ImGui::StyleColorsClassic();
+    ImGui::StyleColorsLight();
 
     // Setup Platform/Renderer backends
     ImGui_ImplGLUT_Init();

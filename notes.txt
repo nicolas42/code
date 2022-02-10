@@ -1,6 +1,9 @@
 #make 
 -----------------------------------------------------
 
+Make seems like cleaned up shell script.
+
+
 To get the terminal commands from a make file, redirect standard error to /dev/null 
 
     make 2>/dev/null 
@@ -8,6 +11,9 @@ To get the terminal commands from a make file, redirect standard error to /dev/n
 
 make -j uses multiple processes to compile a project
 However, it causes errors when making SDL, so it might be unreliable.
+
+
+
 
 
 BUG: Unix terminals insert random characters in paste streams

@@ -1,4 +1,4 @@
-// g++ draw_geometry.cpp -framework SDL2 -framework opengl && ./a.out 
+// g++ opengl_draw_geometry.cpp -framework SDL2 -framework opengl && ./a.out 
 
 // from https://gist.github.com/jordandee/94b187bcc51df9528a2f
 
