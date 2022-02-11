@@ -1,3 +1,5 @@
+from https://github.com/rsnemmen/OpenCL-examples
+
 Simple examples of OpenCL code
 ===============================
 

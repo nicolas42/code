@@ -1,11 +1,15 @@
 # ipython -i ../nit.py
 
-# init()
-# commit()
-# checkout(file)
+# Interface 
 
-# checkout files are written to ".nit/datetime" in the format ".nit/YYYYMMDD_hhmmss"
-# e.g. .nit/20220126_142431
+# init() => creates .nit folder
+# commit() => saves unique files
+# checkout(version_file) => restores files from version_file
+
+# checkout files are located in the .nit folder
+# Their filenames are the date and time in the format ".nit/YYYYMMDD_hhmmss" 
+# so they sort properly e.g. .nit/20220126_142431
+# would be a commit done on 26 Jan 2022 at 1424 hours and 31 seconds
 
 import os
 import sys

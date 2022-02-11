@@ -37,7 +37,7 @@ def blur(a):
 
 
 
-def demo_get_sign_of_multivector():
+def get_sign_of_multivector(_demo):
 
     def bubble_sort(arr):
         # using adjacent swaps
@@ -83,7 +83,7 @@ def demo_get_sign_of_multivector():
 
 
     
-def demo_matplotlib():
+def matplotlib_draw_circle_demo():
 
     # pip3 install matplotlib
     import matplotlib.pyplot as plt
@@ -171,7 +171,7 @@ def newtons_method(f, dfdx):
     return sorted(solutions)
     print(solutions)
 
-def demo_newtons_method():
+def newtons_method_demo():
     f = lambda x : 1 -23*x + 12*x**2 + 213*x**3
     dfdx = lambda x : -23 + 24*x + 213*3*x**2
     solutions = newtons_method(f, dfdx)
@@ -359,34 +359,6 @@ def bash_grep_demo():
 
 
 
-import re
-import sys
-
-def read_file(filename):
-    file = open(filename,'r')
-    input_string = file.read()
-    file.close()
-    return input_string
-
-
-
-def demo_split_at_regex():
-    filename = 'GH010013.txt';
-    output_filename = 'output.txt'
-    regex_pattern = r'\nFPS:\d*\.\d*\s*AVG_FPS:\d*\.\d*\n\n\s*cvWriteFrame\s*\nObjects:\s*\n';
-
-    input_string = read_file(filename)
-    output_list = re.split(regex_pattern, input_string)
-
-    # print items in output_list
-    for _,v in enumerate(output_list):
-        print('{' + v + '}')
-
-
-
-
-
-
 
 import os
 import sys
@@ -500,11 +472,11 @@ def vigenere_cipher(plaintext, key):
     return ciphertext
 
 
-def demo_vigenere_cipher():
+def vigenere_cipher_demo():
 
 
     print("\n")
-    print("demo_vigenere_cipher")
+    print("vigenere_cipher_demo")
     print("---------------------")
 
     # test
@@ -592,82 +564,6 @@ def parallel_wget_demo():
 
 
 
-
-
-
-def tkinter_gui_with_large_font_demo():
-
-    # There's a bug on macos when this is run after other gui code - "libc++abi.dylib: terminating with uncaught exception of type NSException"
-    # Apparently this is a problem with tkinter on macos
-    # "If you are using macOS 10.6 or later, the Apple-supplied Tcl/Tk 8.5 has serious bugs that can cause application crashes. If you wish to use IDLE or Tkinter, do not use the Apple-supplied Pythons. Instead, install and use a newer version of Python from python.org or a third-party distributor that supplies or links with a newer version of Tcl/Tk."
-    # source: https://stackoverflow.com/questions/30031063/nsexception-with-tkinter-on-mac
-
-    # the following code is based on https://tkdocs.com/tutorial/firstexample.html
-
-    print("\n")
-    print("tkinter_gui_with_large_font_demo")
-    print("---------------------")
-
-    # from tkinter import *
-    import tkinter as tk 
-    from tkinter import ttk
-    from tkinter import font
-
-    def calculate(*args):
-        print(args)
-        try:
-            value = float(feet.get())
-            meters.set(int(0.3048 * value * 10000.0 + 0.5)/10000.0)
-        except ValueError:
-            pass
-
-    window = tk.Tk()
-    window.title("OMG It's a Title")
-
-    mainframe = ttk.Frame(window) # , padding="3 3 12 12")
-    mainframe.grid_configure(padx=12, pady=12)
-    mainframe.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
-    window.columnconfigure(0, weight=1)
-    window.rowconfigure(0, weight=1)
-
-    feet = tk.StringVar()
-    meters = tk.StringVar()
-
-    # row 1
-    ttk.Button(mainframe, text="OMG A Button", command=calculate).grid(column=1, row=1, sticky=tk.W)
-    input_field = ttk.Entry(mainframe, width=7, textvariable=feet); input_field.grid(column=2, row=1, sticky=(tk.W, tk.E))
-    ttk.Label(mainframe, text="feet").grid(column=3, row=1, sticky=tk.W)
-
-    # row 2
-    ttk.Label(mainframe, text="is equivalent to").grid(column=1, row=2, sticky=tk.E)
-    ttk.Label(mainframe, textvariable=meters).grid(column=2, row=2, sticky=(tk.W, tk.E))
-    ttk.Label(mainframe, text="meters").grid(column=3, row=2, sticky=tk.W)
-
-    # row 3
-    ttk.Button(mainframe, text="Calculate", command=calculate).grid(column=3, row=3, sticky=tk.W)
-
-    # keyboard shortcuts
-    input_field.bind("<Return>", calculate)
-    window.bind("<Escape>", quit)
-
-    # resize fonts
-    for font_name in [ "TkDefaultFont", "TkTextFont", "TkFixedFont", "TkMenuFont", "TkHeadingFont", "TkCaptionFont", "TkSmallCaptionFont", "TkIconFont", "TkTooltipFont" ]:
-        that_font = tk.font.nametofont(font_name)
-        that_font.configure(size=20)
-
-    # put padding around all elements
-    for child in mainframe.winfo_children(): 
-        child.grid_configure(padx=5, pady=5)
-
-
-    input_field.focus()
-    window.mainloop()
-
-
-
-
-
-
 def matplotlib_pareto_demo():
 
     print("\n")
@@ -684,7 +580,7 @@ def matplotlib_pareto_demo():
     fig, subplot = plt.subplots(nrows = 1, ncols = 1, figsize = (15,5))
     plt.style.use("ggplot")
 
-    n = 1000
+    n = 400
     basic_income = 0
 
     x1 = [ x for x in range(0,n+1) ]
@@ -723,7 +619,7 @@ def sdl_pareto_demo():
     window_width = 800
     window_height = 600
     SDL_Init(SDL_INIT_VIDEO)
-    window = SDL_CreateWindow(b"Hello World", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_width, window_height, SDL_WINDOW_SHOWN)
+    window = SDL_CreateWindow(b"SDL Pareto", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_width, window_height, SDL_WINDOW_SHOWN)
     renderer = SDL_CreateRenderer(window, -1, 0)
 
     SDL_SetRenderDrawColor(renderer, 242, 242, 242, 255)
@@ -854,6 +750,37 @@ def print_columns_demo():
 
 
 
+
+
+
+import re
+import sys
+
+def read_file(filename):
+    file = open(filename,'r')
+    input_string = file.read()
+    file.close()
+    return input_string
+
+
+
+def demo_split_at_regex():
+    filename = "misc.py"
+    output_filename = 'output.txt'
+    regex_pattern = r'\nFPS:\d*\.\d*\s*AVG_FPS:\d*\.\d*\n\n\s*cvWriteFrame\s*\nObjects:\s*\n'
+
+    input_string = read_file(filename)
+    output_list = re.split(regex_pattern, input_string)
+
+    # print items in output_list
+    for _,v in enumerate(output_list):
+        print('{' + v + '}')
+
+
+
+
+
+
 import random
 import requests
 import os
@@ -924,32 +851,54 @@ def make_story_with_markov_chain_demo():
     make_story_with_markov_chain(text)
 
 
+def ordered_datetime():
+    import datetime
+    return datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
+def ordered_datetime_demo():
+    print("\n")
+    print("ordered_datetime_demo")
+    print("---------------------")
+    ordered_datetime()
+
+
+
+
+from multiprocessing import Process
+
 import kmeans_clustering_algorithm 
+# kmeans_clustering_algorithm.demo
 
-if __name__ == "__main__":
-
-    demo_get_sign_of_multivector()
-    # demo_matplotlib()
-    # demo_split_at_regex()
+def dont_deserve_their_own_process():
+    get_sign_of_multivector_demo()
     named_tuple_demo()
-    demo_newtons_method()
+    newtons_method_demo()
     print_on_one_line_demo()
     natural_sort_demo()
     bash_grep_demo()
-
     find_files_demo()
-    demo_vigenere_cipher()
-
-    # parallel_wget_demo()
-
-    # tkinter_gui_with_large_font_demo() # tkinter has bugs in macos
-
-    # # gui
-    # matplotlib_pareto_demo()
-    # sdl_pareto_demo()
-    
+    vigenere_cipher_demo()
     index_files_demo()
     print_columns_demo()
-    make_story_with_markov_chain_demo()
+    ordered_datetime_demo()
+    demo_split_at_regex()
 
-    kmeans_clustering_algorithm.demo()
+if __name__ == "__main__":
+
+    processes = []
+    for f in [ 
+        dont_deserve_their_own_process, 
+        matplotlib_draw_circle_demo,  
+        parallel_wget_demo, 
+        matplotlib_pareto_demo, 
+        sdl_pareto_demo, 
+        make_story_with_markov_chain_demo 
+    ]:
+        p = Process(target=f)
+        processes.append(p)
+        p.start()
+
+    for p in processes:
+        p.join()
+
+

@@ -16,6 +16,8 @@ func main() {
 
 	http.Handle("/", http.FileServer(http.Dir(*directory)))
 
-	log.Printf("Serving %s on HTTP port: %s\n", *directory, *port)
+	// log.Printf("Serving %s on HTTP port: %s\n", *directory, *port)
+	log.Printf("Go to http://localhost:8080\n")
+	
 	log.Fatal(http.ListenAndServe(":"+*port, nil))
 }

@@ -1,4 +1,19 @@
+https://en.wikipedia.org/wiki/Kinetic_theory_of_gases
+
+
+
+#Tkinter 
+
+In macos, the default tkinter version has proper bugs.
+I literally can't close a tkinter window properly
+
+
+#Rebol
+
+Rebol faces would be a good starting point for general interface design
+
 http://www.rebol.com/docs/view-face-content.html
+
 
 
 More c compiler error fun
@@ -887,10 +902,6 @@ make an executable
     pyinstaller --onefile --hidden-import=configparser script.py
 
 --one-file seems to be slower than not, but it is more convenient
-
-datetime filenames in format 20200101_240000
-
-    datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 
 python SSL

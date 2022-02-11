@@ -1,11 +1,9 @@
-// g++ misc.cpp -Iinclude -Ofast -Wfatal-errors
+// g++ aggregated_demos.cpp -Ofast -Wfatal-errors
 
 
-// g++ misc.cpp -Iinclude -Ofast -Weverything -Wno-missing-prototypes -Wno-old-style-cast -Wno-double-promotion
-
-// g++ misc.cpp -Iinclude -Ofast -fPIC -Wall -Wpedantic -Wextra -Wvla -Wshadow -Wfatal-errors -Werror
-
-// clang++ -std=c++11 misc.cpp -Iinclude -Ofast -Weverything -Wno-missing-prototypes -Wno-old-style-cast -Wno-double-promotion -Wfatal-errors
+// g++ aggregated_demos.cpp -Iinclude -Ofast -Weverything -Wno-missing-prototypes -Wno-old-style-cast -Wno-double-promotion
+// g++ aggregated_demos.cpp -Iinclude -Ofast -fPIC -Wall -Wpedantic -Wextra -Wvla -Wshadow -Wfatal-errors -Werror
+// clang++ -std=c++11 aggregated_demos.cpp -Iinclude -Ofast -Weverything -Wno-missing-prototypes -Wno-old-style-cast -Wno-double-promotion -Wfatal-errors
 
 #include <stdint.h>
 #include <stdio.h>
@@ -569,14 +567,14 @@ void read_file2_demo()
     printf("read_file2_demo\n");
     printf("-----------------------\n");
 
-    const char *filename = "misc.cpp";
+    const char *filename = __FILE__;
     char *str;
     size_t len = 0;
     read_file2(filename, &str, &len);
 
     printf("{");
     for(int i=0;i<100;i+=1) putc( str[i], stdout );
-    printf("}\n");
+    printf("...}\n");
 }
 
 
