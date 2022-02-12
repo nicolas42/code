@@ -1,4 +1,4 @@
-# Miscellaneous Public Code
+# Miscellaneous Code
 
 # C/C++
 

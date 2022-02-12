@@ -1,7 +1,8 @@
-test modification
+https://github.com/JoeyDeVries/LearnOpenGL
 
 https://en.wikipedia.org/wiki/Kinetic_theory_of_gases
 
+https://www.youtube.com/watch?v=f08Y39UiC-o stress in beams
 
 
 #Tkinter 
