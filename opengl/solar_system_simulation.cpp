@@ -7,10 +7,18 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
+#ifdef _WIN32
+    #define SDL_MAIN_HANDLED // why??? why???
+#endif 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
-#include <OpenGL/gl.h>
 #include <math.h>
+
+#ifdef __APPLE__ 
+    #include <OpenGL/gl.h>
+#else 
+    #include <GL/gl.h>
+#endif 
 
 void draw_polygon( float cx, float cy, float r, int num_segments )
 {
@@ -177,7 +185,7 @@ void play_sound_effect(Mix_Chunk *sound_effect)
 
 
 
-int even_less_simple_orbit_demo()
+void even_less_simple_orbit_demo()
 {
 
     // Basic solar system simulator
@@ -216,8 +224,8 @@ int even_less_simple_orbit_demo()
     int window_width = 600;
     int window_height = 600;
     uint32_t WindowFlags = SDL_WINDOW_OPENGL;
-    SDL_Window *window = SDL_CreateWindow("OpenGL Test", 0, 0, 
-    window_width, window_height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE ); //  | SDL_WINDOW_ALLOW_HIGHDPI
+    SDL_Window *window = SDL_CreateWindow("OpenGL Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+    window_width, window_height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI ); //  | SDL_WINDOW_ALLOW_HIGHDPI
     assert(window);
 
 
@@ -225,17 +233,12 @@ int even_less_simple_orbit_demo()
     assert(!err);
 	Mix_Music *music = Mix_LoadMUS( "Kerbal Space Program - Space Music (Track 1)-osJqbovbH2A.mp3");
     assert(music);
-    // play_pause_audio(music);
+    play_pause_audio(music);
 
 
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
     SDL_GLContext Context = SDL_GL_CreateContext(window);
-
-
-
-
-
 
 
 
@@ -255,7 +258,7 @@ int even_less_simple_orbit_demo()
     double zoom = 1.0;
     int running = 1; 
     // To control the frequency of gl backbuffer swaps, SDL_GL_SetSwapInterval has to be set to 0, it appears.
-    // SDL_GL_SetSwapInterval(1); // 0 for immediate updates, 1 for updates synchronized with the vertical retrace, -1 for adaptive vsync
+    SDL_GL_SetSwapInterval(1); // 0 for immediate updates, 1 for updates synchronized with the vertical retrace, -1 for adaptive vsync
 
     while (running) {
 
@@ -311,7 +314,7 @@ int even_less_simple_orbit_demo()
         glClear(GL_COLOR_BUFFER_BIT);
         float sun_color[3] = {255,2115,9};
         glColor3f( sun_color[0]/255.0, sun_color[1]/255.0, sun_color[2]/255.0 );
-        draw_polygon(0,0,0.01,100); // sun
+        draw_polygon(0,0,0.1,100); // sun
 
         for (int i=0; i<8; i+=1){
             // scale values down for drawing 
@@ -322,7 +325,7 @@ int even_less_simple_orbit_demo()
         }
 
         SDL_GL_SwapWindow(window);
-        // SDL_Delay(10); 
+        SDL_Delay(10); 
     }
     
 }
