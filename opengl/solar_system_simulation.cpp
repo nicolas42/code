@@ -177,7 +177,7 @@ void play_sound_effect(Mix_Chunk *sound_effect)
 
 
 
-void even_less_simple_orbit_demo()
+int even_less_simple_orbit_demo()
 {
 
     // Basic solar system simulator
@@ -209,22 +209,35 @@ void even_less_simple_orbit_demo()
     // Uranus   2872500e6
     // Neptune  4495100e6
 
-    const int SCREEN_WIDTH = 1000;
-    const int SCREEN_HEIGHT = 1000;
+
+
+
+
+    int window_width = 600;
+    int window_height = 600;
     uint32_t WindowFlags = SDL_WINDOW_OPENGL;
-    SDL_Window *Window = SDL_CreateWindow("OpenGL Test", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
-    assert(Window);
+    SDL_Window *window = SDL_CreateWindow("OpenGL Test", 0, 0, 
+    window_width, window_height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE ); //  | SDL_WINDOW_ALLOW_HIGHDPI
+    assert(window);
 
 
     int err = Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 );
     assert(!err);
 	Mix_Music *music = Mix_LoadMUS( "Kerbal Space Program - Space Music (Track 1)-osJqbovbH2A.mp3");
     assert(music);
-    play_pause_audio(music);
+    // play_pause_audio(music);
+
+
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
+    SDL_GLContext Context = SDL_GL_CreateContext(window);
 
 
 
-    SDL_GLContext Context = SDL_GL_CreateContext(Window);
+
+
+
+
 
     const double G = 6.67408e-11; // gravitational constant
     const double mass_sun = 1.989e30;
@@ -236,32 +249,38 @@ void even_less_simple_orbit_demo()
     double ys[8] = {       0,        0,        0,        0,        0,         0,         0,         0 };
     double vys[8] = { 47.9e3, 35.0e3, 29.8e3, 24.1e3, 13.1e3, 9.7e3, 6.8e3, 5.4e3};
     double vxs[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-    // colors very scientifically taken from some random poster
+    // The colors were very scientifically taken from some random poster
     float colors[8][3] = { {193,80,30}, {230,120,35}, {56,111,164}, {150,42,29}, {70,32,20}, {157,106,49}, {79,105,129}, {39,77,162} };
 
-
-
-    double angle, a, r, v;
-    double x,y,vx,vy,ax,ay;
-
-    a = G * mass_sun / (r*r); 
-    x = r; 
-    y = 0; 
-    vx = 0; 
-    vy = v;
-
     double zoom = 1.0;
-    int running = 1;
+    int running = 1; 
+    // To control the frequency of gl backbuffer swaps, SDL_GL_SetSwapInterval has to be set to 0, it appears.
+    // SDL_GL_SetSwapInterval(1); // 0 for immediate updates, 1 for updates synchronized with the vertical retrace, -1 for adaptive vsync
+
     while (running) {
-        
+
+        double angle, a, r, v;
+        double x,y,vx,vy,ax,ay;
+
         // handle events
         SDL_Event event;
         while (SDL_PollEvent(&event)){
-            if ( event.type == SDL_QUIT ) running = 0;
-            if ( event.type == SDL_MOUSEWHEEL ) {
+            if ( event.type == SDL_QUIT ) {
+                running = 0;
+            }
+            else if ( event.type == SDL_MOUSEWHEEL ) {
                 zoom = zoom * pow(1.1, event.wheel.y);
                 SDL_Log("event.wheel.y %d zoom %f\n", event.wheel.y, zoom);
 
+            }
+            else if (event.type == SDL_WINDOWEVENT) {
+                SDL_GetWindowSize(window, &window_width, &window_height);
+                glViewport(0, 0, window_width, window_height);
+            }
+            if (event.type == SDL_KEYDOWN) {
+                if ( event.key.keysym.sym == SDLK_m ) {
+                    play_pause_audio(music);
+                }
             }
         }
 
@@ -296,15 +315,14 @@ void even_less_simple_orbit_demo()
 
         for (int i=0; i<8; i+=1){
             // scale values down for drawing 
-            double draw_pos_x = xs[i] / 4495100e6 * zoom;
-            double draw_pos_y = ys[i] / 4495100e6 * zoom;
+            double draw_pos_x = xs[i] / 227900e6 * 0.5 * zoom;
+            double draw_pos_y = ys[i] / 227900e6 * 0.5 * zoom;
             glColor3f( colors[i][0]/255.0, colors[i][1]/255.0, colors[i][2]/255.0 );
             draw_polygon( draw_pos_x, draw_pos_y, 0.005, 10 );
         }
 
-        SDL_GL_SwapWindow(Window);
-        SDL_Delay(10); // this doesn't seem to do anything.  why?
-
+        SDL_GL_SwapWindow(window);
+        // SDL_Delay(10); 
     }
     
 }
@@ -320,106 +338,109 @@ int main()
 
 
 
-int a_failed_attempt_at_antialiasing(int ArgCount, char **Args)
-{
-
-    const int SCREEN_WIDTH = 1000;
-    const int SCREEN_HEIGHT = 1000;
-
-    uint32_t WindowFlags = SDL_WINDOW_OPENGL;
-    SDL_Window *Window = SDL_CreateWindow("OpenGL Test", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, WindowFlags);
-    assert(Window);
-
-    SDL_GLContext Context = SDL_GL_CreateContext(Window);
-
-    //Set the viewport
-    glViewport( 0.f, 0.f, SCREEN_WIDTH, SCREEN_HEIGHT );
-
-    //Initialize Projection Matrix
-    glMatrixMode( GL_PROJECTION );
-    glLoadIdentity();
-    glOrtho( 0.0, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0, 1.0, -1.0 );
-
-    //Initialize Modelview Matrix
-    glMatrixMode( GL_MODELVIEW );
-    glLoadIdentity();
 
 
 
-    //Initialize clear color
-    glClearColor( 0.f, 0.f, 0.f, 1.f );
+// int a_failed_attempt_at_antialiasing(int ArgCount, char **Args)
+// {
 
-    //Enable texturing
-    glEnable( GL_TEXTURE_2D );
+//     const int SCREEN_WIDTH = 1000;
+//     const int SCREEN_HEIGHT = 1000;
 
-    //Set blending
-    glEnable( GL_BLEND );
-    glDisable( GL_DEPTH_TEST );
-    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+//     uint32_t WindowFlags = SDL_WINDOW_OPENGL;
+//     SDL_Window *Window = SDL_CreateWindow("OpenGL Test", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, WindowFlags);
+//     assert(Window);
 
-    //Set antialiasing/multisampling
-    glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
-    glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
-    glDisable( GL_LINE_SMOOTH );
-    glDisable( GL_POLYGON_SMOOTH );
-    glDisable( GL_MULTISAMPLE );
+//     SDL_GLContext Context = SDL_GL_CreateContext(Window);
+
+//     //Set the viewport
+//     glViewport( 0.f, 0.f, SCREEN_WIDTH, SCREEN_HEIGHT );
+
+//     //Initialize Projection Matrix
+//     glMatrixMode( GL_PROJECTION );
+//     glLoadIdentity();
+//     glOrtho( 0.0, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0, 1.0, -1.0 );
+
+//     //Initialize Modelview Matrix
+//     glMatrixMode( GL_MODELVIEW );
+//     glLoadIdentity();
+
+
+
+//     //Initialize clear color
+//     glClearColor( 0.f, 0.f, 0.f, 1.f );
+
+//     //Enable texturing
+//     glEnable( GL_TEXTURE_2D );
+
+//     //Set blending
+//     glEnable( GL_BLEND );
+//     glDisable( GL_DEPTH_TEST );
+//     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
+//     //Set antialiasing/multisampling
+//     glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
+//     glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
+//     glDisable( GL_LINE_SMOOTH );
+//     glDisable( GL_POLYGON_SMOOTH );
+//     glDisable( GL_MULTISAMPLE );
 
 
 
         
-    //Clear color
-    glClear( GL_COLOR_BUFFER_BIT );
+//     //Clear color
+//     glClear( GL_COLOR_BUFFER_BIT );
 
-            glDisable( GL_LINE_SMOOTH );
-			glDisable( GL_POLYGON_SMOOTH );
-			glEnable( GL_MULTISAMPLE );
+//             glDisable( GL_LINE_SMOOTH );
+// 			glDisable( GL_POLYGON_SMOOTH );
+// 			glEnable( GL_MULTISAMPLE );
 
-    //Render Triangle
-    glColor3f( 1.f, 1.f, 1.f );
-    glBegin( GL_TRIANGLES );
-    glVertex2f( SCREEN_WIDTH/2.f, 0.f );
-    glVertex2f( SCREEN_WIDTH, SCREEN_HEIGHT );
-    glVertex2f( 0.f, SCREEN_HEIGHT );
-    glEnd();
+//     //Render Triangle
+//     glColor3f( 1.f, 1.f, 1.f );
+//     glBegin( GL_TRIANGLES );
+//     glVertex2f( SCREEN_WIDTH/2.f, 0.f );
+//     glVertex2f( SCREEN_WIDTH, SCREEN_HEIGHT );
+//     glVertex2f( 0.f, SCREEN_HEIGHT );
+//     glEnd();
 
-    glColor3f( 1.f, 1.f, 1.f );
-    draw_polygon(100.f, 100.f, 100.f, 5);
+//     glColor3f( 1.f, 1.f, 1.f );
+//     draw_polygon(100.f, 100.f, 100.f, 5);
 
-    //End alias mode
-			glDisable( GL_MULTISAMPLE );
+//     //End alias mode
+// 			glDisable( GL_MULTISAMPLE );
 
-    draw_polygon(500, 100, 100, 5);
-
-
-    // // render
-    // glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
-    // // draw background
-    // glClearColor(0.0f,0.0f,0.0f,1.0f);
-    // glClear(GL_COLOR_BUFFER_BIT);
-
-    // draw_polygon(-0.5, +0.5, 0.1, 100);
-
-    SDL_GL_SwapWindow(Window);
+//     draw_polygon(500, 100, 100, 5);
 
 
+//     // // render
+//     // glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+//     // // draw background
+//     // glClearColor(0.0f,0.0f,0.0f,1.0f);
+//     // glClear(GL_COLOR_BUFFER_BIT);
+
+//     // draw_polygon(-0.5, +0.5, 0.1, 100);
+
+//     SDL_GL_SwapWindow(Window);
 
 
 
 
-    int32_t running = 1;
-    int32_t fullscreen = 0;
-    while (running) {
+
+
+//     int32_t running = 1;
+//     int32_t fullscreen = 0;
+//     while (running) {
         
-        // handle events
-        SDL_Event event;
-        while (SDL_PollEvent(&event)){
-            if ( event.type == SDL_QUIT ) running = 0;
-        }
+//         // handle events
+//         SDL_Event event;
+//         while (SDL_PollEvent(&event)){
+//             if ( event.type == SDL_QUIT ) running = 0;
+//         }
 
-        SDL_Delay(10);
-    }
+//         SDL_Delay(10);
+//     }
 
-    return 0;
-}
+//     return 0;
+// }
 

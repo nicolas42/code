@@ -1,4 +1,4 @@
-// rm a.out && g++ glut.cpp -Wfatal-errors -framework OpenGL -framework GLUT && ./a.out
+// g++ glut_demo.cpp -Wfatal-errors -framework OpenGL -framework GLUT && ./a.out
 
 
 #ifdef __APPLE__

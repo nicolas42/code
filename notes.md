@@ -1,6 +1,100 @@
+SDL and opengl
+-----------------------
+
+The imgui code seems to be the best stuff to take examples from, generally speaking, for graphical
+2D code. Specifically in my case, the sdl_opengl3 stuff.  I'm not sure what version of opengl I'm currently using
+but I'm afraid that it might be version 2.0.
+
+
+Without this flag, my high DPI display uses pixel doubling when rendering my opengl demo.  So I imagine
+that the width and height of the window are half of what they would be.  There may be some kind of 
+window event that occurs when moving between normal and high DPI displays.
+
+ | SDL_WINDOW_ALLOW_HIGHDPI
+
+
+
+
+Turns out antialiasing in SDL is as simple as putting these two lines before SDL_GL_CreateContext
+
+SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
+SDL_GLContext Context = SDL_GL_CreateContext(Window);
+
+I found antialiasing My testing with lazyfoo antialiasing and multisampling doesn't work on macos 10.12.
+
+
+
+
+Opengl in SDL seems to be set to sync with the refresh rate of the monitor?
+To set an update rate different from the default, the following function must be called.
+SDL_GL_SetSwapInterval(0); // 0 for immediate updates, 1 for updates synchronized with the vertical retrace, -1 for adaptive vsync
+
+
+#ifdef __APPLE__
+    #include <OpenGL/gl.h>
+    #include <OpenGL/glu.h>
+#else 
+    #include <GL/gl.h>
+    #include <GL/glu.h>
+#endif
+
+
+
+
+Predefined macros for OS
+-------------------------------------
+from https://stackoverflow.com/questions/142508/how-do-i-check-os-with-a-preprocessor-directive
+
+The Predefined Macros for OS site has a very complete list of checks. Here are a few of them, with links to where they're found:
+Predefined Macros for OS site: https://sourceforge.net/p/predef/wiki/OperatingSystems/
+
+
+Windows
+
+_WIN32   Both 32 bit and 64 bit
+_WIN64   64 bit only
+__CYGWIN__
+
+Unix (Linux, *BSD, but not Mac OS X)
+
+See this related question on some of the pitfalls of using this check.
+
+unix
+__unix
+__unix__
+
+Mac OS X
+
+__APPLE__ Also used for classic
+__MACH__
+
+Both are defined; checking for either should work.
+
+Linux
+
+__linux__
+linux Obsolete (not POSIX compliant)
+__linux Obsolete (not POSIX compliant)
+
+FreeBSD
+
+__FreeBSD__
+
+Android
+
+__ANDROID__
+
+
+
+
+
+Links
+
 https://github.com/JoeyDeVries/LearnOpenGL
 
 https://en.wikipedia.org/wiki/Kinetic_theory_of_gases
+http://www.hunter.cuny.edu/physics/courses/physics110/repository/files/section51/15TheKineticTheoryofGasesRev2.pdf
 
 https://www.youtube.com/watch?v=f08Y39UiC-o stress in beams
 
@@ -21,7 +115,7 @@ http://www.rebol.com/docs/view-face-content.html
 
 More c compiler error fun
 ------------------------------
-Getting string typing like in go seems to be a losing battle unless one writes all the code.
+Getting string type checking like golang seems to be a losing battle unless you write all the code.
 C code just isn't written with explicity type conversions.
 
 -Wsign-conversion
