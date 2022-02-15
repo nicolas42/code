@@ -92,8 +92,8 @@ read_disk:
     jmp $
 
 
-include "print_string.asm"
-include 'print_hex.asm'
+include "src/print_string.asm"
+include "src/print_hex.asm"
 
 
 str1:   db 'Hello World!', 0xa, 0xd, 0
