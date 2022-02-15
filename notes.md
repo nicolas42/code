@@ -19,16 +19,16 @@ Without this flag, my high DPI display uses pixel doubling when rendering my ope
 that the width and height of the window are half of what they would be.  There may be some kind of 
 window event that occurs when moving between normal and high DPI displays.
 
- | SDL_WINDOW_ALLOW_HIGHDPI
+    | SDL_WINDOW_ALLOW_HIGHDPI
 
 
 
 
 Turns out antialiasing in SDL is as simple as putting these two lines before SDL_GL_CreateContext
 
-SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
-SDL_GLContext Context = SDL_GL_CreateContext(Window);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
+    SDL_GLContext Context = SDL_GL_CreateContext(Window);
 
 I found antialiasing My testing with lazyfoo antialiasing and multisampling doesn't work on macos 10.12.
 
@@ -40,13 +40,13 @@ To set an update rate different from the default, the following function must be
 SDL_GL_SetSwapInterval(0); // 0 for immediate updates, 1 for updates synchronized with the vertical retrace, -1 for adaptive vsync
 
 
-#ifdef __APPLE__
-    #include <OpenGL/gl.h>
-    #include <OpenGL/glu.h>
-#else 
-    #include <GL/gl.h>
-    #include <GL/glu.h>
-#endif
+    #ifdef __APPLE__
+        #include <OpenGL/gl.h>
+        #include <OpenGL/glu.h>
+    #else 
+        #include <GL/gl.h>
+        #include <GL/glu.h>
+    #endif
 
 
 
@@ -59,40 +59,40 @@ The Predefined Macros for OS site has a very complete list of checks. Here are a
 Predefined Macros for OS site: https://sourceforge.net/p/predef/wiki/OperatingSystems/
 
 
-Windows
+    Windows
 
-_WIN32   Both 32 bit and 64 bit
-_WIN64   64 bit only
-__CYGWIN__
+    _WIN32   Both 32 bit and 64 bit
+    _WIN64   64 bit only
+    __CYGWIN__
 
-Unix (Linux, *BSD, but not Mac OS X)
+    Unix (Linux, *BSD, but not Mac OS X)
 
-See this related question on some of the pitfalls of using this check.
+    See this related question on some of the pitfalls of using this check.
 
-unix
-__unix
-__unix__
+    unix
+    __unix
+    __unix__
 
-Mac OS X
+    Mac OS X
 
-__APPLE__ Also used for classic
-__MACH__
+    __APPLE__ Also used for classic
+    __MACH__
 
-Both are defined; checking for either should work.
+    Both are defined; checking for either should work.
 
-Linux
+    Linux
 
-__linux__
-linux Obsolete (not POSIX compliant)
-__linux Obsolete (not POSIX compliant)
+    __linux__
+    linux Obsolete (not POSIX compliant)
+    __linux Obsolete (not POSIX compliant)
 
-FreeBSD
+    FreeBSD
 
-__FreeBSD__
+    __FreeBSD__
 
-Android
+    Android
 
-__ANDROID__
+    __ANDROID__
 
 
 
@@ -100,12 +100,12 @@ __ANDROID__
 
 Links
 
-https://github.com/JoeyDeVries/LearnOpenGL
+    https://github.com/JoeyDeVries/LearnOpenGL
 
-https://en.wikipedia.org/wiki/Kinetic_theory_of_gases
-http://www.hunter.cuny.edu/physics/courses/physics110/repository/files/section51/15TheKineticTheoryofGasesRev2.pdf
+    https://en.wikipedia.org/wiki/Kinetic_theory_of_gases
+    http://www.hunter.cuny.edu/physics/courses/physics110/repository/files/section51/15TheKineticTheoryofGasesRev2.pdf
 
-https://www.youtube.com/watch?v=f08Y39UiC-o stress in beams
+    https://www.youtube.com/watch?v=f08Y39UiC-o stress in beams
 
 
 #Tkinter 
@@ -127,11 +127,11 @@ More c compiler error fun
 Getting string type checking like golang seems to be a losing battle unless you write all the code.
 C code just isn't written with explicity type conversions.
 
--Wsign-conversion
--Wconversion
--W-float-conversion
+    -Wsign-conversion
+    -Wconversion
+    -W-float-conversion
 
-Wlots="-Weverything -Wno-missing-prototypes -Wno-old-style-cast -Wno-double-promotion -Wno-cast-align -Wno-reserved-id-macro -Wno-comma"
+    Wlots="-Weverything -Wno-missing-prototypes -Wno-old-style-cast -Wno-double-promotion -Wno-cast-align -Wno-reserved-id-macro -Wno-comma"
 
 
 STBIMG_Load
@@ -140,10 +140,10 @@ STBIMG_Load is a dropin replacement for SDL's IMG_Load() function.
 Use it like this.
 
 
-#define SDL_STBIMAGE_IMPLEMENTATION
-#include "src/SDL_stbimage.h"
+    #define SDL_STBIMAGE_IMPLEMENTATION
+    #include "src/SDL_stbimage.h"
 
-SDL_Surface* surface = STBIMG_Load( "data/button.png" );
+    SDL_Surface* surface = STBIMG_Load( "data/button.png" );
 
 
 
@@ -299,13 +299,13 @@ Dynamic linking occurs at runtime.
 In c/c++, a trailing f tells the compiler that the number is a float rather than a double as it would otherwise assume.
 0.9f
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+    #ifdef __cplusplus
+    extern "C" {
+    #endif
 
-#ifdef __cplusplus
-}
-#endif
+    #ifdef __cplusplus
+    }
+    #endif
 
 
 Notes on C++ Classes
@@ -397,46 +397,46 @@ SDL has its own standard library implementations for things like malloc, math, q
 
 Basically I was able to get everything working except the video stuff.
 
-// rm *.o 
+    // rm *.o 
 
-// for f in src src/atomic src/audio/coreaudio src/core src/core/unix src/cpuinfo src/dynapi src/events src/file src/file/cocoa src/filesystem src/filesystem/cocoa src/filesystem/unix src/haptic src/hidapi src/joystick src/joystick/darwin src/libm src/loadso src/locale/macosx src/main src/misc src/misc/macosx src/power src/power/macosx src/render src/render/opengl src/sensor src/stdlib src/test src/thread src/timer src/timer/unix src/video src/video/cocoa src/video/x11 src/video/khronos/EGL 
-// do 
-//     if [ ! -z "$(ls $f/*.c 2>/dev/null)" ] 
-//     then 
-//         echo $f
-//         gcc -c $f/*.c -Isrc/include -Iinclude  -Isrc -Isrc/hidapi/hidapi -Isrc/video -Isrc/video/cocoa 
-//     fi
-// done 
+    // for f in src src/atomic src/audio/coreaudio src/core src/core/unix src/cpuinfo src/dynapi src/events src/file src/file/cocoa src/filesystem src/filesystem/cocoa src/filesystem/unix src/haptic src/hidapi src/joystick src/joystick/darwin src/libm src/loadso src/locale/macosx src/main src/misc src/misc/macosx src/power src/power/macosx src/render src/render/opengl src/sensor src/stdlib src/test src/thread src/timer src/timer/unix src/video src/video/cocoa src/video/x11 src/video/khronos/EGL 
+    // do 
+    //     if [ ! -z "$(ls $f/*.c 2>/dev/null)" ] 
+    //     then 
+    //         echo $f
+    //         gcc -c $f/*.c -Isrc/include -Iinclude  -Isrc -Isrc/hidapi/hidapi -Isrc/video -Isrc/video/cocoa 
+    //     fi
+    // done 
 
-// ar rcs lib.a *.o 
-// gcc src/mystuff/main.c lib.a -Iinclude -Isrc/include && ./a.out
-
-
-
-#include <stdio.h>
-
-double SDL_uclibc_atan(double x);
-double SDL_uclibc_atan2(double y, double x);    
-double SDL_uclibc_copysign(double x, double y);       
-double SDL_uclibc_cos(double x);         
-double SDL_uclibc_exp(double x);
-double SDL_uclibc_fabs(double x);        
-double SDL_uclibc_floor(double x);
-double SDL_uclibc_fmod(double x, double y);
-double SDL_uclibc_log(double x);
-double SDL_uclibc_log10(double x);
-double SDL_uclibc_pow(double x, double y);    
-double SDL_uclibc_scalbn(double x, int n);
-double SDL_uclibc_sin(double x);
-double SDL_uclibc_sqrt(double x);
-double SDL_uclibc_tan(double x);
+    // ar rcs lib.a *.o 
+    // gcc src/mystuff/main.c lib.a -Iinclude -Isrc/include && ./a.out
 
 
-int main()
-{
-    printf("omgomg %f\n", SDL_uclibc_sqrt(0.234) );
-    return 0;
-}
+
+    #include <stdio.h>
+
+    double SDL_uclibc_atan(double x);
+    double SDL_uclibc_atan2(double y, double x);    
+    double SDL_uclibc_copysign(double x, double y);       
+    double SDL_uclibc_cos(double x);         
+    double SDL_uclibc_exp(double x);
+    double SDL_uclibc_fabs(double x);        
+    double SDL_uclibc_floor(double x);
+    double SDL_uclibc_fmod(double x, double y);
+    double SDL_uclibc_log(double x);
+    double SDL_uclibc_log10(double x);
+    double SDL_uclibc_pow(double x, double y);    
+    double SDL_uclibc_scalbn(double x, int n);
+    double SDL_uclibc_sin(double x);
+    double SDL_uclibc_sqrt(double x);
+    double SDL_uclibc_tan(double x);
+
+
+    int main()
+    {
+        printf("omgomg %f\n", SDL_uclibc_sqrt(0.234) );
+        return 0;
+    }
 
 
 
@@ -689,7 +689,7 @@ Joining strings in a #macro
 
 The token ## joins two strings in a macro
 
-TYPENAME ## _array => TYPENAME_array
+    TYPENAME ## _array => TYPENAME_array
 
 
 #std::vector is slow
