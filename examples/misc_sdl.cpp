@@ -9,10 +9,10 @@
 #include <SDL2/SDL.h>
 
 #define SDL_TOOLS_IMPLEMENTATION
-#include "src/sdl_tools.h"
+#include "../src/sdl_tools.h"
 
 #define SDL_STBIMAGE_IMPLEMENTATION
-#include "src/SDL_stbimage.h"
+#include "../src/SDL_stbimage.h"
 
 
 

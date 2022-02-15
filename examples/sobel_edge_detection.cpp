@@ -1,11 +1,11 @@
 /*
-gcc sobel_edge_detection.c -framework SDL2 -ISDL2 && ./a.out
+g++ sobel_edge_detection.cpp -framework SDL2 -ISDL2 && ./a.out
 */
 
 #include <SDL2/SDL.h>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "src/stb_image.h"
+#include "../src/stb_image.h"
 
 // #include <stdio.h>
 // #include "types.h"

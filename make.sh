@@ -9,7 +9,7 @@ make_run_linux(){
 }
 
 make_run_all(){
-    for f in image_viewer.cpp play_audio.cpp render_text.cpp show_mandelbrot.cpp sobel_edge_detection.cpp misc.cpp
+    for f in examples/image_viewer.cpp examples/play_audio.cpp examples/render_text.cpp examples/show_mandelbrot.cpp examples/sobel_edge_detection.cpp examples/aggregated_demos.cpp
     do 
         make_run $f
     done 

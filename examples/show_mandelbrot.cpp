@@ -18,7 +18,7 @@ https://stackoverflow.com/questions/33304351/sdl2-fast-pixel-manipulation
 #include <SDL2/SDL.h>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "src/stb_image_write.h"
+#include "../src/stb_image_write.h"
 
 // #include <stdio.h>
 // #include <stdlib.h>

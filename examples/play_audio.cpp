@@ -13,7 +13,7 @@ based on code by the lazyfoo
 #include "SDL2/SDL_mixer.h"
 #include "SDL2/SDL_ttf.h"
 
-#include "src/libc.h"
+#include "../src/libc.h"
 
 
 void stop_audio(Mix_Music *music)
