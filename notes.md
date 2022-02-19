@@ -847,7 +847,6 @@ All the functions take an integer argument.
 
 
 
-
 Make #VSCode ctrl+tab functionality great again
 --------------------------------------------------
 
