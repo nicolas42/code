@@ -122,6 +122,14 @@ http://www.rebol.com/docs/view-face-content.html
 
 
 
+
+
+
+
+
+
+
+
 More c compiler error fun
 ------------------------------
 Getting string type checking like golang seems to be a losing battle unless you write all the code.
@@ -208,16 +216,16 @@ There's a message in imgui telling me not to learn glut lol
 
 
 
-BUG: AddressSanitizer causes my program to crash
-------------------------------------------------------
+BUG: AddressSanitizer causes my program to crash 20220101
+------------------------------------------------------------
 
--fsanitize=address causes the image_viewer program to crash o_o .  
+-fsanitize=address caused the image_viewer program to crash o_o .  
 
 Reproduce:
 g++ image_viewer.cpp -Iinclude -framework SDL2 -framework SDL2_image && ./a.out  => fine 
 g++ image_viewer.cpp -Iinclude -framework SDL2 -framework SDL2_image -fsanitize=address && ./a.out   => crashes on drag and drop of folder 
 
-Perhaps it's due to this 
+Perhaps it's due to SDL's inline assembly???
 
 HINT: this may be a false positive if your program uses some custom stack unwind mechanism or swapcontext
       (longjmp and C++ exceptions *are* supported)
@@ -250,31 +258,37 @@ SUMMARY: AddressSanitizer: stack-use-after-scope (libclang_rt.asan_osx_dynamic.d
 
 
 
+
+
 SQLite amalgamation 
 --------------------------------
 
-SQLite is distributed as 
+SQLite is distributed as an "amalgamated" single c and h file.  This speeds up compilation
+considerably, and according to the creators, allows for optimisations that would not 
+be possible if the program was distributed in many files.
 
-"an amalgamation of many separate C source files from SQLite
-version 3.37.1.  By combining all the individual C code files into a
-single large file, the entire code can be compiled as a single translation
-unit.  This allows many compilers to do optimizations that would not be
-possible if the files were compiled separately.  Performance improvements
-of 5% or more are commonly seen when SQLite is compiled as a single
-translation unit."
+    "By combining all the individual C code files into a
+    single large file, the entire code can be compiled as a single translation
+    unit.  This allows many compilers to do optimizations that would not be
+    possible if the files were compiled separately.  Performance improvements
+    of 5% or more are commonly seen when SQLite is compiled as a single
+    translation unit."
+
+
+
 
 
 
 Assembly
 ------------------------------
 
-It appears like the best way to use assembly is through a regular compiler like gcc or msvc.
-Trying to do it piecemeal with various assemblers makes linking a nightmare.
-However msvc and gcc use very different inline assembly syntax.  The SDL code has examples.
+Inline assembly seems preferable.  Linking is just a nightmare otherwise.
+gcc and msvc use very different inline assembly syntax.
+The SDL codebase has examples of gcc and msvc inline assembly.
 
 Inline assembly in GCC docs
-https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html
-https://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html
+* https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html
+* https://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html
 
 
 
@@ -306,86 +320,6 @@ In c/c++, a trailing f tells the compiler that the number is a float rather than
     #ifdef __cplusplus
     }
     #endif
-
-
-Notes on C++ Classes
--------------------------------
-
-* classes are the same as structs except their data is private by default
-* function pointers are not stored within the struct, they're put somewhere else to save space.
-* methods can be defined inside or outside of the class but prototypes are always required inside the class definition
-* C++ bool is the same as an int.
-* public: and private: labels can be used to specify the visibility of elements in a class which can 
-enforce the usage of standard interfaces. 
-
-* constructors combine declaration and allocation, and destructors are automatically
-called at the end of scope.  However, I typically want it to be more, not less clear when 
-memory is allocated and deallocated.
-
-Cout can be used with a virtual method to make printing look slightly nicer, but that's a bit weird.
-
-Ultimately serialization and deserialization is one thing that it makes sense to put as a method, really.
-
-
-
-Implementing a simple GUI with c++ methods made it a bit clearer why methods
-often comes bearing global variables.  C++ method style is to replace 
-c-style functions, usually with loads of arguments, with C methods that have few. 
-A C++ method can be made that takes many arguments like C-style but then the question 
-naturally arises as to what the benefit is of pretending like there's a function pointer 
-in the struct in the first place.
-
-If a method relies on global variables I think it's an indication that the code probably 
-wants to be an old-fashioned function instead.
-
-
-There's data hiding, which enforces the use of standard interfaces, which could be useful.
-
-
-    // C++ style requires globals
-    // now it's a little clearer why everyone uses them.
-
-    SDL_Texture *textures[4];
-    enum { MOUSEOUT, MOUSEOVER, MOUSEDOWN, MOUSEUP };
-    SDL_Renderer *renderer;
-
-    struct Face { 
-        SDL_Rect r;
-        SDL_Texture *texture;
-        void render()
-        {
-            SDL_RenderCopy(renderer, texture, NULL, &r );
-        }
-        void handle(SDL_Event event)
-        {
-            int mouse_x, mouse_y;
-            SDL_GetMouseState(&mouse_x, &mouse_y);
-            if ( !is_inside( mouse_x, mouse_y, r ) ) {
-                texture = textures[MOUSEOUT];
-            } else {
-                if ( event.type == SDL_MOUSEMOTION ) texture = textures[MOUSEOVER];
-                if ( event.type == SDL_MOUSEBUTTONUP ) texture = textures[MOUSEUP];
-                if ( event.type == SDL_MOUSEBUTTONDOWN ) texture = textures[MOUSEDOWN];
-            } 
-        }
-    };
-
-
-
-
-
-How to disable the crash dialog from terminal applications in macos
------------------------------------------------------------------------------
-
-To disable the dialog, enter the following command in the Terminal:
-
-    defaults write com.apple.CrashReporter DialogType none
-
-Enable crash dialog
-
-defa    ults write com.apple.CrashReporter DialogType prompt
-
-https://www.loekvandenouweland.com/content/disable-python-quit-unexpectedly.html
 
 
 
@@ -692,26 +626,30 @@ The token ## joins two strings in a macro
     TYPENAME ## _array => TYPENAME_array
 
 
-#std::vector is slow
+
+#std::vector is a bit slow
 ----------------------------------------------
 
 std::vector was almost 3 times slower than a 10 line expanding array implementation. Optimising with -Ofast didn't make any difference.
 
 
+
+
 #Endianness
 --------------------------------------
 
+There are two orders in which multibyte data can be stored, big-endian which is how regular numbers are written,
+and little-endian, which is the other way.  Most computers use little-endian since that allows for smaller 
+data-types to be converted to larger ones without modifying the value itself.
 
-Pointers point to the first byte of a 'type'. A 'type' occupies that byte and possibly bytes to the right of it.
-Most modern systems are little endian, meaning that the bytes are stored in the reverse order to how numbers are 
-usually written.  
+Endianness matters if a data's type is changed.  If an integer was converted to a byte array, for instance.
 
-    The two integers 01020304 01020304 
-    are represented in memory as 04 03 02 01 04 03 02 01 
+The integer 0x01020304 exists in memory as the bytes.
 
-Little endianness has the benefit that a value is independent of its type size.  That is to say 
-because bytes are stored from left to right, its value doesn't change if the type size is
-increased.
+    04 03 02 01
+
+If this is converted to a byte array then this will become apparent, and the endianness of the value
+will need to be considered.
 
 https://uynguyen.github.io/2018/04/30/Big-Endian-vs-Little-Endian/
 https://stackoverflow.com/questions/57154009/how-do-pointers-reference-multi-byte-variables
@@ -719,47 +657,21 @@ https://stackoverflow.com/questions/57154009/how-do-pointers-reference-multi-byt
 
 
 
-Endianness in SDL and stb
---------------------------------------
-
-The *INTEGER* rgba is stored in memory as abgr in little-endian systems, 
-however a byte array is stored exactly as it appears in the program.
-
-So, when casting an array from bytes to integers or vice versa, one has 
-to take care.
-
-SDL functions operate on images as a series of integers whereas 
-stb image functions operate on the data as a series of bytes 
-
-
-
 
 Header only libraries
 ----------------------------------------------
 
-A header only library of the sort used by the stb library works by only 
-including implementation of a header library if a particular define is set.
-Usually it's called XX_IMPLEMENTATION.  The idea being that the header file 
-can still be used normally.  Importantly in *ONE* file and only one file 
-the previously mentioned define is set.  And that is the file that actually
-includes the implementation.
+Header-only libraries combine header and implementation info in a single file.
+The implementation is only included in one file where a particular define is set,
+typically called XX_IMPLEMENTATION.
+
+A header-only file should look like this, I think.  But I'm less sure about the 
+implementation guard that I've added in.  It might be counter-productive.
+
+Header-only file example.
 
 
-Only define BASIC_IMPLEMENTATION in *ONE* file, like this.
-
-    #define BASIC_IMPLEMENTATION
-    #include "basic.h"
-
-
-The header only file will look like this.  In addition to header guards to 
-prevent multiple includes, there is an ifdef on BASIC_IMPLEMENTATION.
-There's also a header guard for the implementation, because why not.
-
-
-
-A header only file should look like this 
-
-
+    // basic.h
     #ifndef BASIC_HEADER_GUARD
     #define BASIC_HEADER_GUARD
 
@@ -781,40 +693,46 @@ A header only file should look like this
 
 
 
+Since the implementation define should only exist within one file in a project, 
+it might be better to not have the implementation guard since it will hide that error.
+
 source: https://github.com/nothings/stb/blob/master/docs/stb_howto.txt
 
 
 
-#Windows and #Visual Studio
-----------------------------------------------------------------------------------------
+---------------------------------------------------------------
+#Windows
+---------------------------------------------------------------
 
-Calling visual studio from the command line (cl) requires a script be run beforehand.
-It's called vcvarsall.bat and it moves around every new version so you'll have to find it.
-It's buried somewhere in the visual studio folder, which itself will change. yay :)
-
-Here are the commands from the last time that I used them.
+vcvarsall.bat 
+#Visual studio requires a special script to be called before it can be called (vcvarsall.bat).
+This script moves around with different versions of visual studio. example:
 
     call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
-    cl /Zi /MD main.c
-
 
 source: https://hero.handmade.network/forums/code-discussion/t/2691-day_001_with_visual_studio_2017
 
-An example with linking 
+
+
+visual studio usage examples
+
+    cl /Zi /I [] /D [] [files] /link /libpath:[]  /subsystem:console /out:a
 
     cl /Zi /I "win64\include" "%1" /link "win64\SDL2.lib" "win64\SDL2main.lib" "win64\SDL2_image.lib" "win64\SDL2_mixer.lib" "win64\SDL2_ttf.lib" "kernel32.lib" "user32.lib" "shell32.lib" /SUBSYSTEM:WINDOWS /OUT:"win64\%1.exe"
 
-Example from imgui
-
-    mkdir Debug
     cl /nologo /Zi /MD /I .. /I ..\.. /I "%WindowsSdkDir%Include\um" /I "%WindowsSdkDir%Include\shared" /I "%DXSDK_DIR%Include" /D UNICODE /D _UNICODE *.cpp ..\imgui_impl_win32.cpp ..\imgui_impl_dx10.cpp ..\..\imgui*.cpp /FeDebug/example_win32_directx10.exe /FoDebug/ /link /LIBPATH:"%DXSDK_DIR%/Lib/x86" d3d10.lib d3dcompiler.lib
-    del *.pdb *.ilk *.obj 
 
 
 
-Setting the PATH environmental variable in windows
--------------------------------------------------------
-SET PATH=%PATH%;c:\users\nick\bin
+"Getting" a variable in windows appears to be done using %varname%
+
+To set the PATH environmental variable, for example
+
+    SET PATH=%PATH%;c:\users\nick\bin
+
+
+
+
 
 
 
@@ -840,7 +758,7 @@ Cross platform defines can be used to make portable code using the c preprocesso
 
 
 
-#Linking
+Linking in unix and macos
 -------------------------------------------------------------------------
 
 Macos uses -framework
@@ -863,33 +781,26 @@ It can also output the flags necessary to statically link libraries, which is co
 
 
 
-#Beej's Guide to C Programming 
+
+
+
+
+#C Programming
 -------------------------------------------------------------------
 
-from https://beej.us/guide/bgc/html/
+beej's guide to c programming https://beej.us/guide/bgc/html/
+https://stackoverflow.com/questions/2589949/string-literals-where-do-they-go
 
-
-7.4 String Initializers
----------------------------------
-
-Importantly, in c, initializing a string as a pointer is interpreted 
-as a pointer directly to the string literal.  And string literals apparently are immutable.  
-However if the string is declared as an array, char s[] = 'string', then the program includes 
-a pointer to a COPY of the string literal which is mutable.  
-So basically 
+Typically, string literals that are declared as pointers are immutable, whereas strings that are declared as arrays are not.
 
 char *s = "immutable"; !!!!!!!!
 char s[] = "mutable";
 
-Attempting to change an immutable string will result in the program crashing, which I have done many times.
 
+const applies to the type on its left unless its the leftmost token, in which case it applies to the type 
+on its right (which is actually its most common usage).
 
-
-16.1.1.1 const and Pointers
----------------------------------
-
-Const makes things unmodifiable but it's a little confusing how the keyword actually works.  The general rule appears to be that const applies to the operator to its left.
-But, if it's the leftmost token then it applies to the type on the right (this is the most common way that it's used actually).
+Const Examples:
 
 Both of these examples result in the content itself being unmodifiable.
 
@@ -915,12 +826,8 @@ Multiple levels of indirection
 
 
 
-
-C Operator Precedence
--------------------------------------------------------------------------
-
-How am I supposed to remember this?  It's better just to use parentheses.
-from https://en.cppreference.com/w/c/language/operator_precedence
+C Operator Precedence is too long for me to memorize.
+https://en.cppreference.com/w/c/language/operator_precedence
 
 
 
@@ -930,32 +837,20 @@ from https://en.cppreference.com/w/c/language/operator_precedence
 ctype.h
 --------------------------------
 
-This library checks whether characters are in particular sets including 
-whitespace, alphanumeric, numeric, alpha (a-z), printable, punctuation, hexidecimal,
-upper or lowercase, and printable.  It also converts uppercase and lowercase letters
-into one another.
+The ctype.h library primarily determines different classes of character.
+It also converts uppercase and lowercase letters into one another.
 
-#include <ctype.h>
+e.g. isalpha isalphanum isdigit islower isupper isspace tolower toupper isxdigit, and others
 
-isalpha isalphanum isdigit islower isupper isspace tolower toupper isxdigit, and others
-
-all take an integer 
+All the functions take an integer argument.
 
 
 
 
 
+Make #VSCode ctrl+tab functionality great again
+--------------------------------------------------
 
-
-
-
-
-
-
-
-
-#VSCode sane ctrl+tab functionality
--------------------------------------
     // ctrl+` pulls up terminal
     // Place your key bindings in this file to override the defaults
     [
@@ -969,6 +864,8 @@ all take an integer
             "command": "workbench.action.previousEditor"
         },
     ]
+
+
 
 
 
@@ -995,29 +892,6 @@ It appears the main distinction is between a "character device" where a single c
 versus a "block device" where only a block of information can be read, comprising multiple bytes,
 like a 512 byte sector.
 https://unix.stackexchange.com/questions/259193/what-is-a-block-device
-
-
-
-
-
-#Python
----------------------------------------------------------------
-
-make an executable
-
-    pyinstaller --onefile --hidden-import=configparser script.py
-
---one-file seems to be slower than not, but it is more convenient
-
-
-python SSL
------------------
-Okay for some reason I had to do this to make python SSL work on my old macos
-
-    /Applications/Python\ 3.9/Install\ Certificates.command
-
-https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error
-
 
 
 
@@ -1053,6 +927,41 @@ and wait for an incoming connection.
 
 
 
+
+
+
+
+
+
+
+
+
+
+#Python
+---------------------------------------------------------------
+
+make an executable
+
+    pyinstaller --onefile --hidden-import=configparser script.py
+
+--one-file seems to be slower than not, but it is more convenient
+
+
+python SSL
+-----------------
+Okay for some reason I had to do this to make python SSL work on my old macos
+
+    /Applications/Python\ 3.9/Install\ Certificates.command
+
+https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error
+
+
+
+
+
+
+
+
 ------------------------------------------------------------------
 #MacOS
 ------------------------------------------------------------------
@@ -1072,6 +981,11 @@ Show/hide hidden files in macos
 In Finder, open up your Macintosh HD folder. Press Command+Shift+Dot. Your hidden files will become visible. Repeat step 2 to hide them again
 
 
+macos take screenshtos as jpgs
+--------------------------------
+defaults write com.apple.screencapture type jpg;killall SystemUIServer
+
+
 
 Alert from macos terminal 
 --------------------------
@@ -1081,6 +995,24 @@ Put this after a long command to be alerted when it's done.
 osascript -e 'tell app "System Events" to display dialog "Hello World"'
 
 source: https://stackoverflow.com/questions/5588064/how-do-i-make-a-mac-terminal-pop-up-alert-applescript
+
+
+
+Disable terminal crash dialog
+-----------------------------------------------------------------------------
+
+To disable the dialog, enter the following command in the Terminal:
+
+    defaults write com.apple.CrashReporter DialogType none
+
+Enable crash dialog
+
+defa    ults write com.apple.CrashReporter DialogType prompt
+
+https://www.loekvandenouweland.com/content/disable-python-quit-unexpectedly.html
+
+
+
 
 
 
@@ -1248,6 +1180,11 @@ https://stackoverflow.com/questions/3434278/do-dom-tree-elements-with-ids-become
 
 
 
+---------------------------------------------------------
+#Unix
+---------------------------------------------------------
+
+
 #Bash 
 -------------------------------
 
@@ -1316,6 +1253,8 @@ and waits for someone else to connect.
 
 
 
+
+
 Make an #SSH key 
 --------------------------------------------
 
@@ -1327,6 +1266,10 @@ give the public ssh key to the other party
 In windows, git bash can be used for this.
 
 https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key
+
+
+
+
 
 
 
@@ -1353,7 +1296,7 @@ Unix Specification https://pubs.opengroup.org/onlinepubs/7908799/
 
 
 
-Linux Packages I was using (Debian)   #linux
+#Linux Packages I was using (Debian)   #apt
 ---------------------------------------------------------------------------------
 
     sudo apt install nasm qemu-system-x86 xorriso pkg-config emacs
@@ -1443,7 +1386,7 @@ Misc
 --------------
 
 
-The SDL renderer has a VSYNC option which I should try
+The SDL renderer has a VSYNC option
 gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
 
 
@@ -1470,23 +1413,78 @@ https://stackoverflow.com/questions/3021513/could-someone-explain-declspecnaked-
 
 
 
-macos take screenshtos as jpgs
---------------------------------
-defaults write com.apple.screencapture type jpg;killall SystemUIServer
 
 
-Make ctrl+tab work properly in vscode
-------------------------------------------
 
-// Place your key bindings in keybindings.json to override the defaults
-[
-    // ...
-    {
-        "key": "ctrl+tab",
-        "command": "workbench.action.nextEditor"
-    },
-    {
-        "key": "ctrl+shift+tab",
-        "command": "workbench.action.previousEditor"
-    }
-]
+
+
+
+Notes on C++ Classes
+-------------------------------
+
+There are no tremendous benefits over structs as far as I can see.  But, programming
+is about a group of people understanding and managing code so it does ultimately depend 
+on how they feel.
+
+* classes are the same as structs except their data is private by default
+* function pointers are not stored within the struct, they're put somewhere else to save space.
+* methods can be defined inside or outside of the class but prototypes are always required inside the class definition
+* C++ bool is the same as an int.
+* public: and private: labels can be used to specify the visibility of elements in a class which can 
+enforce the usage of standard interfaces. 
+
+* constructors combine declaration and allocation, and destructors are automatically
+called at the end of scope.  However, I typically want it to be more, not less clear when 
+memory is allocated and deallocated.
+
+Cout can be used with a virtual method to make printing look slightly nicer, but that's a bit weird.
+
+Ultimately serialization and deserialization is one thing that it makes sense to put as a method, really.
+
+
+
+Implementing a simple GUI with c++ methods made it a bit clearer why methods
+often comes bearing global variables.  C++ method style is to replace 
+c-style functions, usually with loads of arguments, with C methods that have few. 
+A C++ method can be made that takes many arguments like C-style but then the question 
+naturally arises as to what the benefit is of pretending like there's a function pointer 
+in the struct in the first place.
+
+If a method relies on global variables I think it's an indication that the code probably 
+wants to be an old-fashioned function instead.
+
+
+There's data hiding, which enforces the use of standard interfaces, which could be useful.
+
+
+    // C++ style requires globals
+    // now it's a little clearer why everyone uses them.
+
+    SDL_Texture *textures[4];
+    enum { MOUSEOUT, MOUSEOVER, MOUSEDOWN, MOUSEUP };
+    SDL_Renderer *renderer;
+
+    struct Face { 
+        SDL_Rect r;
+        SDL_Texture *texture;
+        void render()
+        {
+            SDL_RenderCopy(renderer, texture, NULL, &r );
+        }
+        void handle(SDL_Event event)
+        {
+            int mouse_x, mouse_y;
+            SDL_GetMouseState(&mouse_x, &mouse_y);
+            if ( !is_inside( mouse_x, mouse_y, r ) ) {
+                texture = textures[MOUSEOUT];
+            } else {
+                if ( event.type == SDL_MOUSEMOTION ) texture = textures[MOUSEOVER];
+                if ( event.type == SDL_MOUSEBUTTONUP ) texture = textures[MOUSEUP];
+                if ( event.type == SDL_MOUSEBUTTONDOWN ) texture = textures[MOUSEDOWN];
+            } 
+        }
+    };
+
+
+
+
