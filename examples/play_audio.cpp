@@ -1,5 +1,5 @@
 /*
-g++ play_audio.cpp -Iinclude -framework SDL2 -framework SDL2_mixer -framework SDL2_image -framework SDL2_ttf -Wfatal-errors -g -fsanitize=address -Wall -Wpedantic  && ./a.out
+g++ play_audio.cpp -I../include -framework SDL2 -framework SDL2_mixer -framework SDL2_image -framework SDL2_ttf -Wfatal-errors -g -fsanitize=address -Wall -Wpedantic  && ./a.out
 
 call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 cl /Zi /I "win64\include\SDL2" "play_audio.cpp" /link "win64\SDL2.lib" "win64\SDL2main.lib" "win64\SDL2_image.lib" "win64\SDL2_mixer.lib" "win64\SDL2_ttf.lib" "kernel32.lib" "user32.lib" "shell32.lib" /SUBSYSTEM:WINDOWS /OUT:"win64\play_audio.cpp.exe" && win64\play_audio.cpp.exe
@@ -14,6 +14,8 @@ based on code by the lazyfoo
 #include "SDL2/SDL_ttf.h"
 
 #include "../src/libc.h"
+
+#define DATAFOLDER "../data"
 
 
 void stop_audio(Mix_Music *music)
@@ -75,17 +77,17 @@ int main( int argc, char* args[] )
     Mix_Music *music; 
     Mix_Chunk *scratch, *high;
 
-	music = Mix_LoadMUS( "data/beat.wav");
+	music = Mix_LoadMUS( DATAFOLDER"/beat.wav");
 	if( !music ) { 
         printf("%s %d %s",__FILE__,__LINE__,Mix_GetError()); 
         exit(1); 
     }
-	scratch = Mix_LoadWAV( "data/scratch.wav" );
+	scratch = Mix_LoadWAV( DATAFOLDER"/scratch.wav" );
 	if( !scratch ) { 
         printf("%s %d %s",__FILE__,__LINE__,Mix_GetError()); 
         exit(1); 
     }
-	high = Mix_LoadWAV( "data/high.wav" );
+	high = Mix_LoadWAV( DATAFOLDER"/high.wav" );
 	if( !high ) { 
         printf("%s %d %s",__FILE__,__LINE__,Mix_GetError()); 
         exit(1); 
@@ -93,7 +95,7 @@ int main( int argc, char* args[] )
 
 
     TTF_Init();
-    char* font_path = (char*)"data/Sans.ttf";
+    char* font_path = (char*) DATAFOLDER"/Sans.ttf";
     int font_size = 16;
     TTF_Font *font = TTF_OpenFont(font_path, font_size);
     if (!font) { 

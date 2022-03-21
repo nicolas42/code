@@ -9,10 +9,12 @@ for the most part, unfortunately.  Cross platform building is a work in progress
 A starting place for linux and visual studio build scripts can be found in
 cpp/make.sh and cpp/win64/make.bat, respectively.
 
-# Python, node, go, web
+# Python, node, go
 
 Most of the python, node, go, and web code should mostly just work, 
-given the appropriate libraries and authentication.
+given the appropriate libraries
+
+# Web stuff 
 
 The easiest way to see the web stuff is probably by running the server first.
 

@@ -1,6 +1,6 @@
 /*
 macos:
-g++ image_viewer.cpp -framework SDL2 -framework SDL2_image -std=c++11 && ./a.out
+g++ image_viewer.cpp -I../include -Ofast -std=c++11 -framework SDL2 -framework SDL2_image && ./a.out
 
 g++ image_viewer.cpp -Iinclude -framework SDL2 -framework SDL2_image -std=c++11 -Ofast -fPIC -Wall -Wpedantic -Wextra -Wvla -Wshadow -Wfatal-errors -fsanitize=address -g && ./a.out
 
@@ -459,6 +459,7 @@ int main( int argc, char* argv[] )
 	show( window, filenames, filenames_index );
 
     bool do_show = false;
+
     while (!time_to_quit)
     {
         // SDL_WaitEvent(&event);
@@ -514,7 +515,13 @@ int main( int argc, char* argv[] )
                 }
                 
                 if ( event.key.keysym.sym == SDLK_f ) {
-                    SDL_SetWindowFullscreen( window, SDL_WINDOW_FULLSCREEN_DESKTOP );
+                    if (!is_fullscreen) {
+                        SDL_SetWindowFullscreen( window, SDL_WINDOW_FULLSCREEN_DESKTOP );
+                        is_fullscreen = true;
+                    } else {
+                        SDL_SetWindowFullscreen(window, 0);
+                        is_fullscreen = false;
+                    }
                 }
 
                 if ( event.key.keysym.sym == SDLK_ESCAPE ) {

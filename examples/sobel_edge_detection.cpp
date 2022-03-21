@@ -1,5 +1,5 @@
 /*
-g++ sobel_edge_detection.cpp -framework SDL2 -ISDL2 && ./a.out
+g++ sobel_edge_detection.cpp -I../include -framework SDL2 -ISDL2 && ./a.out
 */
 
 #include <SDL2/SDL.h>
@@ -151,7 +151,7 @@ int main( int argc, char* args[] )
     // use STBI_rgb if you don't want/need the alpha channel
     int req_format = STBI_rgb_alpha;
     int width, height, orig_format;
-    uint8_t* original_image = stbi_load("data/Valve_original.png", &width, &height, &orig_format, req_format);
+    uint8_t* original_image = stbi_load("../data/Valve_original.png", &width, &height, &orig_format, req_format);
     if (original_image == NULL) {
         SDL_Log("Loading image failed: %s", stbi_failure_reason());
         exit(1);

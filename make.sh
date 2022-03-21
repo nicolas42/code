@@ -8,9 +8,14 @@ make_run_linux(){
       -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_net -lSDL2_ttf  && ./a.out
 }
 
-make_run_all(){
+make_run_all_macos(){
     for f in examples/image_viewer.cpp examples/play_audio.cpp examples/render_text.cpp examples/show_mandelbrot.cpp examples/sobel_edge_detection.cpp examples/aggregated_demos.cpp
     do 
         make_run $f
     done 
 }
+
+
+make_run_all_macos
+
+

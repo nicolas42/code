@@ -1,4 +1,4 @@
-// g++ -Wfatal-errors solar_system_simulation.cpp -framework SDL2 -framework SDL2_mixer -framework opengl && ./a.out 
+// g++ solar_system_simulation.cpp -I../include -Wfatal-errors -framework SDL2 -framework SDL2_mixer -framework opengl && ./a.out 
 
 // from https://gist.github.com/jordandee/94b187bcc51df9528a2f
 
@@ -226,13 +226,13 @@ void even_less_simple_orbit_demo()
     int window_height = 600;
     uint32_t WindowFlags = SDL_WINDOW_OPENGL;
     SDL_Window *window = SDL_CreateWindow("OpenGL Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
-    window_width, window_height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI ); //  | SDL_WINDOW_ALLOW_HIGHDPI
+    window_width, window_height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE ); //  | SDL_WINDOW_ALLOW_HIGHDPI ); //  | SDL_WINDOW_ALLOW_HIGHDPI
     assert(window);
 
 
     int err = Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 );
     assert(!err);
-	Mix_Music *music = Mix_LoadMUS( "data/Kerbal Space Program - Space Music (Track 1)-osJqbovbH2A.mp3");
+	Mix_Music *music = Mix_LoadMUS( "../data/Kerbal Space Program - Space Music (Track 1)-osJqbovbH2A.mp3");
     assert(music);
     play_pause_audio(music);
 
@@ -315,14 +315,14 @@ void even_less_simple_orbit_demo()
         glClear(GL_COLOR_BUFFER_BIT);
         float sun_color[3] = {255,2115,9};
         glColor3f( sun_color[0]/255.0, sun_color[1]/255.0, sun_color[2]/255.0 );
-        draw_polygon(0,0,0.1,100); // sun
+        draw_polygon(0,0,0.08 * zoom ,100); // sun
 
         for (int i=0; i<8; i+=1){
             // scale values down for drawing 
             double draw_pos_x = xs[i] / 227900e6 * 0.5 * zoom;
             double draw_pos_y = ys[i] / 227900e6 * 0.5 * zoom;
             glColor3f( colors[i][0]/255.0, colors[i][1]/255.0, colors[i][2]/255.0 );
-            draw_polygon( draw_pos_x, draw_pos_y, 0.005, 10 );
+            draw_polygon( draw_pos_x, draw_pos_y, 0.01, 10 );
         }
 
         SDL_GL_SwapWindow(window);

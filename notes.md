@@ -1,3 +1,16 @@
+Things to do 
+draw lines of text?
+make mario game
+
+It appears that the rebol code to translate it to c code is largely in rebol/include/reb-c.h
+
+
+
+
+
+
+
+
 http://www.opengl-tutorial.org/print/#how-do-i-create-a-quaternion-in-glsl-
 
 Incompatible GPU/OS

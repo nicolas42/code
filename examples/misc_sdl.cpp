@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     enum { MOUSEOUT, MOUSEOVER, MOUSEDOWN, MOUSEUP };
 
     // read image into texture
-    SDL_Surface* surface = STBIMG_Load( "data/button.png" );
+    SDL_Surface* surface = STBIMG_Load( "../data/button.png" );
     if( !surface ) {
         printf( "ERROR %s %d %s\n", __FILE__,__LINE__,SDL_GetError() );
         exit(1);

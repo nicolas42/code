@@ -1,5 +1,5 @@
 /*
- g++ render_text.cpp -Iinclude -framework SDL2 -framework SDL2_image -framework SDL2_ttf && ./a.out
+ g++ render_text.cpp -I../include -framework SDL2 -framework SDL2_image -framework SDL2_ttf && ./a.out
 
 
  call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
@@ -111,7 +111,7 @@ int main(int argc, char **argv) {
     SDL_SetWindowTitle(window, "Scroll text using the mouse wheel or arrow keys.");
 
     TTF_Init();
-    char font_path[] = "data/Sans.ttf"; // "c:/windows/fonts/verdana.ttf"; 
+    char font_path[] = "../data/Sans.ttf"; // "c:/windows/fonts/verdana.ttf"; 
     int font_size = 20;
     TTF_Font *font = TTF_OpenFont(font_path, font_size);
     if (!font) { SDL_Log("ERROR %s %d %s\n", __FILE__, __LINE__, SDL_GetError()); exit(1); }
