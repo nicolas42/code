@@ -1,6 +1,6 @@
-@REM First call vsvarall.bat. This is only needed once per terminal session.
+@REM First run vsvarall.bat
 @REM call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
-@REM then
+@REM then run like this
 @REM make.bat someprogram.cpp && windows\a
 
 

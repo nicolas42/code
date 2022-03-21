@@ -1,26 +1,17 @@
-# Miscellaneous Code
+# C/C++ Demo
 
-# C/C++
+sh make.sh
 
-Most of the c/c++ demos have a build scripts at the top of them.
-So just copy that and run it in bash.  Linking code is macos specific 
-for the most part, unfortunately.  Cross platform building is a work in progress.
+# Web demos
 
-A starting place for linux and visual studio build scripts can be found in
-cpp/make.sh and cpp/win64/make.bat, respectively.
-
-# Python, node, go
-
-Most of the python, node, go, and web code should mostly just work, 
-given the appropriate libraries
-
-# Web stuff 
-
-The easiest way to see the web stuff is probably by running the server first.
+Run the go web server with 
 
     cd web
     go run SERVE.go
-    
-But they'll also work by just clicking on the html files.
 
+the go to 
+
+    localhost:8080
+
+or just click on html files.
 
