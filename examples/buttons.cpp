@@ -1,4 +1,4 @@
-// g++ misc_sdl.cpp -framework SDL2 && ./a.out
+// g++ buttons.cpp -framework SDL2 && ./a.out
 
 // https://wiki.libsdl.org/SDL_CreateTexture
 

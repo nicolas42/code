@@ -23,6 +23,50 @@
 #include <SDL2/SDL_mixer.h>
 
 
+
+
+
+void stop_audio(Mix_Music *music)
+{
+    Mix_HaltMusic(); // stop
+}
+
+void play_pause_audio(Mix_Music *music)
+{
+    // If there is no music playing then play the music.
+    // If the music is in being "played" then check whether the piece is paused of not
+    // if it is paused then resume it, if it's not paused then pause it.
+    // "Playing" music appears to be music that is loaded into the subsystem.
+
+    //If there is no music playing
+    if( Mix_PlayingMusic() == 0 )
+    {
+        //Play the music
+        Mix_PlayMusic( music, -1 );
+    }
+    //If music is being played
+    else
+    {
+        //If the music is paused
+        if( Mix_PausedMusic() == 1 )
+        {
+            //Resume the music
+            Mix_ResumeMusic();
+        } else
+        {
+            //Pause the music
+            Mix_PauseMusic();
+        }
+    }
+}
+
+void play_sound_effect(Mix_Chunk *sound_effect)
+{
+    Mix_PlayChannel( -1, sound_effect, 0 );
+}
+
+
+
 void draw_polygon( float cx, float cy, float r, int num_segments )
 {
     // https://stackoverflow.com/questions/22444450/drawing-circle-with-opengl
@@ -76,8 +120,17 @@ void simple_orbit_demo()
     }
 }
 
-void less_simple_orbit_demo()
+void elliptical_orbit()
 {
+
+
+    int err = Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 );
+    assert(!err);
+	Mix_Music *music = Mix_LoadMUS( "../data/Kerbal Space Program - Space Music (Track 1)-osJqbovbH2A.mp3");
+    assert(music);
+    play_pause_audio(music);
+
+
     // Basic earth orbit simulator using Newton's law of gravity
 
     const int SCREEN_WIDTH = 1000;
@@ -85,7 +138,12 @@ void less_simple_orbit_demo()
     uint32_t WindowFlags = SDL_WINDOW_OPENGL;
     SDL_Window *Window = SDL_CreateWindow("OpenGL Test", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
     assert(Window);
+
+
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
     SDL_GLContext Context = SDL_GL_CreateContext(Window);
+
 
     const double G = 6.67408e-11; // gravitational constant
     const double mass_sun = 1.989e30;
@@ -128,6 +186,10 @@ void less_simple_orbit_demo()
         y += vy * dt;
 
 
+    // The colors were very scientifically taken from some random poster
+    float colors[8][3] = { {193,80,30}, {230,120,35}, {56,111,164}, {150,42,29}, {70,32,20}, {157,106,49}, {79,105,129}, {39,77,162} };
+
+
         // scale values down for drawing 
         double draw_x = x / 150e9 / 3.0;
         double draw_y = y / 150e9 / 3.0;
@@ -145,48 +207,7 @@ void less_simple_orbit_demo()
 
 
 
-void stop_audio(Mix_Music *music)
-{
-    Mix_HaltMusic(); // stop
-}
-
-void play_pause_audio(Mix_Music *music)
-{
-    // If there is no music playing then play the music.
-    // If the music is in being "played" then check whether the piece is paused of not
-    // if it is paused then resume it, if it's not paused then pause it.
-    // "Playing" music appears to be music that is loaded into the subsystem.
-
-    //If there is no music playing
-    if( Mix_PlayingMusic() == 0 )
-    {
-        //Play the music
-        Mix_PlayMusic( music, -1 );
-    }
-    //If music is being played
-    else
-    {
-        //If the music is paused
-        if( Mix_PausedMusic() == 1 )
-        {
-            //Resume the music
-            Mix_ResumeMusic();
-        } else
-        {
-            //Pause the music
-            Mix_PauseMusic();
-        }
-    }
-}
-
-void play_sound_effect(Mix_Chunk *sound_effect)
-{
-    Mix_PlayChannel( -1, sound_effect, 0 );
-}
-
-
-
-void even_less_simple_orbit_demo()
+void solar_system_demo()
 {
 
     // Basic solar system simulator
@@ -334,10 +355,22 @@ void even_less_simple_orbit_demo()
 int main()
 {
     // simple_orbit_demo();
-    // less_simple_orbit_demo();
-    even_less_simple_orbit_demo();
+    elliptical_orbit();
+    // solar_system_demo();
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
