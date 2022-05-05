@@ -22,8 +22,8 @@ test_t_array test_t_array_make()
 void test_t_array_add(test_t_array *arr, test_t item)
 {
     if ( arr->length == arr->allocated ) {
-      arr->allocated *= 2;
-      arr->data = (test_t*)realloc( arr->data, arr->allocated * sizeof(test_t) );
+    arr->allocated *= 2;
+    arr->data = (test_t*)realloc( arr->data, arr->allocated * sizeof(test_t) );
     }
     arr->data[arr->length] = item;
     arr->length += 1;
@@ -33,8 +33,8 @@ void test_t_array_add(test_t_array *arr, test_t item)
 test_t_array test_t_array_add2(test_t_array arr, test_t item)
 {
     if ( arr.length == arr.allocated ) {
-      arr.allocated *= 2;
-      arr.data = (test_t*)realloc( arr.data, arr.allocated * sizeof(test_t) );
+    arr.allocated *= 2;
+    arr.data = (test_t*)realloc( arr.data, arr.allocated * sizeof(test_t) );
     }
     arr.data[arr.length] = item;
     arr.length += 1;
@@ -46,19 +46,19 @@ int main()
 {
     int i;
     time_t t0 = clock();
-
+    int N = 50*1000*1000;
     std::vector<test_t> std_vector;
-    for(i=0;i<500*1000*1000;i+=1) std_vector.push_back(i);
+    for(i=0;i<N;i+=1) std_vector.push_back(i);
 
     time_t t1 = clock();
     
     test_t_array arr = test_t_array_make();
-    for(i=0;i<500*1000*1000;i+=1) test_t_array_add( &arr, i );
+    for(i=0;i<N;i+=1) test_t_array_add( &arr, i );
 
     time_t t2 = clock();
 
     test_t_array arr2 = test_t_array_make();
-    for(i=0;i<500*1000*1000;i+=1) arr2 = test_t_array_add2( arr2, i );
+    for(i=0;i<N;i+=1) arr2 = test_t_array_add2( arr2, i );
 
     time_t t3 = clock();
 

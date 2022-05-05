@@ -1,4 +1,4 @@
-// g++ aggregated_demos.cpp -Ofast -Wfatal-errors
+// g++ aggregated_demos.cpp -Ofast -Wfatal-errors && ./a.out
 
 
 // g++ aggregated_demos.cpp -Iinclude -Ofast -Weverything -Wno-missing-prototypes -Wno-old-style-cast -Wno-double-promotion
