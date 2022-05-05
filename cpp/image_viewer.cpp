@@ -377,12 +377,12 @@ void show_using_renderer( SDL_Window *window, std::vector<std::string> filenames
 
     SDL_Renderer *renderer = SDL_GetRenderer(window);
 
-    SDL_Surface* image = IMG_Load( filenames[filenames_index].c_str() );
-    if(!image) { 
+    SDL_Surface* surface = IMG_Load( filenames[filenames_index].c_str() );
+    if(!surface) { 
         printf("ERROR %s %d %s\n", __FILE__, __LINE__, SDL_GetError());
         return;
     }
-	SDL_Texture *texture = SDL_CreateTextureFromSurface( renderer, image );
+	SDL_Texture *texture = SDL_CreateTextureFromSurface( renderer, surface );
     if (!texture) { 
         printf("ERROR %s %d %s\n", __FILE__, __LINE__, SDL_GetError());
         return;
@@ -392,13 +392,13 @@ void show_using_renderer( SDL_Window *window, std::vector<std::string> filenames
     SDL_GetWindowSize(window, &w, &h);
 
     // resize to fit inside window
-    double width_scaler = ((double)w) / ((double)image->w);
-    double height_scaler = ((double)h) / ((double)image->h);
+    double width_scaler = ((double)w) / ((double)surface->w);
+    double height_scaler = ((double)h) / ((double)surface->h);
     double scaler = min(width_scaler, height_scaler);
     
     SDL_Rect image_size;
-    image_size.w = (int)(scaler * image->w);
-    image_size.h = (int)(scaler * image->h);
+    image_size.w = (int)(scaler * surface->w);
+    image_size.h = (int)(scaler * surface->h);
     image_size.y = (h - image_size.h)/2;
     image_size.x = (w - image_size.w)/2;
 
@@ -408,6 +408,10 @@ void show_using_renderer( SDL_Window *window, std::vector<std::string> filenames
 
     SDL_RenderCopy( renderer, texture, NULL, &image_size );
     SDL_RenderPresent( renderer );
+
+    // omg have to free the surface and the texture omg
+    SDL_FreeSurface(surface);
+    SDL_DestroyTexture(texture);
     
 }
 
@@ -445,10 +449,10 @@ int main( int argc, char* argv[] )
     char* dropped_filename;
 
 
-    // terminal
-   	char *dir = (char*)"";
-	// char *dir = (char*)"/Users/nick/Downloads";
+   	// char *dir = (char*)"";
+	char *dir = (char*)"/Users/nick/Downloads";
 
+    // // terminal
     // if (argc == 1) printf("show_images <dir>\n");
 	// if (argc==2){
 	// 	dir = argv[1];
