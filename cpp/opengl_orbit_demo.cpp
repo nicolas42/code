@@ -1,4 +1,4 @@
-// g++ solar_system_simulation.cpp -I../include -Wfatal-errors -framework SDL2 -framework SDL2_mixer -framework opengl && ./a.out 
+// g++ opengl_orbit_demo.cpp -I../include -Wfatal-errors -framework SDL2 -framework SDL2_mixer -framework opengl && ./a.out 
 
 // from https://gist.github.com/jordandee/94b187bcc51df9528a2f
 
@@ -21,8 +21,6 @@
 #endif 
 
 #include <SDL2/SDL_mixer.h>
-
-
 
 
 
@@ -355,8 +353,8 @@ void solar_system_demo()
 int main()
 {
     // simple_orbit_demo();
-    elliptical_orbit();
-    // solar_system_demo();
+    // elliptical_orbit();
+    solar_system_demo();
     return 0;
 }
 

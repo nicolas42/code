@@ -1,9 +1,13 @@
-// g++ aggregated_demos.cpp -Ofast -Wfatal-errors && ./a.out
+// g++ aggregated_demos.cpp -Wfatal-errors && ./a.out
 
 
 // g++ aggregated_demos.cpp -Iinclude -Ofast -Weverything -Wno-missing-prototypes -Wno-old-style-cast -Wno-double-promotion
 // g++ aggregated_demos.cpp -Iinclude -Ofast -fPIC -Wall -Wpedantic -Wextra -Wvla -Wshadow -Wfatal-errors -Werror
 // clang++ -std=c++11 aggregated_demos.cpp -Iinclude -Ofast -Weverything -Wno-missing-prototypes -Wno-old-style-cast -Wno-double-promotion -Wfatal-errors
+
+
+
+
 
 #include <stdint.h>
 #include <stdio.h>
@@ -699,6 +703,11 @@ int cpp_vector_demo()
 // https://www.reddit.com/r/Cprog/comments/kaapdr/prints_itself/
 int print_this_file()
 {
+
+    printf("\n\n");
+    printf("print_this_file\n");
+    printf("-----------------------------------\n");
+
     FILE *file = fopen(__FILE__, "r");
     for (;;) {
         while (!feof(file)) {
@@ -1550,6 +1559,194 @@ int atof()
 
 
 
+
+
+
+
+
+// Classes are the same as structs except their data is private by default.
+// Function pointers are not stored within the struct.
+// Methods can be defined inside or outside of the class
+// but prototypes are always required inside the class definition.
+// A C++ bool is the same as int, it appears.
+// The labels public: and private: can be used to specify the visibility of elements in a class
+// In many ways an object is a bit like a header file in that it specifies visibility.
+
+#include <iostream>
+
+// using namespace std;
+
+struct Box {
+    float length;
+    float breadth;
+    float height;
+    float volume() {
+        return length * breadth * height;
+    }
+    float do_something();
+};
+
+float Box::do_something(){
+    return 0.5 * volume();
+}
+
+int cpp_classes_demo() {
+
+
+    printf("\n\n");
+    printf("cpp_classes_demo\n");
+    printf("-----------------------\n");
+
+    std::cout << "Function pointers are not stored within structs/classes\n";
+    std::cout << "sizeof(Box): " << sizeof(Box) << "\n";
+
+    Box b;
+    b.length = 1;
+    b.breadth = 2;
+    b.height = 3;
+
+    std::cout << "volume: " << b.volume() << std::endl;
+    std::cout << b.do_something() << std::endl;
+
+   return 0;
+}
+
+
+
+
+
+
+
+
+
+
+/*
+cl /Zi /MD demo_function_overloading.cpp
+rm *.ilk *.obj *.pdb
+
+function overloading doesn't work based on the return type.
+
+It also seems to screw up type safety.
+*/
+
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+void print(char a)
+{
+    printf("%c ",a);
+}
+
+void print(int a)
+{
+    printf("%d ",a);
+}
+
+void print(float a)
+{
+    printf("%.20f ",a);
+}
+
+void print(double a)
+{
+    printf("%.40f ",a);
+}
+
+
+
+#define DEFINE_ARRAY(TYPENAME)                                                                  \
+                                                                                                \
+typedef struct {                                                                                \
+  TYPENAME* data;                                                                               \
+  int length;                                                                                   \
+  int allocated;                                                                                \
+} TYPENAME ## _array;                                                                           \
+                                                                                                \
+                                                                                                \
+TYPENAME ## _array append(TYPENAME ## _array arr, TYPENAME item)                \
+{                                                                                               \
+    if ( arr.length == arr.allocated ) {                                                        \
+      arr.allocated *= 2;                                                                       \
+      arr.data = (TYPENAME*)realloc( arr.data, arr.allocated * sizeof(TYPENAME) );              \
+    }                                                                                           \
+    arr.data[arr.length] = item;                                                                \
+    arr.length += 1;                                                                            \
+    return arr;                                                                                 \
+}                                                                                               \
+
+
+DEFINE_ARRAY(char)
+DEFINE_ARRAY(int)
+
+
+
+
+int cpp_function_overloading_demo()
+{
+
+    printf("\n\n");
+    printf("cpp_function_overloading_demo\n");
+    printf("-----------------------\n");
+
+    int a = 1;
+    float b = 1;
+    double c = 1;
+
+    print(a); 
+    print(b);
+    print(c);
+
+    int num_iterations = 1000;
+    {
+        char_array arr;
+        arr.length = 0;        
+        arr.allocated = 16;    
+        arr.data = (char*)malloc( arr.allocated * sizeof(char) ); 
+
+        for(int i=0;i<num_iterations;i+=1) arr = append(arr, (char)((i%26)+65) );
+
+        for(int i=0;i<num_iterations;i+=1) print(arr.data[i]);
+
+    }
+
+    {
+        int_array arr;
+        arr.length = 0;        
+        arr.allocated = 16;    
+        arr.data = (int*)malloc( arr.allocated * sizeof(int) ); 
+
+        for(int i=0;i<num_iterations;i+=1) arr = append(arr, i );
+
+        for(int i=0;i<num_iterations;i+=1) print(arr.data[i]);
+
+
+    }
+    return 0;
+}
+
+
+
+// This is just a simple demo of how to output preprocessor output using the -E flag
+
+// gcc -E hello_world.c > preprocessor_output.c
+
+#include <stdio.h>
+
+int hello_world_demo()
+{
+    printf("Hello World\n");
+    return 0;
+}
+
+
+
+
+
+
+
+
+
 int main()
 {
     caesar_cipher_demo();
@@ -1573,8 +1770,7 @@ int main()
     is_prime_demo();
 
     errno_demo();
-    // demo_split_string();
-    // print_this_file();
+    // demo_split_string();  strtok is better than my split_string(), it appears
 
     union_of_structs_demo();
     sprint_float3_main();
@@ -1584,15 +1780,24 @@ int main()
     reverse_string_demo();
     pthreads_demo();
 
-    // // these take a little time
-    // showip_demo();
-    // print_stuff_on_one_line_demo();
-    // thread_race_demo();
-    // memory_write_speed_demo();
 
 
     endianness_demo();
     atof();
+
+    cpp_classes_demo();
+    cpp_function_overloading_demo();
+
+    // hello_world_demo(); 
+
+    
+    // these take a little time
+    showip_demo();
+    print_stuff_on_one_line_demo();
+    thread_race_demo();
+    // memory_write_speed_demo();
+    // print_this_file();
+
 
     return 0;
 }

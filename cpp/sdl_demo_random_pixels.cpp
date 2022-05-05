@@ -4,7 +4,7 @@ clang++ -ISDL2 -framework SDL2 -framework SDL2_image -framework SDL2_mixer -fram
 from https://stackoverflow.com/questions/33304351/sdl2-fast-pixel-manipulation
 */
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <iostream>
 #include <iomanip>
 #include <vector>
