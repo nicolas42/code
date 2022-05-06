@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	directory := flag.String("d", ".", "the directory of static file to host")
+	directory := flag.String("d", "./", "the directory of static file to host")
 	port := flag.String("p", "8080", "port to serve on")
 	flag.Parse()
 

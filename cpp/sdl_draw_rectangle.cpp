@@ -1,6 +1,6 @@
 /*
 
-g++ draw_rectangle.cpp -I../include -framework SDL2 -framework SDL2_mixer -framework SDL2_image -framework SDL2_ttf -Wfatal-errors -fsanitize=address && ./a.out
+g++ sdl_draw_rectangle.cpp -I../include -framework SDL2 -framework SDL2_mixer -framework SDL2_image -framework SDL2_ttf -Wfatal-errors -fsanitize=address && ./a.out
 
 based on draw_geometry by thenumbat https://thenumbat.github.io/cpp-course/sdl2/04/04.html
 

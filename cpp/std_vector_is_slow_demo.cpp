@@ -1,9 +1,14 @@
-// g++ std_vector_is_slow_demo.cpp -Ofast && ./a.out
+// apparently std::vector is just as fast when link time optimisations are enabled
+// In gcc it's -fwhole-program.  I don't know how to do it with clang in macos 
+// but it seems to be -flto.  Doesn't speed it up tho.
+
+// g++ std_vector_is_slow_demo.cpp -Ofast -flto && ./a.out
 
 // std::vector is more than 2X slower than a simple expanding array implementation
 
 #include <vector>
 #include <stdint.h>
+#include "../src/libc.h"
 
 typedef uint32_t test_t;
 

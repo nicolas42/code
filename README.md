@@ -1,17 +1,16 @@
-# C/C++ Demo
+To see a bunch of c++ demos, of which the graphical ones will require SDL and possibly opengl libraries
 
-sh make.sh
+    cd cpp
+    sh demo.sh
 
-# Web demos
-
-Run the go web server with 
+To see web demos run the web server with go then go to localhost:8080 in a browser.
 
     cd web
-    go run SERVE.go
+    go run server.go
 
-the go to 
+Python stuff is in the python dir
 
-    localhost:8080
+Node stuff is in the node dir
 
-or just click on html files.
+
 

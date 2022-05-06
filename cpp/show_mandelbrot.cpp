@@ -157,6 +157,7 @@ int main()
             if ( event.type == SDL_QUIT ) quit = 1;
             // if ( event.type == SDL_KEYDOWN ) render = 1;
             if ( event.type == SDL_MOUSEBUTTONDOWN ) {
+
                 SDL_GetMouseState(&mousex,&mousey);
 
                 double w = 4.0/zoom;
@@ -178,12 +179,14 @@ int main()
                 
                 SDL_Log("image_w, image_h, x, y, zoom: %.20f, %.20f, %.20f, %.20f, %.20f\n", image_w, image_h, x, y, zoom );
                 render = 1;
+
+
             }
         }
 
         if (render){
-            SDL_PumpEvents();
-            SDL_FlushEvents(0x101, 0xFFFF);
+            // SDL_PumpEvents();
+            // SDL_FlushEvents(0x101, 0xFFFF);
             render = 0;
             SDL_Surface *surface = sdl_draw_mandelbrot(image_w, image_h, x,y, zoom, 1000);
             SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
