@@ -37,7 +37,7 @@ def blur(a):
 
 
 
-def get_sign_of_multivector(_demo):
+def get_sign_of_multivector_demo():
 
     def bubble_sort(arr):
         # using adjacent swaps
@@ -349,7 +349,7 @@ def bash_grep_demo():
     print("---------------------")
 
     # get all function lines
-    filename   = "misc.py"
+    filename   = __file__ # "misc.py"
     expression = "def .*?\(.*?\):"
     matches = bash_grep(filename, expression)
     for match in matches: print(match)
@@ -751,36 +751,6 @@ def print_columns_demo():
 
 
 
-
-
-import re
-import sys
-
-def read_file(filename):
-    file = open(filename,'r')
-    input_string = file.read()
-    file.close()
-    return input_string
-
-
-
-def demo_split_at_regex():
-    filename = "misc.py"
-    output_filename = 'output.txt'
-    regex_pattern = r'\nFPS:\d*\.\d*\s*AVG_FPS:\d*\.\d*\n\n\s*cvWriteFrame\s*\nObjects:\s*\n'
-
-    input_string = read_file(filename)
-    output_list = re.split(regex_pattern, input_string)
-
-    # print items in output_list
-    for _,v in enumerate(output_list):
-        print('{' + v + '}')
-
-
-
-
-
-
 import random
 import requests
 import os
@@ -859,7 +829,8 @@ def ordered_datetime_demo():
     print("\n")
     print("ordered_datetime_demo")
     print("---------------------")
-    ordered_datetime()
+    print(ordered_datetime())
+    
 
 
 
@@ -870,35 +841,47 @@ import kmeans_clustering_algorithm
 # kmeans_clustering_algorithm.demo
 
 def dont_deserve_their_own_process():
-    get_sign_of_multivector_demo()
-    named_tuple_demo()
-    newtons_method_demo()
-    print_on_one_line_demo()
-    natural_sort_demo()
-    bash_grep_demo()
-    find_files_demo()
-    vigenere_cipher_demo()
-    index_files_demo()
-    print_columns_demo()
-    ordered_datetime_demo()
-    demo_split_at_regex()
+    for f in [
+        get_sign_of_multivector_demo,
+        named_tuple_demo,
+        newtons_method_demo,
+        print_on_one_line_demo,
+        natural_sort_demo,
+        bash_grep_demo,
+        find_files_demo,
+        vigenere_cipher_demo,
+        index_files_demo,
+        print_columns_demo,
+        ordered_datetime_demo,
+    ]:
+        try:
+            f()
+        except Exception as e:
+            print(e)
+            quit()
+            
+        
+
+
+
 
 if __name__ == "__main__":
 
     processes = []
     for f in [ 
         dont_deserve_their_own_process, 
-        matplotlib_draw_circle_demo,  
-        parallel_wget_demo, 
-        matplotlib_pareto_demo, 
-        sdl_pareto_demo, 
-        make_story_with_markov_chain_demo 
+        # matplotlib_draw_circle_demo,  
+        # parallel_wget_demo, 
+        # matplotlib_pareto_demo, 
+        # sdl_pareto_demo, 
+        # make_story_with_markov_chain_demo 
     ]:
         p = Process(target=f)
         processes.append(p)
-        p.start()
+        # p.start()
 
-    for p in processes:
-        p.join()
+    for p in processes: p.start()
+
+    for p in processes: p.join()
 
 

@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
 
 
 int populate_array_with_junk(int *arr, int count){
@@ -9,6 +7,9 @@ int populate_array_with_junk(int *arr, int count){
     return 0;
 }
 
+
+#include <stdio.h>
+#include <stdlib.h>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"

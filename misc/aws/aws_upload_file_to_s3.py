@@ -1,3 +1,14 @@
+# # How to upload and download files using the higher level client interface
+# # -----------------------------------------------------------------------------
+# s3 = boto3.client('s3')
+# s3.download_file("nschmidt-public", "funk_overload.mp4", "downloaded.mp4", Callback=None)
+# response = s3.upload_file("downloaded.mp4", "nschmidt-public", "uploaded.mp4", Callback=None)
+# response = s3.list_objects(Bucket='nschmidt-public')
+# for f in response['Contents']: 
+#     print(f['Key'])
+
+
+
 # https://boto3.amazonaws.com/v1/documentation/api/latest/guide/s3-uploading-files.html
 
 # files are copied to bucket/prefix/filepath

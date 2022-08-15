@@ -1,3 +1,6 @@
+# Output mp3 files
+# next version should play audio directly
+
 print("usage: python3 text-to-speech.py <filename>")
 
 
