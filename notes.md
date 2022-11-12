@@ -1,6 +1,18 @@
     call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 
 
+## bootable_usb_iso.md
+from https://gist.github.com/stephen-hannam/ee0547e16da27d09e78d40b562ad95d2
+
+DD, MKFS -> bootable ISO
+$ umount /dev/sdx*
+$ sudo fdisk –l
+$ sudo mkfs.vfat /dev/sdx –I
+$ sudo dd if=[path to iso] of=/dev/sdx
+monitor progress $ pgrep –l ‘^dd$’ get the PID returned $ kill –USR1 [PID]
+
+
+
 Things to do 
 draw lines of text?
 make mario game
