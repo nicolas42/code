@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<!-- saved from url=(0034)https://nicolas42.github.io/chaos/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body><canvas height="1000" width="1400"></canvas>
+<script>
+
+// x_n+1 = rx_n(1-x_n)
+function make_chaos(r)
+{
+    var x = [0.02];
+
+    for ( var i = 0; i < 200 ; i += 1 ){
+        x_n1 = r * x[x.length-1] * ( 1 - x[x.length-1] );
+        x_n1 = Math.max(x_n1, 0);
+        x.push(x_n1);
+    }
+    return x;
+}
+
+
+function draw(r_value){
+    let canvas = document.querySelector('canvas')
+    canvas.height = 1000;
+    canvas.width = 1400;
+
+    var context = canvas.getContext("2d");
+    context.fillStyle = "#000055";
+    // context.fillRect(0, 0, a.w, a.h);
+
+
+    var y_points = make_chaos(r_value);
+    let dx = 10;
+    var x = 0;
+    var y = 0;
+
+    context.translate(0.5, 0.5);
+    context.lineWidth = .5;
+    for ( var i = 0; i < y_points.length-1; i += 1 ){
+        y = canvas.height - 10 - (canvas.height * y_points[i]);
+        context.moveTo(x, y);
+        x += dx;
+        y = canvas.height - 10 - (canvas.height * y_points[i+1]);
+        context.lineTo(x,y);
+        context.stroke();
+
+    }
+
+}
+
+r = 3.7
+
+window.addEventListener("wheel", function(event) {
+  if (event.deltaY > 0) {
+    console.log(r);
+    r = r - 0.01
+    draw(r)
+
+  } else if (event.deltaY < 0) {
+    console.log(r);
+    r = r + 0.01
+    draw(r)
+  }
+});
+
+</script>
+</body></html>
