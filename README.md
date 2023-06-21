@@ -13,9 +13,9 @@ Python stuff is in the python dir
 Node stuff is in the node dir
 
 
-
-// Place your key bindings in this file to override the defaults
-[
-    { "key": "ctrl+tab", "command": "workbench.action.nextEditor" },
-    { "key": "ctrl+shift+tab", "command": "workbench.action.previousEditor" },
-]
+    
+    // Place your key bindings in this file to override the defaults
+    [
+        { "key": "ctrl+tab", "command": "workbench.action.nextEditor" },
+        { "key": "ctrl+shift+tab", "command": "workbench.action.previousEditor" },
+    ]
