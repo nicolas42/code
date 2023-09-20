@@ -1,0 +1,23 @@
+--------------------------------------------------------------------------
+Distribution
+--------------------------------------------------------------------------
+Bricklayer for Windows version 1.50 is Copyright 1994 Opinicus 
+Microtechnologies and is distributed under a non-exclusive licensing
+agreement by Vanilla-Extract Software.
+
+You may freely distribute Bricklayer for Windows version 1.50 as long as
+
+(1) All files in the Bricklayer for Windows version 1.50 distribution
+    (as listed in the FILELIST.TXT document) are included and are  
+    unmodified.  Only the files listed in FILELIST.TXT may be included in
+    the distribution, with the exception of a ASCII text document providing
+    additional information about the distributor.  The added text document
+    may not include any pricing or payment information.
+and
+(2) no fee is charged for distribution other than charges to cover media, 
+    shipping/handling, and/or communication costs.
+No part of the Bricklayer distribution, excepting the ASCII text files
+(with the .TXT extension), may be distributed separately from a complete
+Bricklayer for Windows version 1.50 distribution.  This includes the
+WAV music files, which can be used only for purposes of playing Bricklayer.
+--------------------------------------------------------------------------

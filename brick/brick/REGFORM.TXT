@@ -1,0 +1,39 @@
+Bricklayer for Windows v1.5 Registration Form ** Vanilla-Extract Software
+
+Last Name       ____________________  
+First Name      ____________________         Initial __
+
+if USA Address:
+        Address    ___________________________________________________
+        City       ___________________________________________________
+        State, Zip __   _____-____
+
+if Outside USA:
+        Address ______________________________________________________
+                ______________________________________________________
+                ______________________________________________________
+                ______________________________________________________
+        Country ____________________________
+
+email address                                _________________________
+Would you like to be notified about new 
+products/releases via email ?                                     ____
+
+[Additional Information]
+Where did you find Bricklayer (ftp, online service, BBS, friend, etc.) ? 
+
+
+
+What Hardware and OS are you using ?
+
+
+
+
+---------------8<---------------8<--------------------8<---------------------
+
+Thank you for registering Bricklayer for Windows!
+Please send US$10 for each copy of Bricklayer to be registered to:
+        Yevgeny Gurevich
+        129 Franklin Street #112
+        Cambridge, MA 02139
+
