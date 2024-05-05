@@ -16,8 +16,10 @@ void find_files(const char* directory, const char* pattern, uintmax_t min_size) 
     
     dir = opendir(directory);
     if (dir == NULL) {
-        perror("Error opening directory");
-        exit(EXIT_FAILURE);
+        printf("%s", directory);
+	perror("Error opening directory");
+	return;
+        // exit(EXIT_FAILURE);
     }
     
     while ((entry = readdir(dir)) != NULL) {

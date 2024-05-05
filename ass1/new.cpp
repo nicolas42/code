@@ -222,7 +222,19 @@ int demo2(){
   return 0;
 }
 
-void place_tile(){
+
+void print_board(char *board, int width, int height){
+    for (int i=0;i<height;i+=1){
+      for (int j=0;j<width;j+=1){
+	printf("%c",board[(i*width)+j]);
+      }
+      printf("\n");
+    }
+}
+
+
+void place_tile(int row, int column, int rotate){
+  
 }
 
 int main(int argc, char *argv[]) {
@@ -237,21 +249,52 @@ int main(int argc, char *argv[]) {
     printf("Usage: %s tilefile [p1type p2type [height width | filename]]\n", argv[0]);
     // 1,3,5,or 4 arguments, not including the executable.
 
+
+    char tiles[100][25];
+    int len_tiles = 0;
+    tilefile = argv[1];
+    char *tilestext = read_whole_file(tilefile);
+    if (!tilestext) return -1;
+    len_tiles = load_tiles(tilestext, tiles); 
+    
     // If only one argument is given, the contents of the tile file should be output to standard out as described below.    
-    if (argc==2){
-
-      tilefile = argv[1];
-      char *tilestext = read_whole_file(tilefile);
-      if (!tilestext) return -1;
-
-      char tiles[100][25];
-      int num_tiles = load_tiles(tilestext, tiles); 
-
-      for (int i=0;i<num_tiles;i+=1){
+    if (argc == 2){
+      for (int i=0;i<len_tiles;i+=1){
 	print_rotations(tiles[i]);
 	printf("\n");
       }
 
+    }
+    else if (argc == 4){
+      p1type = argv[2];
+      p2type = argv[3];
+    }
+    else if (argc == 6){
+      p1type = argv[2];
+      p2type = argv[3];
+      width = atoi(argv[4]);
+      height = atoi(argv[5]);
+      //      printf("%d %d\n", width, height);
+    }
+    
+    // initialize board 
+    char board[height*width];
+    for (int i=0;i<height;i+=1){
+      for (int j=0;j<width;j+=1){
+	board[width*i+j] = '.';
+      }
+    }      
+
+    //    void print_board(char *board, int width, int height){
+
+    int row, column, rotate;
+    int tiles_index = 0;
+    while (1){
+      print_board(board, width, height);
+      print_tile(tiles[tiles_index]);
+      printf("Player *] ");
+      scanf("%d %d %d", &row, &column, &rotate);
+      printf("%d %d %d\n", row, column, rotate);
     }
 
     return 0;
