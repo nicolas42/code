@@ -1,3 +1,5 @@
+// gcc -Wall -Wpedantic -Wextra -Wno-missing-prototypes -Wno-old-style-cast new.cpp && ./a.out tilefile h h 10 10
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -233,8 +235,49 @@ void print_board(char *board, int width, int height){
 }
 
 
-void place_tile(int row, int column, int rotate){
+int place_tile(char *board, int width, int height, char* tile, int row, int column, int rotate, char playerchar){
+
+  // return value is whether move completed ok.  0 = not okay.  everything else = ok.
+  // tiles are 5x5 characters.  The center point of the tile is what is actually placed onto the board.
+  // Lets just put a tile in the middle of the board for the time being.
+
+  // lets put the tile at 2,2.
+  // That means that we'll have to check all the points on the board from row 0..5 and col 0..5.
+
+  char rotations[4][25];
+  make_rotations(tile, rotations);
+  int rotation_index = rotate / 90;
+  char *rotated_tile = rotations[rotation_index];
+  //  print_tile(rotated_tile);
+
+  // do everything on a temporary board. if all of the char copies work then copy the results to the actual board.
+  char *temporary_board = (char*)malloc(width*height*sizeof(char));
+  for (int i=0;i<width*height;i+=1) { temporary_board[i] = board[i]; }
   
+  int tileindex = 0;
+  for (int i=(row-2);i<(row+3);i+=1){
+    for (int j=(column-2);j<(column+3);j+=1){
+      char tilechar = rotated_tile[tileindex];
+      tileindex+=1;
+      if (tilechar == '!'){
+	// constraints on i and j are 0 < i < height  and 0 < j < width;
+	// the board at this location must not have an existing tile. the board char must be '.'
+	if (!((0 <= i) && (i < height) && (0 <= j) && (j < width))){
+	  printf("out of bounds\n");
+	  return 0;
+	}
+	else if (!(temporary_board[width*i+j] == '.')){
+	  printf("Intersection error\n");
+	  return 0;
+	}
+	else {
+	  temporary_board[width*i+j] = playerchar;
+	} 
+      }
+    }
+  }
+  for (int i=0;i<width*height;i+=1) { board[i] = temporary_board[i]; }
+  return 1; // completed ok
 }
 
 int main(int argc, char *argv[]) {
@@ -242,8 +285,8 @@ int main(int argc, char *argv[]) {
     char *tilefile;
     char *p1type;
     char *p2type;
-    int height;
-    int width;
+    int height = 5;
+    int width = 5;
     char *filename;
     
     printf("Usage: %s tilefile [p1type p2type [height width | filename]]\n", argv[0]);
@@ -278,25 +321,31 @@ int main(int argc, char *argv[]) {
     }
     
     // initialize board 
-    char board[height*width];
+    char *board = (char*)malloc(height*width*sizeof(char));
     for (int i=0;i<height;i+=1){
       for (int j=0;j<width;j+=1){
 	board[width*i+j] = '.';
       }
     }      
 
-    //    void print_board(char *board, int width, int height){
-
     int row, column, rotate;
     int tiles_index = 0;
+    char player_chars[2] = {'*','#'};
+    int player_index = 0;
+    int ok = 0;
     while (1){
       print_board(board, width, height);
       print_tile(tiles[tiles_index]);
-      printf("Player *] ");
-      scanf("%d %d %d", &row, &column, &rotate);
-      printf("%d %d %d\n", row, column, rotate);
+      ok = 0;
+      while (ok == 0){
+	printf("Player %c] ", player_chars[player_index]);
+	scanf("%d %d %d", &row, &column, &rotate);
+	ok = place_tile(board, width, height, tiles[tiles_index], row, column, rotate, player_chars[player_index]);
+      }
+      player_index = 1 - player_index;
     }
 
+    
     return 0;
 }
 
