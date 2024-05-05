@@ -1,4 +1,24 @@
- ##  Visual Studio command line
+## Github SSH Key Generation
+
+1. Generate SSH key:
+   $ ssh-keygen -t ed25519 -C "your_email@example.com"
+
+2. Add SSH key to SSH agent:
+   $ eval "$(ssh-agent -s)"
+   $ ssh-add ~/.ssh/id_ed25519
+
+3. Copy SSH key to clipboard:
+   $ cat ~/.ssh/id_ed25519.pub | pbcopy
+
+4. Add SSH key to GitHub account:
+   1. Go to GitHub Settings.
+   2. Select "SSH and GPG keys".
+   3. Click on "New SSH key" and paste the key.
+
+
+
+
+##  Visual Studio command line
  
     call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 
