@@ -41,6 +41,7 @@ char* read_whole_file(const char *filename) {
     return buffer;
 }
 
+
 int read_and_display_tilefile() {
     const char *filename = "tilefile";
     char *content = read_whole_file(filename);
@@ -55,7 +56,6 @@ int read_and_display_tilefile() {
 
 // Shape display
 // For each tile in the file (in order), print the tile with its three rotations next to it (space separated). Put a blank line between each row of tiles.
-
 void make_tile(const char *a, char *tile){
   // char tile[25];
   int j=0;
@@ -66,6 +66,7 @@ void make_tile(const char *a, char *tile){
     }
   }
 }
+
 
 void print_tile(const char *tile){
 
@@ -93,12 +94,14 @@ void rotate_tile(const char *in, char *out){
   }
 }
 
+
 void copy_tile(const char *a, char *b){
 
   for (int i=0;i<25;i+=1){
     b[i]=a[i];
   }
 }
+
 
 void make_rotations(const char *tile, char tiles[4][25]){
   //  printf("%lu\n", sizeof(tile));
@@ -109,6 +112,7 @@ void make_rotations(const char *tile, char tiles[4][25]){
     rotate_tile(tiles[i], tiles[i+1]);
   }
 }
+
 
 void print_rotations(char *tile){
   // Note: in c an array element like this decays into a pointer.  Adding & actually introduces warnings.
@@ -127,8 +131,6 @@ void print_rotations(char *tile){
     printf("\n");
   }
 }
-
-
 
 
 int demo1(){
@@ -280,6 +282,99 @@ int place_tile(char *board, int width, int height, char* tile, int row, int colu
   return 1; // completed ok
 }
 
+
+int run_automatic_player_type_1(char *board, int width, int height, char* tile, char playerchar, int *r, int *c, int *rot){
+  // automatic player type 1
+  // r_start, c_start are the most recent legal play by either player or -2,-2 if no moves have been made yet.
+  // let r = r_start, c = c_start
+  // let rot = 0
+  // loop, loop
+  // if r,c,rot is a valid placement stop
+  // add one to c
+  // if c is larger than max column then set c to -2 and add 1 to r
+  // if r is larger than maximum row + 2 then set r to -2
+  // until r == r_start and c == c_start
+  // rotation += 90
+  // until rotation > 270
+
+  
+  // int r_start, c_start, r, c, rot, ok;
+  // r_start = row; // set to -2 if not set yet.
+  // c_start = column;
+  // *r = r_start;
+  // *c = c_start;
+  // *rot = 0;
+
+  int r_start = *r;
+  int c_start = *c;
+  int ok = 0;
+  while (1) {
+    while (1) {
+      ok = place_tile(board, width, height, tile, *r, *c, *rot, playerchar);
+      if (ok == 1){ return 1; }
+      *c += 1;
+      if (*c > (width+2)) { *c = -2; *r += 1; }
+      if (*r > (height+2)) { *r = -2; }
+      if (*r == r_start && *c == c_start) { break; }
+    }
+    *rot += 90;
+    if ( *rot > 270 ) { break; }
+  }
+  return 0;
+}  
+
+
+
+int run_automatic_player_type_2(char *board, int width, int height, char* tile, char playerchar, int *r, int *c, int *rot, int player_index){
+
+  // the most recent legal play by this player  
+  int r_start = *r; 
+  int c_start = *c;
+  
+  // starting location and search direction changes depending on which player this is.
+  // if player_index = 0 then it's player 1
+  // player_index = 1 means player 2
+  // player one starts at (-2,-2) and searches left to right top to bottom.  Player two starts at bottom right (rows+2,cols+2) and searches right to left, bottom to top
+  if (player_index == 0){
+    *r = -2; 
+    *c = -2;
+  }
+  else if (player_index == 1){
+    *r = width+2; 
+    *c = height+2;
+  }
+
+  int ok = 0;
+  while (1) {
+    *rot = 0;
+    while (1) {
+      ok = place_tile(board, width, height, tile, *r, *c, *rot, playerchar);
+      if (ok == 1){ return 1; }
+      *rot += 90;
+      if (*rot > 270) { break; }
+    }
+    if (player_index == 0){
+      *c += 1;
+      if (*c > (width+2)){
+	*c = -2;
+	*r += 1;
+      }
+    }
+    if (player_index == 1){
+      *c -= 1;
+      if (*c < -2){
+	*c = width+2;
+	*r -= 1;
+      }
+    }
+
+    if (*r==r_start && *c==c_start){ break; }
+  }
+  return 0;
+}
+
+
+
 int main(int argc, char *argv[]) {
 
     char *tilefile;
@@ -300,13 +395,13 @@ int main(int argc, char *argv[]) {
     if (!tilestext) return -1;
     len_tiles = load_tiles(tilestext, tiles); 
     
-    // If only one argument is given, the contents of the tile file should be output to standard out as described below.    
+
     if (argc == 2){
+      // If only one argument is given, the contents of the tile file should be output to standard out as described below.
       for (int i=0;i<len_tiles;i+=1){
 	print_rotations(tiles[i]);
 	printf("\n");
       }
-
     }
     else if (argc == 4){
       p1type = argv[2];
@@ -329,20 +424,35 @@ int main(int argc, char *argv[]) {
     }      
 
     int row, column, rotate;
+    row = -2;
+    column = -2;
+    rotate = 0;
     int tiles_index = 0;
     char player_chars[2] = {'*','#'};
+    char playerchar;
     int player_index = 0;
+    char *tile;
     int ok = 0;
     while (1){
       print_board(board, width, height);
       print_tile(tiles[tiles_index]);
       ok = 0;
       while (ok == 0){
-	printf("Player %c] ", player_chars[player_index]);
-	scanf("%d %d %d", &row, &column, &rotate);
-	ok = place_tile(board, width, height, tiles[tiles_index], row, column, rotate, player_chars[player_index]);
+	tile = tiles[tiles_index];
+	playerchar = player_chars[player_index];
+	// printf("Player %c] ", playerchar);
+	// scanf("%d %d %d", &row, &column, &rotate);
+	// ok = place_tile(board, width, height, tile, row, column, rotate, playerchar);
+
+	// if an automatic player returns 0 then there are no moves that it can play
+	//	getchar();
+	//	ok = run_automatic_player_type_1(board, width, height, tile, playerchar, &row, &column, &rotate);
+
+	// if an automatic player returns 0 then there are no moves that it can play
+	getchar();
+	ok = run_automatic_player_type_2(board, width, height, tile, playerchar, &row, &column, &rotate, player_index);
       }
-      player_index = 1 - player_index;
+      player_index = 1 - player_index; // toggles 0,1...
     }
 
     
