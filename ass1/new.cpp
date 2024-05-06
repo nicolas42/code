@@ -360,7 +360,7 @@ int run_automatic_player_type_2(char *board, int width, int height, char* tile, 
 	*r += 1;
       }
     }
-    if (player_index == 1){
+    else if (player_index == 1){
       *c -= 1;
       if (*c < -2){
 	*c = width+2;
