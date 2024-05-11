@@ -1,8 +1,10 @@
-// gcc -Wall -Wpedantic -Wextra -Wno-missing-prototypes -Wno-old-style-cast new.cpp && ./a.out tilefile h h 10 10
+// gcc fitz.cpp -fsanitize=address -Wall -Wpedantic -Wextra -Wno-missing-prototypes -Wno-old-style-cast && ./a.out tilefile 1 2 10 10
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+
+static int debug = 0;
 
 char* read_whole_file(const char *filename) {
     FILE *file = fopen(filename, "r");  // Open the file in read mode
@@ -183,13 +185,13 @@ int demo1(){
 }
 
 
-int load_tiles(char *tilefile, char tiles[][25]){
+int load_tiles(char *tilefile, char *tiles){ // tiles[][25]){
   // load tiles
   // char tiles[100][25];
   int tiles_length = 0;
   int j = 0;
   while (1){
-    make_tile(&tilefile[j], tiles[tiles_length]);
+    make_tile(&tilefile[j], &tiles[25*tiles_length]);
     j += 30;
     tiles_length += 1;
     if (tilefile[j] == '\n') {
@@ -209,11 +211,11 @@ int demo2(){
   if (!tilefile) return -1;
   // printf("Tilefile\n%s",tilefile);
 
-  char tiles[100][25];
+  char *tiles = (char*)malloc(100*25*sizeof(char));
   load_tiles(tilefile,tiles); 
 
   
-  char *tile = tiles[0];
+  char *tile = &tiles[0];
   char rotations[4][25];
   make_rotations(tile, rotations);
   // for (auto r: rotations) {  print_tile(r); }
@@ -265,11 +267,11 @@ int place_tile(char *board, int width, int height, char* tile, int row, int colu
 	// constraints on i and j are 0 < i < height  and 0 < j < width;
 	// the board at this location must not have an existing tile. the board char must be '.'
 	if (!((0 <= i) && (i < height) && (0 <= j) && (j < width))){
-	  printf("out of bounds\n");
+	  if (debug){ printf("out of bounds\n"); }
 	  return 0;
 	}
 	else if (!(temporary_board[width*i+j] == '.')){
-	  printf("Intersection error\n");
+	  if (debug){ printf("Intersection error\n"); }
 	  return 0;
 	}
 	else {
@@ -279,6 +281,7 @@ int place_tile(char *board, int width, int height, char* tile, int row, int colu
     }
   }
   for (int i=0;i<width*height;i+=1) { board[i] = temporary_board[i]; }
+  free(temporary_board);
   return 1; // completed ok
 }
 
@@ -373,7 +376,14 @@ int run_automatic_player_type_2(char *board, int width, int height, char* tile, 
   return 0;
 }
 
-
+int strlen(const char *a){
+  int len = 0;
+  for (int i=0; a[i] != '\0'; i+=1){
+    len += 1;
+  }
+  return len;
+}
+    
 
 int main(int argc, char *argv[]) {
 
@@ -381,29 +391,36 @@ int main(int argc, char *argv[]) {
     char *p1type;
     char *p2type;
     int height = 5;
-    int width = 5;
+    int width  = 5;
     char *filename;
     
     printf("Usage: %s tilefile [p1type p2type [height width | filename]]\n", argv[0]);
-    // 1,3,5,or 4 arguments, not including the executable.
+    for (int i = 0; i < argc; i++) { printf("'%s' ", argv[i]); }  printf("\n");
 
-
-    char tiles[100][25];
-    int len_tiles = 0;
+    int tiles_length = 0;
     tilefile = argv[1];
     char *tilestext = read_whole_file(tilefile);
-    if (!tilestext) return -1;
-    len_tiles = load_tiles(tilestext, tiles); 
+    if (tilestext == 0) return -1;
+    // 92 = 30*n + (n-1) = 31*n - 1
+    // tl = 30*n + (n-1) = 31*n - 1
+    // n = (tl+1)/31 ; n is tiles to allocate
+    int tilestext_length = strlen(tilestext);
+    int tiles_to_allocate = (tilestext_length + 1) / 31;
+    char *tiles = (char*)malloc(tiles_to_allocate * 25 * sizeof(char));
+    tiles_length = load_tiles(tilestext, tiles); 
     
+
 
     if (argc == 2){
       // If only one argument is given, the contents of the tile file should be output to standard out as described below.
-      for (int i=0;i<len_tiles;i+=1){
-	print_rotations(tiles[i]);
+      for (int i=0;i<tiles_length;i+=1){
+	print_rotations(&tiles[i]);
 	printf("\n");
       }
+      return 0;
     }
-    else if (argc == 4){
+    
+    if (argc == 4){
       p1type = argv[2];
       p2type = argv[3];
     }
@@ -412,11 +429,13 @@ int main(int argc, char *argv[]) {
       p2type = argv[3];
       width = atoi(argv[4]);
       height = atoi(argv[5]);
-      //      printf("%d %d\n", width, height);
+    }
+    else {
+      return 1;
     }
     
     // initialize board 
-    char *board = (char*)malloc(height*width*sizeof(char));
+    char *board = (char*)malloc( height * width * sizeof(char) );
     for (int i=0;i<height;i+=1){
       for (int j=0;j<width;j+=1){
 	board[width*i+j] = '.';
@@ -429,32 +448,46 @@ int main(int argc, char *argv[]) {
     rotate = 0;
     int tiles_index = 0;
     char player_chars[2] = {'*','#'};
+    char player_types[2] = { p1type[0], p2type[0] };
+    char ptype;
     char playerchar;
     int player_index = 0;
     char *tile;
     int ok = 0;
     while (1){
       print_board(board, width, height);
-      print_tile(tiles[tiles_index]);
+      print_tile(&tiles[25*tiles_index]);
+      tile = &tiles[25*tiles_index];
+      playerchar = player_chars[player_index];
+      ptype = player_types[player_index];
       ok = 0;
-      while (ok == 0){
-	tile = tiles[tiles_index];
-	playerchar = player_chars[player_index];
-	// printf("Player %c] ", playerchar);
-	// scanf("%d %d %d", &row, &column, &rotate);
-	// ok = place_tile(board, width, height, tile, row, column, rotate, playerchar);
-
-	// if an automatic player returns 0 then there are no moves that it can play
-	//	getchar();
-	//	ok = run_automatic_player_type_1(board, width, height, tile, playerchar, &row, &column, &rotate);
-
-	// if an automatic player returns 0 then there are no moves that it can play
+      if (ptype == 'h'){
+	while (ok == 0){
+	  printf("Player %c] ", playerchar);
+	  scanf("%d %d %d", &row, &column, &rotate);
+	  ok = place_tile(board, width, height, tile, row, column, rotate, playerchar);
+	}
+      }
+      else if (ptype == '1'){
+	//if an automatic player returns 0 then there are no moves that it can play
+	getchar();
+	ok = run_automatic_player_type_1(board, width, height, tile, playerchar, &row, &column, &rotate);
+	if (ok == 1) { printf("Player %c => %d %d rotated %d\n", playerchar, row, column, rotate); }
+      }
+      else if (ptype == '2'){
+	//if an automatic player returns 0 then there are no moves that it can play
 	getchar();
 	ok = run_automatic_player_type_2(board, width, height, tile, playerchar, &row, &column, &rotate, player_index);
+	if (ok == 1) { printf("Player %c => %d %d rotated %d\n", playerchar, row, column, rotate); }
       }
+      if (ok == 0) { printf("Player %d (%c) loses\n", player_index+1, playerchar); break; }
       player_index = 1 - player_index; // toggles 0,1...
+      tiles_index += 1;
+      if (tiles_index == tiles_length){
+	tiles_index = 0;
+      }
+      
     }
-
     
     return 0;
 }
