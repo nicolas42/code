@@ -1,4 +1,4 @@
-// gcc fitz.cpp -fsanitize=address -Wall -Wpedantic -Wextra -Wno-missing-prototypes -Wno-old-style-cast && ./a.out tilefile 1 2 10 10
+// gcc fitz.cpp -g -fsanitize=address,undefined -Ofast -Wall -Wpedantic -Wextra -Wno-missing-prototypes -Wno-old-style-cast && ./a.out tilefile 1 2 10 10
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -149,7 +149,6 @@ int demo1(){
   // @todo Should be able to calculate the length of the tiles
   // len = 30n + n-1, len+1 = 30n+n = 31n, n = (len+1)/31
 
-  // char *tiles = (char*)malloc(10*25*sizeof(char));
   char tiles[10][25];
   int tiles_length = 0;
   int j = 0;
@@ -201,31 +200,6 @@ int load_tiles(char *tilefile, char *tiles){ // tiles[][25]){
     }
   }
   return tiles_length;
-}
-
-
-int demo2(){
-
-  // read tilefile
-  char *tilefile = read_whole_file("tilefile");
-  if (!tilefile) return -1;
-  // printf("Tilefile\n%s",tilefile);
-
-  char *tiles = (char*)malloc(100*25*sizeof(char));
-  load_tiles(tilefile,tiles); 
-
-  
-  char *tile = &tiles[0];
-  char rotations[4][25];
-  make_rotations(tile, rotations);
-  // for (auto r: rotations) {  print_tile(r); }
-  // for (int i=0;i<4;i+=1){  print_tile(rotations[i]);  }
-
-  printf("Print rotations of a tile\n");
-  print_rotations(tile);
-
-  free(tilefile);
-  return 0;
 }
 
 
@@ -281,6 +255,7 @@ int place_tile(char *board, int width, int height, char* tile, int row, int colu
     }
   }
   for (int i=0;i<width*height;i+=1) { board[i] = temporary_board[i]; }
+
   free(temporary_board);
   return 1; // completed ok
 }
@@ -385,6 +360,7 @@ int strlen(const char *a){
 }
     
 
+
 int main(int argc, char *argv[]) {
 
     char *tilefile;
@@ -394,22 +370,18 @@ int main(int argc, char *argv[]) {
     int width  = 5;
     char *filename;
     
-    printf("Usage: %s tilefile [p1type p2type [height width | filename]]\n", argv[0]);
-    for (int i = 0; i < argc; i++) { printf("'%s' ", argv[i]); }  printf("\n");
+    if (debug) { for (int i = 0; i < argc; i++) { printf("'%s' ", argv[i]); }  printf("\n"); } 
 
-    int tiles_length = 0;
+    // load tiles
     tilefile = argv[1];
     char *tilestext = read_whole_file(tilefile);
     if (tilestext == 0) return -1;
-    // 92 = 30*n + (n-1) = 31*n - 1
-    // tl = 30*n + (n-1) = 31*n - 1
-    // n = (tl+1)/31 ; n is tiles to allocate
+
     int tilestext_length = strlen(tilestext);
     int tiles_to_allocate = (tilestext_length + 1) / 31;
     char *tiles = (char*)malloc(tiles_to_allocate * 25 * sizeof(char));
-    tiles_length = load_tiles(tilestext, tiles); 
+    int tiles_length = load_tiles(tilestext, tiles); 
     
-
 
     if (argc == 2){
       // If only one argument is given, the contents of the tile file should be output to standard out as described below.
@@ -427,13 +399,15 @@ int main(int argc, char *argv[]) {
     else if (argc == 6){
       p1type = argv[2];
       p2type = argv[3];
-      width = atoi(argv[4]);
+      width  = atoi(argv[4]);
       height = atoi(argv[5]);
     }
     else {
+      printf("Usage: %s tilefile [p1type p2type [height width | filename]]\n", argv[0]);
       return 1;
     }
     
+
     // initialize board 
     char *board = (char*)malloc( height * width * sizeof(char) );
     for (int i=0;i<height;i+=1){
@@ -480,6 +454,7 @@ int main(int argc, char *argv[]) {
 	ok = run_automatic_player_type_2(board, width, height, tile, playerchar, &row, &column, &rotate, player_index);
 	if (ok == 1) { printf("Player %c => %d %d rotated %d\n", playerchar, row, column, rotate); }
       }
+      
       if (ok == 0) { printf("Player %d (%c) loses\n", player_index+1, playerchar); break; }
       player_index = 1 - player_index; // toggles 0,1...
       tiles_index += 1;
@@ -488,7 +463,9 @@ int main(int argc, char *argv[]) {
       }
       
     }
-    
+
+
+    free(tiles);
     return 0;
 }
 

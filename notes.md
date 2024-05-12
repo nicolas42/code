@@ -22,6 +22,8 @@
  
     call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 
+    cl a.cpp
+
 
 ## bootable_usb_iso.md
 from https://gist.github.com/stephen-hannam/ee0547e16da27d09e78d40b562ad95d2
