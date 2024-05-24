@@ -1,3 +1,7 @@
+Recursively change ownership in macos
+
+	    sudo chown -R $(whoami) .
+
 ## Github SSH Key Generation
 
 1. Generate SSH key:

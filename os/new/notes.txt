@@ -1,0 +1,2 @@
+objdump -x86-asm-syntax=intel -d hello.o
+
