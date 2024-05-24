@@ -1,3 +1,7 @@
+Emacs indent in python
+C-x tab, left and right arrow keys
+
+
 Recursively change ownership in macos
 
 	    sudo chown -R $(whoami) .
