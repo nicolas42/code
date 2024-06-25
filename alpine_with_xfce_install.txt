@@ -1,0 +1,30 @@
+# Alpine Linux XFCE Setup
+
+# https://www.youtube.com/watch?v=8WYgynP8VJ8&t=815s
+
+setup-alpine
+# Remove installation media after installation
+# Instead of reboot use poweroff then remove media then boot again.
+
+free -h # usage
+adduser nick
+adduser nick wheel # big cheese
+apk add doas nano  # doas lighter sudo
+nano /etc/doas.conf  # permit persist :wheel
+
+nano /etc/apk/repositories # get community packages
+apk update
+
+# setup x environment
+setup-xorg-base
+apk add xfce4 xfce4-terminal xfce4-screensaver lightdm-gtk-greeter dbus adwaita-icon-theme
+
+# boot these when machine boots
+rc-update add lightdm
+rc-update add dbus
+
+# allow shutdown and reboot for users
+apka dd elogind polkit-elogind
+
+
+
