@@ -1,0 +1,39 @@
+Hash Collision col.c
+
+We need to supply a string 20 bytes long that adds to the following number if we chunk it into 4 byte (little endian) integers
+
+0x21DD09EC
+== 568134124
+
+The simplest thing to do is just append a bunch of zeroes to the number but that won't work since a zero byte terminates a c-string.  We won't get to the length = 20 requirement.
+
+So, we'll use a bunch of bytes of value 1 instead.  This'll give the integers this value
+1 + 2**8 + 2**16 + 2**24 == 16843009
+
+All four of them
+16843009 * 4 == 67372036
+
+Leaving this amount 
+568,134,124 - 67,372,036 == 500762088
+hex(500762088) == '0x1dd905e8'
+
+Just checking.  Booyah!
+0x1dd905e8 + 0x01010101 + 0x01010101 + 0x01010101 + 0x01010101
+== 568134124
+
+
+0x1dd905e8 0x01010101 0x01010101 0x01010101 0x01010101
+
+\x1d\xd9\x05\xe8\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01
+
+x86 is little endian, so it'll reverse the order of our bytes when it interprets an integer.  So we'll have to reverse them in anticipation to get the desired value.
+\x1d\xd9\x05\xe8 => \xe8\x05\xd9\x1d
+\x01\x01\x01\x01 => \x01\x01\x01\x01 ...
+
+Print bytes to standard output using this incantation.
+
+./col $(python3 -c "import sys; sys.stdout.buffer.write(b'\xe8\x05\xd9\x1d\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01')")
+
+
+
+

@@ -21,7 +21,7 @@ int main(int argc, char* argv[]){
 
 /*
 
-https://dogbolt.org/
+decompiler explorer https://dogbolt.org/
 
 printf "00000000000000000000000000000000\xbe\xba\xfe\xca" | ./bof
 

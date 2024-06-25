@@ -53,6 +53,7 @@ hex(0x21DD09EC - (4*0x01010101))
 
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 
 unsigned long hashcode = 0x21DD09EC;
 unsigned long check_password(const char* p){
@@ -70,13 +71,34 @@ unsigned long check_password(const char* p){
 }
 
 int main(int argc, char* argv[]){
-
-  /*
-  printf("%lu\n", strlen(argv[1]));
-  for(int i=0;i<20;++i) printf("%x ", argv[1][i]);
-  printf("\n");
-  */
   
+  /*
+  // print bytes
+  printf("%lu\n", strlen(argv[1]));
+  for(int i=0;i<20;++i) printf("0x%X ", (uint8_t)argv[1][i]);
+  printf("\n");
+  return 0;
+  */
+
+  // check input.  use incantation below to output bytes and read them again
+  // gcc col.c && ./a.out $(python3 -c "import sys; sys.stdout.buffer.write(b'\xe8\x05\xd9\x1d\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01')")
+  /*
+  uint32_t s = 0;
+  for(int i=0;i<20;i+=4) {
+    uint32_t ti = 0;
+    uint8_t *b = &(argv[1][i]);
+    // [1, 256, 65536, 16777216]
+    ti += b[0] * 1;
+    ti += b[1] * 256;
+    ti += b[2] * 65536;
+    ti += b[3] * 16777216;
+    s += ti;
+    printf("%x %x %x %x, ", b[0],b[1],b[2],b[3]);
+    
+  }
+  printf("%X\n", s);
+  */
+
   if(argc<2){
     printf("usage : %s [passcode]\n", argv[0]);
     return 0;
