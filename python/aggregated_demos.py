@@ -406,7 +406,7 @@ def find_files_terminal():
 
     if ( len(sys.argv) < 2 ):
         print("usage: python find_files.py dir query")
-        exit()
+        return
 
 
     query = [""]

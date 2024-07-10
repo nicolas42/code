@@ -1,12 +1,16 @@
+Emacs
+--------------------------------
 Emacs indent in python
 C-x tab, left and right arrow keys
 
 
 Recursively change ownership in macos
-
+------------------------------------------------
 	    sudo chown -R $(whoami) .
 
-## Github SSH Key Generation
+
+Github SSH Key Generation
+-------------------------------------------------------
 
 1. Generate SSH key:
    $ ssh-keygen -t ed25519 -C "your_email@example.com"
@@ -26,14 +30,16 @@ Recursively change ownership in macos
 
 
 
-##  Visual Studio command line
- 
+Visual Studio Command Line Usage
+----------------------------------------------
+
     call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 
     cl a.cpp
 
 
-## bootable_usb_iso.md
+bootable_usb_iso.md
+---------------------------------------
 from https://gist.github.com/stephen-hannam/ee0547e16da27d09e78d40b562ad95d2
 
 DD, MKFS -> bootable ISO
@@ -46,18 +52,15 @@ monitor progress $ pgrep –l ‘^dd$’ get the PID returned $ kill –USR1 [PI
 
 
 Things to do 
+----------------------------------
 draw lines of text?
 make mario game
 
 It appears that the rebol code to translate it to c code is largely in rebol/include/reb-c.h
 
 
-
-
-
-
-
-
+Creating Quaternions in GLSL
+---------------------------------------
 http://www.opengl-tutorial.org/print/#how-do-i-create-a-quaternion-in-glsl-
 
 Incompatible GPU/OS
@@ -67,7 +70,7 @@ The other possible reason is that you’re on a Mac, with a pre-Lion (10.7) vers
 
 
 
-SDL and opengl
+SDL and Opengl
 -----------------------
 
 The imgui code seems to be the best stuff to take examples from, generally speaking, for graphical
@@ -111,7 +114,7 @@ SDL_GL_SetSwapInterval(0); // 0 for immediate updates, 1 for updates synchronize
 
 
 
-Predefined macros for OS
+Operating System C Macros
 -------------------------------------
 from https://stackoverflow.com/questions/142508/how-do-i-check-os-with-a-preprocessor-directive
 
@@ -254,8 +257,9 @@ However, it causes errors when making SDL, so it might be unreliable.
 
 
 
-BUG: Unix terminals insert random characters in paste streams
------------------------------------------------------------
+Strange Behaviour - Unix terminals seems to insert random characters in paste streams
+---------------------------------------------------------------------------------------
+This is probably just the programs working as intended.  
 Macos terminal inserts random character into terminal when pasting code.
 This has happened in linux too.
 This time it was different characters always at the same place. 
@@ -473,7 +477,7 @@ To Do / Ideas
 --------------------------------
 OS 
 
-Extend the OS so that it can use more memory.  Currently the bootloader can only read three pages of 512 bytes of code.  Why?  Plus there are truly weird things that happen if I try to allocate more than 300*300 pixels.  I guess because the data is displacing code???
+Extend current OS so that it can use more memory.  Currently the bootloader can only read three pages of 512 bytes of code.  Why?  Plus there are truly weird things that happen if I try to allocate more than 300*300 pixels.  I guess because the data is displacing code???
 
 stripe
 
