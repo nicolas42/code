@@ -1,3 +1,6 @@
+# This simply uses AWS to convert a text file into an mp3.  
+# The free version has a limit on the amount of text that it can handle. 
+
 # Output mp3 files
 # next version should play audio directly
 

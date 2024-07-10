@@ -124,7 +124,7 @@ func savePng() {
 func main() {
 
 	port := ":8080"
-	fmt.Printf("Serving mandelbrot on localhost%s...\n", port)
+	fmt.Printf("Serving mandelbrot on http://localhost%s...\n", port)
 	http.HandleFunc("/", serveMandelbrotImage)
 	log.Fatal(http.ListenAndServe(port, nil))
 }

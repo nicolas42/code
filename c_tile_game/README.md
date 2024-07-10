@@ -1,7 +1,7 @@
 Block game "fitz" from university
 --------------------------------------
 
-Make and run demos.  
+Make and run demos with GCC or Visual Studio
 
 GCC
 
