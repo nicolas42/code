@@ -1,4 +1,4 @@
-// gcc fitz.cpp -g -fsanitize=address,undefined -Ofast -Wall -Wpedantic -Wextra -Wno-missing-prototypes -Wno-old-style-cast && ./a.out tilefile 1 2 10 10
+// Block game "fitz" from university
 
 #include <stdio.h>
 #include <stdlib.h>

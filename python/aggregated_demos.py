@@ -554,6 +554,7 @@ def parallel_wget_demo():
         [ "https://media.4-paws.org/8/a/a/0/8aa007ca1ea6b56e152eaa378cac580af6fcbdc1/YAR_6487-5272x3648.jpg" , output_dir ], 
         [ "https://image.pbs.org/video-assets/ae5wgeQ-asset-mezzanine-16x9-MqD4B29.jpg" , output_dir ], 
         [ "https://www.sciencenewsforstudents.org/wp-content/uploads/2021/04/1440_bb_brown_black_bear_explainer_feat-1030x580.jpg" , output_dir ], 
+        [ "https://gutenberg.net.au/ebooks15/1500401h.html" , output_dir ], 
     ]
 
     with multiprocessing.Pool(10) as pool:

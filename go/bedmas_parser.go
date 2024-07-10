@@ -1,6 +1,3 @@
-// You can edit this code!
-// Click here and start typing.
-
 // 8-mar-2016 updated order of operation from from BEMDAS to BEDMAS
 // A better design would be a data and an operation stack.  This would allow for the removal of the Entry struct
 

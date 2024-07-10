@@ -32,23 +32,30 @@ import (
 	"bufio"
 )
 
-func download(url string) {
-	// take the filename as the last part of the path	
+func download_url(url string) {
+	// take the filename as the last part of the path
 	tokens := strings.Split(url, "/")
 	filename := tokens[len(tokens)-1]
 	fmt.Println("Downloading", url, "to", filename)
+
 	// create file
 	output, err := os.Create(filename)
 	if err != nil {
 		log.Fatal("Error while creating", filename, "-", err)
 	}
 	defer output.Close()
-	// download with get request
+
+	// download_url with get request
 	res, err := http.Get(url)
 	if err != nil {
-		log.Fatal("http get error: ", err)
+		log.Fatal("HTTP GET error: ", err)
 	} 
 	defer res.Body.Close()
+
+	// Log status code and headers
+	fmt.Println("HTTP Status Code:", res.StatusCode)
+	fmt.Println("HTTP Headers:", res.Header)
+
 	// copy the response body to the file
 	_, err = io.Copy(output, res.Body)
 	if err != nil {
@@ -65,7 +72,7 @@ func download_multiple(urls []string) {
 	for _, url := range urls {
 		go func(url string){
 			defer wg.Done()
-			download(url)
+			download_url(url)
 		}(url)
 	}
 	wg.Wait()
@@ -78,10 +85,10 @@ func path_exists(path string) bool {
 	return err == nil
 }
 
-func request_make_dir(root_dir string) string {
+func safely_make_directory(root_dir string) string {
 	// make the directory or a renamed version
 	// return the actual path that is made
-	// usage: dir := request_make_dir("downloads")
+	// usage: dir := safely_make_directory("downloads")
 	path := root_dir
 	for i:=1; path_exists(path); i+=1 {
 		path = strings.Join([]string{root_dir, strconv.Itoa(i)}, " ")
@@ -113,25 +120,25 @@ func main() {
 	// for _, url := range urls { fmt.Println(url) }
 
 
-	// supply urls with a file
-	urls, err := read_lines("urls.txt")
-	if err != nil {
-		log.Fatal("couldn't read the urls file", err)
-	}
-
-
-	// // supply urls in program
-	// urls := []string{
-	// 	"https://www.outsideonline.com/sites/default/files/styles/full-page/public/2019/09/13/trump-polar-bears_h.jpg",
-	// 	"https://www.outsideonline.com/sites/default/files/styles/img_600x600/public/2019/09/09/bear-family-in-field_s.jpg",
-	// 	"https://www.banffjaspercollection.com/Brewster/media/Images/Stories/2019/04/MBN-Bears-Grizzly-Bear-Dandelions.jpg",
-	// 	"https://19mvmv3yn2qc2bdb912o1t2n-wpengine.netdna-ssl.com/science/files/2019/01/bear-featured-image-1200x708.jpg",
-	// 	"https://media.npr.org/assets/img/2018/03/26/picture1-femalewithcub_wide-311cc2a65f12f1bed7475c3672944954e60fa85a-s800-c85.jpg",
+	// // supply urls with a file
+	// urls, err := read_lines("urls.txt")
+	// if err != nil {
+	// 	log.Fatal("couldn't read the urls file", err)
 	// }
 
 
-	// safely make a directory
-	dir := request_make_dir("downloads")
+	// supply urls in program
+	urls := []string{
+		// "https://www.outsideonline.com/sites/default/files/styles/full-page/public/2019/09/13/trump-polar-bears_h.jpg",
+		// "https://www.outsideonline.com/sites/default/files/styles/img_600x600/public/2019/09/09/bear-family-in-field_s.jpg",
+		// "https://www.banffjaspercollection.com/Brewster/media/Images/Stories/2019/04/MBN-Bears-Grizzly-Bear-Dandelions.jpg",
+		// "https://19mvmv3yn2qc2bdb912o1t2n-wpengine.netdna-ssl.com/science/files/2019/01/bear-featured-image-1200x708.jpg",
+		// "https://media.npr.org/assets/img/2018/03/26/picture1-femalewithcub_wide-311cc2a65f12f1bed7475c3672944954e60fa85a-s800-c85.jpg",
+		"https://www.gutenberg.org/files/1342/1342-0.txt",
+	}
+
+
+	dir := safely_make_directory("downloads")
 
 	// change dir and restore it back at the end
 	original_dir, err := os.Getwd()

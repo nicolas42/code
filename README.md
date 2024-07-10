@@ -1,3 +1,16 @@
+
+
+Make simple C project in in unix and windows
+-----------------------------------------------------
+gcc main.cpp -g -fsanitize=address,undefined -Ofast -Wall -Wpedantic -Wextra -Wno-missing-prototypes -Wno-old-style-cast && ./a.out
+
+"c:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" x64 && cl main.cpp && main.exe
+
+
+
+Demos
+----------------
+
 To see a bunch of c++ demos, of which the graphical ones will require SDL and possibly opengl libraries
 
     cd cpp
@@ -13,6 +26,10 @@ Python stuff is in the python dir
 Node stuff is in the node dir
 
 
+
+
+Visual Studio Code
+----------------------------
     
     // Place your key bindings in this file to override the defaults
     [
@@ -22,43 +39,54 @@ Node stuff is in the node dir
 
 
 
-
+Emacs
+--------------------------------
 Emacs indent in python
 C-x tab, left and right arrow keys
 
 
 Recursively change ownership in macos
-
+------------------------------------------------
 	    sudo chown -R $(whoami) .
 
-## Github SSH Key Generation
 
-1. Generate SSH key:
-   $ ssh-keygen -t ed25519 -C "your_email@example.com"
+#SSH Key Generation in Unix System
+-------------------------------------------------------
 
-2. Add SSH key to SSH agent:
-   $ eval "$(ssh-agent -s)"
-   $ ssh-add ~/.ssh/id_ed25519
+#!/bin/bash
 
-3. Copy SSH key to clipboard:
-   $ cat ~/.ssh/id_ed25519.pub | pbcopy
+1. Generating the SSH key
+echo "Generating an SSH key..."
+ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_ed25519 -C "optional_comment"
 
-4. Add SSH key to GitHub account:
-   1. Go to GitHub Settings.
-   2. Select "SSH and GPG keys".
-   3. Click on "New SSH key" and paste the key.
+2. Starting the SSH agent
+echo "Starting the SSH agent..."
+eval "$(ssh-agent -s)"
+
+3. Adding the SSH key to the agent
+echo "Adding the SSH key to the agent..."
+ssh-add ~/.ssh/id_ed25519
+
+4. Copying the SSH key to clipboard (macOS version, adjust if on Linux)
+echo "Copying the SSH key to the clipboard..."
+pbcopy < ~/.ssh/id_ed25519.pub
+
+echo "SSH key generated and copied to clipboard. Please add it to your GitHub account."
 
 
 
 
-##  Visual Studio command line
- 
+
+Visual Studio Command Line Usage
+----------------------------------------------
+
     call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 
     cl a.cpp
 
 
-## bootable_usb_iso.md
+bootable_usb_iso.md
+---------------------------------------
 from https://gist.github.com/stephen-hannam/ee0547e16da27d09e78d40b562ad95d2
 
 DD, MKFS -> bootable ISO
@@ -70,19 +98,18 @@ monitor progress $ pgrep –l ‘^dd$’ get the PID returned $ kill –USR1 [PI
 
 
 
+
+
 Things to do 
+----------------------------------
 draw lines of text?
 make mario game
 
 It appears that the rebol code to translate it to c code is largely in rebol/include/reb-c.h
 
 
-
-
-
-
-
-
+Creating Quaternions in GLSL
+---------------------------------------
 http://www.opengl-tutorial.org/print/#how-do-i-create-a-quaternion-in-glsl-
 
 Incompatible GPU/OS
@@ -92,7 +119,7 @@ The other possible reason is that you’re on a Mac, with a pre-Lion (10.7) vers
 
 
 
-SDL and opengl
+SDL and Opengl
 -----------------------
 
 The imgui code seems to be the best stuff to take examples from, generally speaking, for graphical
@@ -1339,26 +1366,6 @@ and waits for someone else to connect.
 
 
 
-Make an #SSH key 
---------------------------------------------
-
-    ssh-keygen -o
-
-follow the prompts
-give the public ssh key to the other party
-
-In windows, git bash can be used for this.
-
-https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key
-
-
-
-
-
-
-
-
-
 -------------------------------------------------------------------
 #Misc
 -------------------------------------------------------------------
@@ -1569,6 +1576,38 @@ There's data hiding, which enforces the use of standard interfaces, which could 
         }
     };
 
+
+
+
+
+# Alpine Linux XFCE Setup
+------------------------------------------
+
+https://www.youtube.com/watch?v=8WYgynP8VJ8&t=815s
+
+setup-alpine
+Remove installation media after installation
+Instead of reboot use poweroff then remove media then boot again.
+
+free -h # usage
+adduser nick
+adduser nick wheel # big cheese
+apk add doas nano  # doas lighter sudo
+nano /etc/doas.conf  # permit persist :wheel
+
+nano /etc/apk/repositories # get community packages
+apk update
+
+1. setup x environment
+setup-xorg-base
+apk add xfce4 xfce4-terminal xfce4-screensaver lightdm-gtk-greeter dbus adwaita-icon-theme
+
+2. boot these when machine boots
+rc-update add lightdm
+rc-update add dbus
+
+3. allow shutdown and reboot for users
+apka dd elogind polkit-elogind
 
 
 
