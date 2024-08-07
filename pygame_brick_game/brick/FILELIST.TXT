@@ -1,0 +1,17 @@
+default.blr    - Bricklayer default backgrounds
+bwcc.dll       - Borland Custom Control Library
+wavemix.dll    - Microsoft Wavemixing Library
+bricklyr.exe   - Bricklayer executable
+wavemix.ini    - Microsoft wavemixing prefs
+bricklyr.txt   - Short Bricklayer description
+distrib.txt    - Distribution information
+filelist.txt   - This file
+readme.txt     - Longer Bricklayer description and information
+regform.txt    - Registration form for Bricklayer
+mus2cd.wav     - Music
+mus2e.wav      - Music
+mus2fa.wav     - Music
+mus2fb.wav     - Music
+mus2fc.wav     - Music
+mus2g.wav      - Music
+mus2rpt.wav    - Music
