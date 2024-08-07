@@ -1,5 +1,7 @@
 # crappygames.com
-
+# How to remove silence from songs with Audacity.
+# Load a song.  Select all of song with ctrl+a. Go to effects > special > truncate silence . Export wav
+    
 import pygame
 import sys
 
@@ -22,7 +24,6 @@ pygame.display.set_caption("Simple Tetris")
 clock = pygame.time.Clock()
 
 
-# Shape class
 class Square:
     def __init__(self, x, y):
         self.x = x
@@ -46,7 +47,7 @@ class Square:
     def draw(self, screen):
         pygame.draw.rect(screen, RED, (self.x, self.y, BLOCK_SIZE, BLOCK_SIZE))
 
-
+        
 MOVE_DOWN_EVENT = pygame.USEREVENT + 1
 pygame.time.set_timer(MOVE_DOWN_EVENT, 500)  # Trigger every 500 milliseconds
 
@@ -64,22 +65,22 @@ def game_loop():
 
     square = Square(SCREEN_WIDTH // 2, 0)
 
-    # How to remove silence from songs with Audacity
-    # Load a song.  Select all of song with ctrl+a. Go to effects > special > truncate silence . Export wav
+
     music_files = ['MUS2CD_truncated.wav','brick/MUS2E.WAV','brick/MUS2FA.WAV','brick/MUS2FB.WAV','brick/MUS2FC.WAV','brick/MUS2G.WAV','brick/MUS2RPT.WAV']
     music_files_index = 0
 
     while True:
 
+        # Music stuff
         if not pygame.mixer.music.get_busy():
             pygame.mixer.music.load(music_files[music_files_index])
             pygame.mixer.music.play()
             music_files_index += 1
             if music_files_index >= len(music_files):
                 music_files_index = 0
+            print(music_files[music_files_index])
 
 
-        screen.fill(WHITE)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -118,6 +119,7 @@ def game_loop():
         if square.y >= SCREEN_HEIGHT:
             square.y = 0
 
+            
         # Draw the tile after processing inputs
         screen.fill(WHITE)
         square.draw(screen)
