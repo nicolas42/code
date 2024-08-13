@@ -1,6 +1,6 @@
 /*
 macos:
-g++ image_viewer.cpp -I../include -Ofast -std=c++11 -framework SDL2 -framework SDL2_image && ./a.out
+g++ image_viewer.cpp -Iinclude -Ofast -std=c++11 -framework SDL2 -framework SDL2_image && ./image_viewer
 
 g++ image_viewer.cpp -Iinclude -framework SDL2 -framework SDL2_image -std=c++11 -Ofast -fPIC -Wall -Wpedantic -Wextra -Wvla -Wshadow -Wfatal-errors -fsanitize=address -g && ./a.out
 
@@ -416,6 +416,27 @@ void show_using_renderer( SDL_Window *window, std::vector<std::string> filenames
 }
 
 
+#include <iostream>
+#include <mach-o/dyld.h>
+#include <limits.h>
+#include <unistd.h>
+
+std::string getExecutableDir() {
+    char path[PATH_MAX];
+    uint32_t size = sizeof(path);
+    
+    if (_NSGetExecutablePath(path, &size) == 0) {
+        char realPath[PATH_MAX];
+        realpath(path, realPath);
+        std::string dirPath(realPath);
+        return dirPath.substr(0, dirPath.find_last_of('/'));
+    } else {
+        std::cerr << "Buffer size is too small; need size " << size << std::endl;
+        return "";
+    }
+}
+
+
 int main( int argc, char* argv[] )
 {
     int window_width = 800;
@@ -449,8 +470,13 @@ int main( int argc, char* argv[] )
     char* dropped_filename;
 
 
+
+    std::string dir2 = getExecutableDir();
+    char *dir = (chardir2.c_str();
+
+    
    	// char *dir = (char*)"";
-	char *dir = (char*)"/Users/nick/Downloads";
+    // char *dir = (char*)"/Users/nick/Downloads";
 
     // // terminal
     // if (argc == 1) printf("show_images <dir>\n");
