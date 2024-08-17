@@ -1,78 +1,87 @@
 import pygame
-import sys
+import math
 
-# Initialize pygame
+# Initialize Pygame
 pygame.init()
 
-# Constants
-WIDTH, HEIGHT = 800, 600
-BUTTON_WIDTH, BUTTON_HEIGHT = 200, 50
-WHITE = (255, 255, 255)
+# Set up the display
+width, height = 800, 600
+screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption("2D Rocket Game")
+
+# Colors
 BLACK = (0, 0, 0)
-GREEN = (0, 255, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
 
-# Colors for the darkest 8 greens
-darkest_greens = [
-    (0, 0, 0), (0, 10, 0), (0, 20, 0), (0, 30, 0),
-    (0, 40, 0), (0, 50, 0), (0, 60, 0), (0, 70, 0)
-]
+# Rocket properties
+rocket_img = pygame.Surface((20, 40))
+rocket_img.fill(WHITE)
+rocket_rect = rocket_img.get_rect(center=(width // 2, height // 2))
+rocket_angle = 0
+rocket_speed = 0
+rocket_acceleration = 0.1
+engine_on = False
 
-# Screen setup
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Gradient Display")
-
-# Font setup
-font = pygame.font.Font(None, 36)
-
-def draw_button(text, x, y):
-    text_surf = font.render(text, True, WHITE)
-    text_width, text_height = text_surf.get_size()
-    button_rect = pygame.Rect(x, y, text_width + 20, text_height + 10)
-    pygame.draw.rect(screen, BLACK, button_rect)
-    text_rect = text_surf.get_rect(center=button_rect.center)
-    screen.blit(text_surf, text_rect)
-    return button_rect
-
-def draw_gradient_light_to_dark_green():
-    for i in range(WIDTH):
-        color = (0, int((i / WIDTH) * 255), 0)
-        pygame.draw.rect(screen, color, (i, HEIGHT / 2 - 100, 1, 200))
-
-def draw_gradient_darkest_8_colors():
-    bar_width = WIDTH // 8
-    for i, color in enumerate(darkest_greens):
-        pygame.draw.rect(screen, color, (i * bar_width, HEIGHT / 2 - 100, bar_width, 200))
-
-# Main loop
+# Game loop
+clock = pygame.time.Clock()
 running = True
-show_light_to_dark = True
 
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if light_to_dark_button.collidepoint(event.pos):
-                show_light_to_dark = True
-            elif darkest_8_button.collidepoint(event.pos):
-                show_light_to_dark = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                engine_on = not engine_on
 
-    # Drawing
-    screen.fill(WHITE)
-    
-    light_to_dark_button = draw_button("Light to Dark Green", WIDTH / 4 - BUTTON_WIDTH / 2, HEIGHT - 100)
-    darkest_8_button = draw_button("Darkest 8 Greens", 3 * WIDTH / 4 - BUTTON_WIDTH / 2, HEIGHT - 100)
+    # Handle continuous key presses
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        rocket_angle += 3
+    if keys[pygame.K_RIGHT]:
+        rocket_angle -= 3
 
-    if show_light_to_dark:
-        draw_gradient_light_to_dark_green()
+    # Update rocket position and speed
+    if engine_on:
+        rocket_speed += rocket_acceleration
+        rocket_rect.x += rocket_speed * math.sin(math.radians(rocket_angle))
+        rocket_rect.y -= rocket_speed * math.cos(math.radians(rocket_angle))
     else:
-        draw_gradient_darkest_8_colors()
-    
+        rocket_speed = max(0, rocket_speed - rocket_acceleration / 2)
+
+    # Wrap around screen edges
+    rocket_rect.x %= width
+    rocket_rect.y %= height
+
+    # Clear the screen
+    screen.fill(BLACK)
+
+    # Draw the rocket
+    rotated_rocket = pygame.transform.rotate(rocket_img, rocket_angle)
+    rotated_rect = rotated_rocket.get_rect(center=rocket_rect.center)
+    screen.blit(rotated_rocket, rotated_rect)
+
+    # Draw engine flame when on
+    if engine_on:
+        flame_length = 20
+        flame_width = 10
+        flame_offset = rotated_rect.height // 2
+        flame_start = (
+            rotated_rect.centerx + flame_offset * math.sin(math.radians(rocket_angle)),
+            rotated_rect.centery + flame_offset * math.cos(math.radians(rocket_angle))
+        )
+        flame_end = (
+            flame_start[0] + flame_length * math.sin(math.radians(rocket_angle)),
+            flame_start[1] + flame_length * math.cos(math.radians(rocket_angle))
+        )
+        pygame.draw.line(screen, RED, flame_start, flame_end, flame_width)
+
+    # Update the display
     pygame.display.flip()
 
+    # Control the frame rate
+    clock.tick(60)
+
+# Quit the game
 pygame.quit()
-sys.exit()
-
-
-
-
