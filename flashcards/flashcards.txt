@@ -1,0 +1,8 @@
+天気, Weather,今日の天気はどうですか？,What is the weather like today?
+学校,School,私は学校に行きます。,I am going to school.
+美味しい,Delicious,このケーキは美味しいです。,This cake is delicious.
+早い,Fast/Early,彼はいつも早く来ます。,He always comes early.
+遅い,Slow/Late,電車が遅れています。,The train is late.
+front, back
+
+
