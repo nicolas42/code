@@ -1,3 +1,13 @@
+Macos
+-----------------------------------------------------
+
+xcode-select --install
+
+
+nano ~/.zprofile
+alias python='python3'
+alias pip='pip3'
+
 
 
 Make simple C project in in unix and windows
