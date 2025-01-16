@@ -1,9 +1,61 @@
 #include <stdio.h>
 #include <math.h>
 
-// UUID collision chance calculations
-// https://en.wikipedia.org/wiki/Birthday_problem
+/*
 
+UUID Collision Chance
+------------------------------------
+
+The likelihood that there is at least one collision for UUIDs can be understood
+with what's typically called the birthday problem story.
+Counterintuitively, it only takes 23 people to have a roughly equal chance of there being
+a 50% chance of at least two people having the same birthday in the room.
+If we increase the number of options from 365 to whatever the number of alternatives for UUIDs are
+then we can use similar mathematics to work out the likelihood of UUID and hash function collisions
+which have real world consequences for software systems.
+
+The chance of at least one collision for birthdays can be calculated by calculating the chance that
+there are no collisions and then convert that to the chance of one of more collisions by converting
+it to one minus that amount.
+
+P(no collisions) = 0/365 * 1/365 * 2/365 * ... one term per person
+P(one of more collisions) = 1 - P(no collisions)
+
+
+
+Reality can be split into parallel dimensions :) where there is a collision
+and where there is no collision (C or NC).
+
+             Reality
+                |
+          ┌─────┴─────┐
+          │           │
+          C           NC
+       ┌──┴──┐     ┌──┴──┐
+       │     │     │     │
+       C     NC    C     NC
+    ┌──┴──┐ ┌─┴─┐ ┌─┴─┐ ┌─┴─┐
+    │     │ │   │ │   │ │   │
+    C    NC C  NC C  NC C  NC
+
+
+The first bifurcation has a 0/100 chance of a collision C and a 100/100 chance of no collision (NC).
+Then there's a 1/100 chance of a collision and a 99/100 chance of no collision.
+Then it's C = 2/100 and NC = 98/100 and so on.
+
+For universal unique identifiers we're interested in the chance that there is at least one collision throughout all time.
+This can be conveniently calculated by finding the chance of having absolutely no collisions which is the route taken
+on the right hand side of the graph choosing all NC options.
+
+To calculate it multiply 100/100 * 99/100 * 98/100 and so on with one term per insertion.
+
+
+“You know nothing of future time,” pronounced Deep Thought, “and yet in my teeming circuitry I can navigate infinite delta streams of future probability and see that there must one day come a computer whose merest operational parameters I am not worthy to calculate, but which it will be my eventual fate to design.” - Douglas Adams
+
+*/
+
+	       
+	     
 int birthday_problem_start(double N)
 {
   // double N = 20;
